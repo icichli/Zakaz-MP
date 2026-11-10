@@ -1,4 +1,4 @@
-const CACHE_NAME = 'snack-order-v1';
+const CACHE_NAME = 'snack-order-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -11,12 +11,12 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -25,28 +25,34 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('Removing old cache:', key);
             return caches.delete(key);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
+// Network First strategy: always try to fetch fresh files from network, fallback to cache when offline
 self.addEventListener('fetch', (event) => {
-  // If fetching Google Sheets, try network first
-  if (event.request.url.includes('google.com') || event.request.url.includes('googleapis.com')) {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
-    );
+  // If request is for Google Sheets API/export, always use network without caching
+  if (event.request.url.includes('google.com') || event.request.url.includes('googleusercontent.com')) {
+    event.respondWith(fetch(event.request));
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
-

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="out">Testing...</pre>
+<script>
+async function run() {
+  const out = document.getElementById('out');
+  const url = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
+  try {
+    const res = await fetch(url);
+    out.textContent = 'Status: ' + res.status + ' OK=' + res.ok;
+    const buf = await res.arrayBuffer();
+    out.textContent += ' Bytes: ' + buf.byteLength;
+  } catch (e) {
+    out.textContent = 'Error: ' + e.name + ': ' + e.message;
+  }
+}
+run();
+</script>
+</body>
+</html>
+

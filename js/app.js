@@ -3603,13 +3603,35 @@ function saveState() {
   }
 }
 
+const APP_DATA_VERSION = 'v2.0.4';
+const SPREADSHEET_ID = '1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro';
+const SHEET_GIDS = [
+  { name: 'Гренки Весовые', gid: '0' },
+  { name: 'Сырные Сухие', gid: '716206792' },
+  { name: 'Гренки Чипсы и снеки ЗАВОДСКИЕ', gid: '302677348' },
+  { name: 'Орехи', gid: '1918744596' },
+  { name: 'Начос и лавашики', gid: '555310337' },
+  { name: 'Соусы', gid: '753689220' },
+  { name: 'Рыбные', gid: '686812298' },
+  { name: 'Сыры', gid: '2087869613' },
+  { name: 'Мясные', gid: '1279909913' },
+  { name: 'Мясные ЗАВОД', gid: '152219417' }
+];
+
 // Load Catalog from cache or fallback to embedded DEFAULT_CATALOG
 async function loadCatalog() {
+  // Check app version and clear outdated caches from v1/v2
+  const savedVersion = localStorage.getItem('snack_app_version');
+  if (savedVersion !== APP_DATA_VERSION) {
+    localStorage.setItem('snack_app_version', APP_DATA_VERSION);
+    localStorage.removeItem('snack_catalog_cache');
+    localStorage.removeItem('snack_custom_sheet_url');
+  }
+
   const cachedCatalog = localStorage.getItem('snack_catalog_cache');
   if (cachedCatalog) {
     try {
       const parsed = JSON.parse(cachedCatalog);
-      // If cached version is older or has fewer items than our full catalog (322 items), upgrade it
       if (Array.isArray(parsed) && parsed.length >= DEFAULT_CATALOG.length) {
         catalog = parsed;
         return;
@@ -3623,41 +3645,99 @@ async function loadCatalog() {
   localStorage.setItem('snack_catalog_cache', JSON.stringify(catalog));
 }
 
-// Synchronize from Google Sheets directly via XLSX export (all 10 tabs!)
+// Synchronize from Google Sheets directly (Dual Sync: XLSX + GViz parallel fallback across all 10 tabs)
 async function syncFromGoogleSheets(notify = true) {
   const btn = document.getElementById('btnSync');
   if (btn) btn.classList.add('syncing');
 
-  const sheetUrl = localStorage.getItem('snack_custom_sheet_url') || DEFAULT_SHEET_XLSX_URL;
-
-  try {
-    const res = await fetch(sheetUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const arrayBuffer = await res.arrayBuffer();
-
-    if (typeof XLSX === 'undefined') {
-      throw new Error('Библиотека XLSX не загружена');
-    }
-
-    const wb = XLSX.read(arrayBuffer, { type: 'array' });
-    const parsedItems = parseGoogleSheetWorkbook(wb);
-
-    if (parsedItems && parsedItems.length > 0) {
-      catalog = parsedItems;
-      localStorage.setItem('snack_catalog_cache', JSON.stringify(catalog));
-      renderCategoryTabs();
-      renderBrandChips();
-      renderCatalog();
-      if (notify) showToast(`✅ Каталог обновлен: ${parsedItems.length} позиций во всех вкладках!`);
-    } else {
-      throw new Error('Не удалось прочитать позиции из таблицы');
-    }
-  } catch (err) {
-    console.error('Sync error:', err);
-    if (notify) showToast(`❌ Ошибка обновления таблицы: ${err.message}`, true);
-  } finally {
+  // Check if running on local file:// protocol where browser security blocks external fetch
+  if (window.location.protocol === 'file:') {
     if (btn) btn.classList.remove('syncing');
+    showToast('⚠️ При открытии локально (file://) браузер блокирует интернет. На GitHub Pages синхронизация работает автоматически!', true);
+    return;
   }
+
+  let parsedItems = [];
+
+  // Method 1: Fetch via Google Sheets XLSX export
+  try {
+    const sheetUrl = localStorage.getItem('snack_custom_sheet_url') || DEFAULT_SHEET_XLSX_URL;
+    const res = await fetch(sheetUrl);
+    if (res.ok && typeof XLSX !== 'undefined') {
+      const arrayBuffer = await res.arrayBuffer();
+      const wb = XLSX.read(arrayBuffer, { type: 'array' });
+      parsedItems = parseGoogleSheetWorkbook(wb);
+    }
+  } catch (errXlsx) {
+    console.warn('XLSX sync redirect/CORS blocked, attempting GViz multi-sheet fetch...', errXlsx);
+  }
+
+  // Method 2 (Fallback): Fetch all 10 sheets via GViz CSV endpoints in parallel (direct 200 CORS)
+  if (!parsedItems || parsedItems.length < 50) {
+    try {
+      parsedItems = await fetchAllSheetsViaGViz();
+    } catch (errGviz) {
+      console.error('GViz sync error:', errGviz);
+    }
+  }
+
+  if (btn) btn.classList.remove('syncing');
+
+  if (parsedItems && parsedItems.length > 0) {
+    catalog = parsedItems;
+    localStorage.setItem('snack_catalog_cache', JSON.stringify(catalog));
+    renderCategoryTabs();
+    renderBrandChips();
+    renderCatalog();
+    if (notify) showToast(`✅ Каталог обновлен: ${parsedItems.length} позиций во всех 10 вкладках!`);
+  } else {
+    if (notify) showToast(`❌ Не удалось связаться с Google Таблицей. Проверьте сеть`, true);
+  }
+}
+
+// Fallback fetch all sheets via GViz CSV (100% CORS compliant on all browsers)
+async function fetchAllSheetsViaGViz() {
+  const promises = SHEET_GIDS.map(async (sheet) => {
+    const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${sheet.gid}`;
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const text = await res.text();
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const items = [];
+    for (const line of lines) {
+      const cells = splitCSVLine(line);
+      const rawText = cells.find(c => c.trim().length > 0) || '';
+      if (!rawText || rawText.toLowerCase().includes('категория') || rawText.toLowerCase().includes('название')) continue;
+      const obj = parseRawItemFromSheet(rawText, sheet.name, 0);
+      if (obj) items.push(obj);
+    }
+    return items;
+  });
+
+  const results = await Promise.all(promises);
+  const all = results.flat();
+  all.forEach((it, idx) => it.id = `item_${idx + 1}`);
+  return all;
+}
+
+// Split CSV helper
+function splitCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"' && (i === 0 || line[i-1] !== '\\')) {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result.map(s => s.replace(/^"|"$/g, '').trim());
 }
 
 // Parse all sheets in the Excel workbook
@@ -4770,10 +4850,59 @@ function setupEventListeners() {
   }
 }
 
-// Register Service Worker for offline PWA
+// Force refresh and clear all browser caches programmatically
+async function forceAppUpdate() {
+  try {
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const r of regs) {
+        await r.unregister();
+      }
+    }
+    localStorage.removeItem('snack_catalog_cache');
+    localStorage.removeItem('snack_app_version');
+    localStorage.removeItem('snack_custom_sheet_url');
+    showToast('Кэш очищен. Перезагрузка...');
+    setTimeout(() => {
+      window.location.href = window.location.pathname + '?reload=' + Date.now();
+    }, 700);
+  } catch (err) {
+    console.error('Force update error:', err);
+    window.location.reload();
+  }
+}
+
+// Register Service Worker with auto-update check on every visit
 if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration skipped:', err));
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      // Force check for updates from GitHub on every page load
+      reg.update();
+
+      reg.onupdatefound = () => {
+        const installingWorker = reg.installing;
+        if (!installingWorker) return;
+        installingWorker.onstatechange = () => {
+          if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New version downloaded in background! Auto-reload to apply
+            showToast('🚀 Вышло обновление! Перезагрузка...');
+            setTimeout(() => window.location.reload(), 1200);
+          }
+        };
+      };
+    }).catch(err => console.log('SW registration skipped:', err));
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
   });
 }
 

@@ -9,8 +9,8 @@
   <meta name="description" content="Удобная система формирования заказа снеков для пивных магазинов">
   <title>Заказ Снеков</title>
   
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/styles.css?v=2.0.4">
+  <link rel="manifest" href="manifest.json?v=2.0.4">
 </head>
 <body>
 
@@ -167,6 +167,18 @@
         <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
           💡 Чтобы обновить ассортимент, просто добавьте или измените строки в вашей таблице Google Sheets и нажмите кнопку обновления 🔄 в шапке приложения.
         </p>
+
+        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">
+            Управление кэшем приложения
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px;">
+            Если приложение показывает старую версию или не видит изменений с GitHub, нажмите кнопку ниже:
+          </p>
+          <button type="button" class="btn-action-secondary" style="width: 100%; color: #f87171; border-color: rgba(239, 68, 68, 0.4);" onclick="forceAppUpdate()">
+            🗑️ Очистить кэш и перезагрузить
+          </button>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-action-primary" style="background: var(--accent-amber); color: #0f172a;" onclick="saveSettings()">
@@ -194,7 +206,7 @@
 
   <!-- Vendor Scripts & Application -->
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=2.0.4"></script>
 </body>
 </html>
 
