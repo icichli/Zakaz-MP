@@ -804,6 +804,47 @@ body {
   color: #0f172a;
 }
 
+/* Scroll to Top Floating Button */
+.btn-scroll-top {
+  position: fixed;
+  right: 18px;
+  bottom: calc(24px + var(--safe-bottom));
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(245, 158, 11, 0.45);
+  color: var(--accent-amber-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 45;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(0.85);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.25s ease, background 0.15s;
+}
+
+.btn-scroll-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.btn-scroll-top.has-order-bar {
+  bottom: calc(88px + var(--safe-bottom));
+}
+
+.btn-scroll-top:active {
+  transform: scale(0.9);
+  background: var(--bg-card-hover);
+  border-color: var(--accent-amber);
+}
+
 /* Empty state */
 .empty-state {
   text-align: center;
