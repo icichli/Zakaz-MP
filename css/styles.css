@@ -221,11 +221,7 @@ body {
 
 /* Subcategory / Brand Chips */
 .subcat-chips {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding: 4px 16px 8px;
-  scrollbar-width: none;
+  display: none;
 }
 
 .subcat-chips::-webkit-scrollbar {
@@ -336,8 +332,16 @@ body {
 }
 
 .badge-step {
-  color: var(--accent-amber);
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--accent-amber-light);
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 /* Quantity Stepper Controls */
