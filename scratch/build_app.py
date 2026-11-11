@@ -7,26 +7,64 @@ json_catalog_str = json.dumps(items, ensure_ascii=False, indent=2)
 
 js_content = f"""/**
  * Заказ Снеков — PWA / Mobile Web App
- * Designed for beer snack orders, optimized for mobile devices.
- * Contains all 14 categories (389 items) and live multi-sheet synchronization.
- *
- * Updated: only 'Наименование' is displayed; 'Фасовка' defines order multiplicity (step).
+ * Multi-Supplier ordering system for beer stores and bars.
+ * Supports:
+ *  - 🍺 Снеки и закуски (325 items)
+ *  - 🧻 Расходники и тара (49 items)
+ *  - 🎪 Ярмарка (15 items)
+ *  - Automatic dynamic supplier reading from Google Sheets
+ *  - Independent carts, export, and WhatsApp summaries per supplier
  */
 
 const DEFAULT_CATALOG = {json_catalog_str};
 
-let catalog = [...DEFAULT_CATALOG];
-let order = {{}}; // {{ itemId: quantity }}
-let manualItems = []; // [ {{ id, name, category, quantity, unit, step }} ]
-let activeCategory = 'all';
-let searchQuery = '';
+// Standard / Fallback Suppliers Configuration
+const DEFAULT_SUPPLIERS = [
+  {{
+    id: 'snacks',
+    name: 'Снеки и закуски',
+    shortName: 'Снеки',
+    icon: '🍺',
+    categories: [
+      'Гренки Весовые',
+      'Сырные Сухие',
+      'Гренки Чипсы и снеки ЗАВОДСКИЕ',
+      'Орехи',
+      'Начос и лавашики',
+      'Соусы',
+      'Рыбные',
+      'Сыры',
+      'Мясные',
+      'Мясные ЗАВОД'
+    ]
+  }},
+  {{
+    id: 'consumables',
+    name: 'Расходники и тара',
+    shortName: 'Расходники',
+    icon: '🧻',
+    categories: [
+      'Расходники',
+      'Контейнеры'
+    ]
+  }},
+  {{
+    id: 'yarmarka',
+    name: 'Ярмарка',
+    shortName: 'Ярмарка',
+    icon: '🎪',
+    categories: [
+      'Заморозка',
+      'Вкусняшки и прочее'
+    ]
+  }}
+];
 
-const CATALOG_CACHE_KEY = 'snack_catalog_cache_v5';
-const ORDER_STORAGE_KEY = 'snack_order';
-const MANUAL_STORAGE_KEY = 'snack_manual_items';
-const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
-
-const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
+const KNOWN_SUPPLIER_META = {{
+  'snacks': {{ name: 'Снеки и закуски', shortName: 'Снеки', icon: '🍺' }},
+  'consumables': {{ name: 'Расходники и тара', shortName: 'Расходники', icon: '🧻' }},
+  'yarmarka': {{ name: 'Ярмарка', shortName: 'Ярмарка', icon: '🎪' }}
+}};
 
 // Category metadata: labels and icons
 const CATEGORY_META = {{
@@ -48,23 +86,24 @@ const CATEGORY_META = {{
   'manual': {{ label: 'Свободный ввод', icon: '✏️' }}
 }};
 
-// Preferred category display order
-const CATEGORY_ORDER = [
-  'Гренки Весовые',
-  'Сырные Сухие',
-  'Гренки Чипсы и снеки ЗАВОДСКИЕ',
-  'Орехи',
-  'Начос и лавашики',
-  'Соусы',
-  'Рыбные',
-  'Сыры',
-  'Мясные',
-  'Мясные ЗАВОД',
-  'Расходники',
-  'Контейнеры',
-  'Заморозка',
-  'Вкусняшки и прочее'
-];
+// Application State
+let catalog = [...DEFAULT_CATALOG];
+let suppliers = [...DEFAULT_SUPPLIERS];
+let activeSupplier = 'snacks';
+let modalActiveSupplier = 'snacks';
+let activeCategory = 'all';
+let searchQuery = '';
+let order = {{}}; // {{ itemId: quantity }}
+let manualItems = []; // [ {{ id, name, category, quantity, unit, step, supplier }} ]
+
+const CATALOG_CACHE_KEY = 'snack_catalog_cache_v6';
+const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v6';
+const ORDER_STORAGE_KEY = 'snack_order_v6';
+const MANUAL_STORAGE_KEY = 'snack_manual_items_v6';
+const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v6';
+const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
+
+const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
 
 // SVG Icons helper
 const ICONS = {{
@@ -83,6 +122,7 @@ async function initApp() {{
   loadSavedState();
   await loadCatalog();
   setupEventListeners();
+  renderSupplierNav();
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
@@ -91,11 +131,14 @@ async function initApp() {{
 // LocalStorage helpers
 function loadSavedState() {{
   try {{
-    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY);
+    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY) || localStorage.getItem('snack_order');
     if (savedOrder) order = JSON.parse(savedOrder);
 
-    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY);
+    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY) || localStorage.getItem('snack_manual_items');
     if (savedManual) manualItems = JSON.parse(savedManual);
+
+    const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY);
+    if (savedSupplier) activeSupplier = savedSupplier;
   }} catch (e) {{
     console.error('Failed to load localStorage', e);
   }}
@@ -105,6 +148,7 @@ function saveState() {{
   try {{
     localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
     localStorage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(manualItems));
+    localStorage.setItem(ACTIVE_SUPPLIER_KEY, activeSupplier);
   }} catch (e) {{
     console.error('Failed to save localStorage', e);
   }}
@@ -113,11 +157,16 @@ function saveState() {{
 // Load Catalog from cache or fallback to embedded DEFAULT_CATALOG
 async function loadCatalog() {{
   const cachedCatalog = localStorage.getItem(CATALOG_CACHE_KEY);
+  const cachedSuppliers = localStorage.getItem(SUPPLIERS_CACHE_KEY);
+
   if (cachedCatalog) {{
     try {{
       const parsed = JSON.parse(cachedCatalog);
-      if (Array.isArray(parsed) && parsed.length >= 350 && parsed[0].display_step !== undefined) {{
+      if (Array.isArray(parsed) && parsed.length >= 350 && parsed[0].supplier !== undefined) {{
         catalog = parsed;
+        if (cachedSuppliers) {{
+          suppliers = JSON.parse(cachedSuppliers);
+        }}
         return;
       }}
     }} catch (e) {{
@@ -126,7 +175,14 @@ async function loadCatalog() {{
   }}
 
   catalog = [...DEFAULT_CATALOG];
+  suppliers = [...DEFAULT_SUPPLIERS];
   localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
+  localStorage.setItem(SUPPLIERS_CACHE_KEY, JSON.stringify(suppliers));
+}}
+
+// Helper to get supplier metadata by ID
+function getSupplierById(id) {{
+  return suppliers.find(s => s.id === id) || suppliers[0] || {{ id, name: id, shortName: id, icon: '📦' }};
 }}
 
 // Parse packaging / multiplicity information from cell value
@@ -190,7 +246,7 @@ function parsePackInfo(name, packStr, cat) {{
   return {{ step: 1.0, unit: unit, display: `кратность 1 ${{unit}}` }};
 }}
 
-// Synchronize from Google Sheets directly via XLSX export (all 14 tabs)
+// Synchronize from Google Sheets directly via XLSX export
 async function syncFromGoogleSheets(notify = true) {{
   const btn = document.getElementById('btnSync');
   if (btn) btn.classList.add('syncing');
@@ -207,14 +263,26 @@ async function syncFromGoogleSheets(notify = true) {{
     }}
 
     const wb = XLSX.read(arrayBuffer, {{ type: 'array' }});
-    const parsedItems = parseGoogleSheetWorkbook(wb);
+    const parsedData = parseGoogleSheetWorkbook(wb);
 
-    if (parsedItems && parsedItems.length > 0) {{
-      catalog = parsedItems;
+    if (parsedData && parsedData.items && parsedData.items.length > 0) {{
+      catalog = parsedData.items;
+      if (parsedData.suppliers && parsedData.suppliers.length > 0) {{
+        suppliers = parsedData.suppliers;
+      }}
       localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
+      localStorage.setItem(SUPPLIERS_CACHE_KEY, JSON.stringify(suppliers));
+
+      // Validate active supplier
+      if (!suppliers.some(s => s.id === activeSupplier)) {{
+        activeSupplier = suppliers[0].id;
+      }}
+
+      renderSupplierNav();
       renderCategoryTabs();
       renderCatalog();
-      if (notify) showToast(`✅ Каталог обновлен: ${{parsedItems.length}} позиций во всех вкладках!`);
+      updateOrderBar();
+      if (notify) showToast(`✅ Каталог обновлен: ${{parsedData.items.length}} позиций во всех вкладках!`);
     }} else {{
       throw new Error('Не удалось прочитать позиции из таблицы');
     }}
@@ -226,16 +294,33 @@ async function syncFromGoogleSheets(notify = true) {{
   }}
 }}
 
-// Parse all sheets in the Excel workbook
+// Dynamic parser for multi-sheet Google Sheets workbook
 function parseGoogleSheetWorkbook(wb) {{
   const items = [];
   let index = 1;
 
-  let sheetNames = wb.SheetNames;
-  const hasCategories = sheetNames.some(s => s !== 'Весь ассортимент');
-  if (hasCategories) {{
-    sheetNames = sheetNames.filter(s => s !== 'Весь ассортимент');
+  // 1. Check for dedicated 'Поставщики' sheet if user created one
+  const sheetToSupplierMap = {{
+    'Расходники': 'consumables',
+    'Контейнеры': 'consumables',
+    'Заморозка': 'yarmarka',
+    'Вкусняшки и прочее': 'yarmarka'
+  }};
+
+  const supSheetName = wb.SheetNames.find(s => s.toLowerCase().includes('поставщик') || s.toLowerCase().includes('supplier'));
+  if (supSheetName) {{
+    const supWs = wb.Sheets[supSheetName];
+    const supRows = XLSX.utils.sheet_to_json(supWs, {{ header: 1 }});
+    if (supRows && supRows.length > 1) {{
+      supRows.slice(1).forEach(r => {{
+        if (r && r[0] && r[1]) {{
+          sheetToSupplierMap[String(r[0]).trim()] = String(r[1]).trim();
+        }}
+      }});
+    }}
   }}
+
+  let sheetNames = wb.SheetNames.filter(s => s !== 'Весь ассортимент' && s !== supSheetName);
 
   for (const sheetName of sheetNames) {{
     const ws = wb.Sheets[sheetName];
@@ -247,7 +332,7 @@ function parseGoogleSheetWorkbook(wb) {{
     const header = rows[0] || [];
     let nameCol = -1;
     let packCol = -1;
-    let catCol = -1;
+    let supCol = -1;
 
     header.forEach((col, idx) => {{
       if (!col) return;
@@ -256,13 +341,13 @@ function parseGoogleSheetWorkbook(wb) {{
         nameCol = idx;
       }} else if (cLower.includes('фасовка') || cLower.includes('кратность')) {{
         packCol = idx;
-      }} else if (cLower.includes('категория')) {{
-        catCol = idx;
+      }} else if (cLower.includes('поставщик')) {{
+        supCol = idx;
       }}
     }});
 
-    if (nameCol === -1) nameCol = (sheetName === 'Весь ассортимент') ? 1 : 0;
-    if (packCol === -1) packCol = (sheetName === 'Весь ассортимент') ? 4 : 3;
+    if (nameCol === -1) nameCol = 0;
+    if (packCol === -1) packCol = 3;
 
     for (let r = 1; r < rows.length; r++) {{
       const row = rows[r];
@@ -275,17 +360,23 @@ function parseGoogleSheetWorkbook(wb) {{
       if (cleanName.toLowerCase() === 'наименование' || cleanName.toLowerCase() === 'название') continue;
 
       const rawPack = row[packCol];
-      let cat = sheetName;
-      if (sheetName === 'Весь ассортимент' && catCol !== -1 && row[catCol]) {{
-        cat = String(row[catCol]).trim();
-      }}
+      const packInfo = parsePackInfo(cleanName, rawPack, sheetName);
 
-      const packInfo = parsePackInfo(cleanName, rawPack, cat);
+      // Determine supplier
+      let supplierId = 'snacks';
+      if (supCol !== -1 && row[supCol] && String(row[supCol]).trim()) {{
+        const supVal = String(row[supCol]).trim();
+        supplierId = slugify(supVal);
+      }} else if (sheetToSupplierMap[sheetName]) {{
+        const supVal = sheetToSupplierMap[sheetName];
+        supplierId = slugify(supVal);
+      }}
 
       items.push({{
         id: `item_${{String(index++).padStart(3, '0')}}`,
         name: cleanName,
-        category: cat,
+        category: sheetName,
+        supplier: supplierId,
         step: packInfo.step,
         unit: packInfo.unit,
         display_step: packInfo.display
@@ -293,22 +384,109 @@ function parseGoogleSheetWorkbook(wb) {{
     }}
   }}
 
-  return items;
+  // Build dynamic suppliers array from discovered items
+  const discoveredSupplierIds = [...new Set(items.map(i => i.supplier))];
+  const dynamicSuppliers = [];
+
+  discoveredSupplierIds.forEach(id => {{
+    const known = KNOWN_SUPPLIER_META[id];
+    const categoriesForSup = [...new Set(items.filter(i => i.supplier === id).map(i => i.category))];
+
+    if (known) {{
+      dynamicSuppliers.push({{
+        id,
+        name: known.name,
+        shortName: known.shortName,
+        icon: known.icon,
+        categories: categoriesForSup
+      }});
+    }} else {{
+      dynamicSuppliers.push({{
+        id,
+        name: unslugify(id),
+        shortName: unslugify(id),
+        icon: '📦',
+        categories: categoriesForSup
+      }});
+    }}
+  }});
+
+  return {{
+    items,
+    suppliers: dynamicSuppliers.length > 0 ? dynamicSuppliers : DEFAULT_SUPPLIERS
+  }};
 }}
 
-// Category Tabs Navigation
+function slugify(text) {{
+  const lower = String(text).toLowerCase().trim();
+  if (lower.includes('снек') || lower.includes('закус')) return 'snacks';
+  if (lower.includes('расход') || lower.includes('контейнер') || lower.includes('тара')) return 'consumables';
+  if (lower.includes('ярм')) return 'yarmarka';
+  return lower.replace(/[^a-zа-я0-9]+/gi, '_').replace(/^_+|_+$/g, '');
+}}
+
+function unslugify(slug) {{
+  if (slug === 'snacks') return 'Снеки';
+  if (slug === 'consumables') return 'Расходники';
+  if (slug === 'yarmarka') return 'Ярмарка';
+  return slug.charAt(0).toUpperCase() + slug.slice(1);
+}}
+
+// Top-Level Supplier Navigation Bar
+function renderSupplierNav() {{
+  const container = document.getElementById('supplierNav');
+  if (!container) return;
+
+  container.innerHTML = suppliers.map(sup => {{
+    const totals = getOrderTotals(sup.id);
+    const isActive = activeSupplier === sup.id ? 'active' : '';
+    const hasItems = totals.count > 0 ? 'has-items' : '';
+
+    return `
+      <button class="supplier-tab ${{isActive}}" data-supplier="${{sup.id}}">
+        <span>${{sup.icon}}</span>
+        <span>${{escapeHtml(sup.shortName)}}</span>
+        <span class="supplier-badge ${{hasItems}}" id="badge-sup-${{sup.id}}">${{totals.count}}</span>
+      </button>
+    `;
+  }}).join('');
+
+  container.querySelectorAll('.supplier-tab').forEach(btn => {{
+    btn.addEventListener('click', () => {{
+      const supId = btn.getAttribute('data-supplier');
+      switchSupplier(supId);
+    }});
+  }});
+}}
+
+function switchSupplier(supId) {{
+  activeSupplier = supId;
+  saveState();
+  activeCategory = 'all';
+  renderSupplierNav();
+  renderCategoryTabs();
+  renderCatalog();
+  updateOrderBar();
+  window.scrollTo({{ top: 0, behavior: 'smooth' }});
+}}
+
+// Category Tabs Navigation (Scoped to Active Supplier)
 function renderCategoryTabs() {{
   const container = document.getElementById('categoryNav');
   if (!container) return;
 
-  const presentCategories = new Set(catalog.map(i => i.category));
+  const currentSup = getSupplierById(activeSupplier);
+  const itemsInSup = catalog.filter(i => i.supplier === activeSupplier);
+  const presentCategories = new Set(itemsInSup.map(i => i.category));
+
   const orderedCats = ['all'];
 
-  CATEGORY_ORDER.forEach(cat => {{
-    if (presentCategories.has(cat)) orderedCats.push(cat);
-  }});
+  if (currentSup && Array.isArray(currentSup.categories)) {{
+    currentSup.categories.forEach(cat => {{
+      if (presentCategories.has(cat)) orderedCats.push(cat);
+    }});
+  }}
 
-  // Include any extra categories not in standard list
   presentCategories.forEach(cat => {{
     if (!orderedCats.includes(cat)) orderedCats.push(cat);
   }});
@@ -318,11 +496,11 @@ function renderCategoryTabs() {{
   container.innerHTML = orderedCats.map(cat => {{
     let count = 0;
     if (cat === 'all') {{
-      count = catalog.length;
+      count = itemsInSup.length;
     }} else if (cat === 'manual') {{
-      count = manualItems.length;
+      count = manualItems.filter(m => (m.supplier || 'snacks') === activeSupplier).length;
     }} else {{
-      count = catalog.filter(i => i.category === cat).length;
+      count = itemsInSup.filter(i => i.category === cat).length;
     }}
 
     const meta = CATEGORY_META[cat] || {{ label: cat, icon: '🏷️' }};
@@ -342,13 +520,12 @@ function renderCategoryTabs() {{
       activeCategory = btn.getAttribute('data-cat');
       renderCategoryTabs();
       renderCatalog();
-      // Scroll to top of catalog smoothly
       window.scrollTo({{ top: 0, behavior: 'smooth' }});
     }});
   }});
 }}
 
-// Render Products Catalog List
+// Render Products Catalog List (Scoped to Active Supplier)
 function renderCatalog() {{
   const container = document.getElementById('catalogContent');
   if (!container) return;
@@ -358,7 +535,9 @@ function renderCatalog() {{
     return;
   }}
 
-  let filtered = catalog.filter(item => {{
+  const itemsInSup = catalog.filter(item => item.supplier === activeSupplier);
+
+  let filtered = itemsInSup.filter(item => {{
     const matchCat = activeCategory === 'all' || item.category === activeCategory;
     let matchSearch = true;
 
@@ -372,12 +551,34 @@ function renderCatalog() {{
   }});
 
   if (filtered.length === 0) {{
+    // Check if query exists in another supplier
+    let otherFoundHtml = '';
+    if (searchQuery.trim()) {{
+      const q = searchQuery.toLowerCase().trim();
+      const otherMatches = catalog.filter(i => i.supplier !== activeSupplier && i.name.toLowerCase().includes(q));
+      if (otherMatches.length > 0) {{
+        const otherSupId = otherMatches[0].supplier;
+        const otherSup = getSupplierById(otherSupId);
+        otherFoundHtml = `
+          <div style="margin-top: 14px; padding: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px;">
+            <p style="margin: 0 0 8px; font-size: 0.88rem; color: #fde68a;">
+              Найдено в поставщике <strong>${{escapeHtml(otherSup.name)}}</strong> (${{otherMatches.length}} поз.)
+            </p>
+            <button class="btn-action-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="switchSupplier('${{otherSupId}}')">
+              Перейти к ${{escapeHtml(otherSup.shortName)}} ➔
+            </button>
+          </div>
+        `;
+      }}
+    }}
+
     container.innerHTML = `
       <div class="empty-state">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <p>Ничего не найдено по запросу "${{escapeHtml(searchQuery)}}"</p>
+        <p>Ничего не найдено в разделе «${{escapeHtml(getSupplierById(activeSupplier).shortName)}}» по запросу "${{escapeHtml(searchQuery)}}"</p>
+        ${{otherFoundHtml}}
         <button class="btn-action-secondary" style="margin: 12px auto; display: inline-flex;" onclick="resetSearch()">Сбросить поиск</button>
       </div>
     `;
@@ -468,6 +669,7 @@ function attachStepperEvents(container) {{
 
       saveState();
       updateProductCard(id);
+      renderSupplierNav();
       updateOrderBar();
     }});
   }});
@@ -483,11 +685,11 @@ function attachStepperEvents(container) {{
         if (newVal <= 0) {{
           delete order[id];
         }} else {{
-          // Arbitrary manual entry allowed per user requirement
           order[id] = Math.round(newVal * 1000) / 1000;
         }}
         saveState();
         updateProductCard(id);
+        renderSupplierNav();
         updateOrderBar();
       }});
     }});
@@ -522,15 +724,18 @@ function updateProductCard(id) {{
 
 // Manual Items Form & List
 function renderManualSection(container) {{
+  const currentSup = getSupplierById(activeSupplier);
+  const itemsInCurrentSup = manualItems.filter(m => (m.supplier || 'snacks') === activeSupplier);
+
   let manualListHtml = '';
-  if (manualItems.length > 0) {{
+  if (itemsInCurrentSup.length > 0) {{
     manualListHtml = `
       <div class="section-group" style="margin-top: 16px;">
         <div class="section-header">
-          <div class="section-title">Добавленные вручную (${{manualItems.length}})</div>
+          <div class="section-title">Добавлено вручную для «${{escapeHtml(currentSup.shortName)}}» (${{itemsInCurrentSup.length}})</div>
         </div>
         <div class="product-cards-list">
-          ${{manualItems.map(item => `
+          ${{itemsInCurrentSup.map(item => `
             <div class="product-card has-order" data-id="${{item.id}}">
               <div class="product-info">
                 <div class="product-title">${{escapeHtml(item.name)}}</div>
@@ -554,12 +759,12 @@ function renderManualSection(container) {{
   container.innerHTML = `
     <div class="manual-card">
       <div class="manual-card-title">
-        ✏️ Добавить нестандартную или редкую позицию
+        ✏️ Добавить позицию для «${{escapeHtml(currentSup.name)}}»
       </div>
       <form id="formManual" class="manual-form-grid" onsubmit="handleManualSubmit(event)">
         <div class="form-group">
           <label>Наименование товара</label>
-          <input type="text" id="manualName" class="form-control" placeholder="Например: Сыр чечил спагетти 1кг" required />
+          <input type="text" id="manualName" class="form-control" placeholder="Например: Пакеты фасовочные 500 шт" required />
         </div>
         <div class="form-row">
           <div class="form-group" style="flex: 2;">
@@ -569,21 +774,20 @@ function renderManualSection(container) {{
           <div class="form-group" style="flex: 2;">
             <label>Ед. измерения</label>
             <select id="manualUnit" class="form-control">
-              <option value="кг">кг</option>
               <option value="шт">шт</option>
-              <option value="кор">кор</option>
               <option value="уп">уп</option>
-              <option value="пачка">пачка</option>
+              <option value="кор">кор</option>
+              <option value="кг">кг</option>
               <option value="ведро">ведро</option>
             </select>
           </div>
         </div>
         <div class="form-group">
           <label>Раздел (необязательно)</label>
-          <input type="text" id="manualCat" class="form-control" placeholder="Например: Снеки весовые" />
+          <input type="text" id="manualCat" class="form-control" placeholder="Например: Свободный ввод" />
         </div>
         <button type="submit" class="btn-add-manual">
-          ${{ICONS.plus}} Добавить в заказ
+          ${{ICONS.plus}} Добавить в заказ ${{escapeHtml(currentSup.shortName)}}
         </button>
       </form>
     </div>
@@ -606,6 +810,7 @@ function handleManualSubmit(e) {{
     id: `manual_${{Date.now()}}`,
     name,
     category: cat,
+    supplier: activeSupplier,
     quantity: qty,
     unit: unit,
     step: unit === 'кг' ? 0.5 : 1
@@ -614,6 +819,7 @@ function handleManualSubmit(e) {{
   manualItems.push(newItem);
   saveState();
   showToast(`Добавлено: ${{name}} (${{qty}} ${{unit}})`);
+  renderSupplierNav();
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
@@ -646,6 +852,7 @@ function attachManualEvents(container) {{
           }}
           saveState();
           renderCatalog();
+          renderSupplierNav();
           updateOrderBar();
         }});
         return;
@@ -653,6 +860,7 @@ function attachManualEvents(container) {{
 
       saveState();
       renderCatalog();
+      renderSupplierNav();
       updateOrderBar();
     }});
   }});
@@ -664,8 +872,8 @@ function formatQty(qty, unit) {{
   return `${{qty}} ${{unit}}`;
 }}
 
-// Calculate Total Order Statistics
-function getOrderTotals() {{
+// Calculate Total Order Statistics (Scoped to a Supplier or All)
+function getOrderTotals(supplierId = activeSupplier) {{
   let count = 0;
   let totalKg = 0;
   let totalBuckets = 0;
@@ -673,22 +881,25 @@ function getOrderTotals() {{
 
   for (const [id, qty] of Object.entries(order)) {{
     if (qty > 0) {{
-      count++;
       const item = catalog.find(i => i.id === id);
-      if (item) {{
-        if (item.unit === 'кг') {{
-          totalKg += qty;
-        }} else if (item.name.toLowerCase().includes('ведро')) {{
-          totalBuckets += qty;
-        }} else {{
-          totalPieces += qty;
-        }}
+      if (!item) continue;
+      if (supplierId && item.supplier !== supplierId) continue;
+
+      count++;
+      if (item.unit === 'кг') {{
+        totalKg += qty;
+      }} else if (item.name.toLowerCase().includes('ведро')) {{
+        totalBuckets += qty;
+      }} else {{
+        totalPieces += qty;
       }}
     }}
   }}
 
   manualItems.forEach(it => {{
     if (it.quantity > 0) {{
+      if (supplierId && (it.supplier || 'snacks') !== supplierId) return;
+
       count++;
       if (it.unit === 'кг') {{
         totalKg += it.quantity;
@@ -715,26 +926,44 @@ function updateOrderBar() {{
   const totalEl = document.getElementById('orderBarTotal');
   if (!bar) return;
 
-  const totals = getOrderTotals();
+  const currentSup = getSupplierById(activeSupplier);
+  const totals = getOrderTotals(activeSupplier);
 
-  if (totals.count > 0) {{
+  // Check if other suppliers also have active orders
+  const otherActiveSups = suppliers
+    .filter(s => s.id !== activeSupplier && getOrderTotals(s.id).count > 0);
+
+  if (totals.count > 0 || otherActiveSups.length > 0) {{
     bar.classList.add('visible');
-    countEl.textContent = `В заказе: ${{totals.count}} поз.`;
 
-    const parts = [];
-    if (totals.totalKg > 0) parts.push(`${{totals.totalKg}} кг`);
-    if (totals.totalBuckets > 0) parts.push(`${{totals.totalBuckets}} ведер`);
-    if (totals.totalPieces > 0) parts.push(`${{totals.totalPieces}} шт/кор`);
+    if (totals.count > 0) {{
+      countEl.textContent = `[${{currentSup.shortName}}]: ${{totals.count}} поз.`;
 
-    totalEl.textContent = parts.join(' • ') || `${{totals.count}} поз.`;
+      const parts = [];
+      if (totals.totalKg > 0) parts.push(`${{totals.totalKg}} кг`);
+      if (totals.totalBuckets > 0) parts.push(`${{totals.totalBuckets}} ведер`);
+      if (totals.totalPieces > 0) parts.push(`${{totals.totalPieces}} шт/кор`);
+
+      let totalStr = parts.join(' • ') || `${{totals.count}} поз.`;
+      if (otherActiveSups.length > 0) {{
+        const otherStr = otherActiveSups.map(s => `${{s.icon}} ${{getOrderTotals(s.id).count}}`).join(' ');
+        totalStr += ` | др: ${{otherStr}}`;
+      }}
+      totalEl.textContent = totalStr;
+    }} else {{
+      countEl.textContent = `В [${{currentSup.shortName}}] пусто`;
+      const otherStr = otherActiveSups.map(s => `${{s.icon}} ${{s.shortName}}: ${{getOrderTotals(s.id).count}} поз.`).join(', ');
+      totalEl.textContent = otherStr;
+    }}
   }} else {{
     bar.classList.remove('visible');
   }}
 }}
 
-// Generate Clean Text for WhatsApp / Telegram
-function generateOrderText() {{
-  const totals = getOrderTotals();
+// Generate WhatsApp / Telegram Order Text for a Specific Supplier
+function generateOrderText(supplierId = modalActiveSupplier) {{
+  const sup = getSupplierById(supplierId);
+  const totals = getOrderTotals(supplierId);
   const dateStr = new Date().toLocaleString('ru-RU', {{
     day: '2-digit',
     month: '2-digit',
@@ -748,7 +977,7 @@ function generateOrderText() {{
   for (const [id, qty] of Object.entries(order)) {{
     if (qty > 0) {{
       const it = catalog.find(i => i.id === id);
-      if (!it) continue;
+      if (!it || it.supplier !== supplierId) continue;
       const cat = it.category || 'Прочее';
       if (!grouped[cat]) grouped[cat] = [];
       grouped[cat].push({{
@@ -759,16 +988,17 @@ function generateOrderText() {{
     }}
   }}
 
-  if (manualItems.length > 0) {{
+  const supManual = manualItems.filter(m => (m.supplier || 'snacks') === supplierId);
+  if (supManual.length > 0) {{
     const key = '✏️ Дополнительно (вручную)';
-    grouped[key] = manualItems.map(it => ({{
+    grouped[key] = supManual.map(it => ({{
       name: it.name,
       qty: it.quantity,
       unit: it.unit
     }}));
   }}
 
-  let text = `📦 ЗАКАЗ СНЕКОВ\\n`;
+  let text = `📦 ЗАКАЗ: ${{sup.name.toUpperCase()}}\\n`;
   text += `📅 Дата: ${{dateStr}}\\n`;
   text += `------------------------------------\\n\\n`;
 
@@ -794,16 +1024,63 @@ function generateOrderText() {{
   return text;
 }}
 
-// Open Order Drawer Modal
+// Open Order Drawer Modal with Supplier Switcher
 function openOrderModal() {{
   const modal = document.getElementById('orderModal');
-  const body = document.getElementById('orderModalBody');
-  if (!modal || !body) return;
+  if (!modal) return;
 
-  const totals = getOrderTotals();
+  // Open with active supplier initially
+  modalActiveSupplier = activeSupplier;
+  renderOrderModalContent();
+  modal.classList.add('active');
+}}
+
+function closeOrderModal() {{
+  const modal = document.getElementById('orderModal');
+  if (modal) modal.classList.remove('active');
+}}
+
+function switchModalSupplier(supId) {{
+  modalActiveSupplier = supId;
+  renderOrderModalContent();
+}}
+
+// Render Content Inside Order Modal Drawer
+function renderOrderModalContent() {{
+  const body = document.getElementById('orderModalBody');
+  if (!body) return;
+
+  const currentSup = getSupplierById(modalActiveSupplier);
+  const totals = getOrderTotals(modalActiveSupplier);
+
+  // Supplier Switcher Tabs in Cart
+  const supplierTabsHtml = `
+    <div class="modal-supplier-nav">
+      ${{suppliers.map(s => {{
+        const sTotals = getOrderTotals(s.id);
+        const isActive = s.id === modalActiveSupplier ? 'active' : '';
+        const badgeClass = sTotals.count > 0 ? 'has-items' : '';
+        return `
+          <button class="modal-sup-tab ${{isActive}}" onclick="switchModalSupplier('${{s.id}}')">
+            <span>${{s.icon}}</span>
+            <span>${{escapeHtml(s.shortName)}}</span>
+            <span class="badge ${{badgeClass}}">${{sTotals.count}}</span>
+          </button>
+        `;
+      }}).join('')}}
+    </div>
+  `;
+
   if (totals.count === 0) {{
-    body.innerHTML = `<div class="empty-state"><p>Заказ пока пуст. Выберите нужные товары в каталоге.</p></div>`;
-    modal.classList.add('active');
+    body.innerHTML = `
+      ${{supplierTabsHtml}}
+      <div class="empty-state" style="padding: 24px 12px;">
+        <p>В заказе для <strong>«${{escapeHtml(currentSup.name)}}»</strong> пока нет товаров.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+          Выберите нужные позиции в каталоге или переключите поставщика вверху.
+        </p>
+      </div>
+    `;
     return;
   }}
 
@@ -811,7 +1088,7 @@ function openOrderModal() {{
   for (const [id, qty] of Object.entries(order)) {{
     if (qty > 0) {{
       const it = catalog.find(i => i.id === id);
-      if (!it) continue;
+      if (!it || it.supplier !== modalActiveSupplier) continue;
       const meta = CATEGORY_META[it.category] || {{ label: it.category }};
       itemsHtml += `
         <div class="order-item-row" data-id="${{it.id}}">
@@ -830,7 +1107,7 @@ function openOrderModal() {{
     }}
   }}
 
-  manualItems.forEach(it => {{
+  manualItems.filter(m => (m.supplier || 'snacks') === modalActiveSupplier).forEach(it => {{
     itemsHtml += `
       <div class="order-item-row" data-id="${{it.id}}">
         <div style="flex: 1; min-width: 0;">
@@ -847,36 +1124,37 @@ function openOrderModal() {{
     `;
   }});
 
-  const previewText = generateOrderText();
+  const previewText = generateOrderText(modalActiveSupplier);
 
   body.innerHTML = `
+    ${{supplierTabsHtml}}
+
     <div style="margin-bottom: 16px;">
-      <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">
-        Выбранные позиции (${{totals.count}}):
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 0.82rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">
+          Товары [${{escapeHtml(currentSup.shortName)}}] (${{totals.count}}):
+        </div>
+        <button class="btn-text-danger" onclick="confirmResetCurrentSupplier()" style="font-size: 0.75rem; background: none; border: none; color: #ef4444; cursor: pointer;">
+          Очистить ${{escapeHtml(currentSup.shortName)}}
+        </button>
       </div>
       ${{itemsHtml}}
     </div>
 
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 18px;">
       <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; font-weight: 700;">
-        Предпросмотр сообщения для отправки:
+        Сообщение для поставщика «${{escapeHtml(currentSup.name)}}»:
       </div>
-      <textarea id="orderTextPreview" class="form-control" style="height: 140px; font-family: monospace; font-size: 0.8rem; line-height: 1.4; resize: none;" readonly>${{escapeHtml(previewText)}}</textarea>
+      <textarea id="orderTextPreview" class="form-control" style="height: 130px; font-family: monospace; font-size: 0.8rem; line-height: 1.4; resize: none;" readonly>${{escapeHtml(previewText)}}</textarea>
     </div>
   `;
-
-  modal.classList.add('active');
-}}
-
-function closeOrderModal() {{
-  const modal = document.getElementById('orderModal');
-  if (modal) modal.classList.remove('active');
 }}
 
 function removeOrderItem(id) {{
   delete order[id];
   saveState();
-  openOrderModal();
+  renderOrderModalContent();
+  renderSupplierNav();
   updateOrderBar();
   renderCatalog();
 }}
@@ -884,14 +1162,16 @@ function removeOrderItem(id) {{
 function removeManualItem(id) {{
   manualItems = manualItems.filter(i => i.id !== id);
   saveState();
-  openOrderModal();
+  renderOrderModalContent();
+  renderSupplierNav();
   updateOrderBar();
   renderCatalog();
 }}
 
 // Copy order text for WhatsApp / Telegram
 async function copyOrderToClipboard() {{
-  const text = generateOrderText();
+  const text = generateOrderText(modalActiveSupplier);
+  const sup = getSupplierById(modalActiveSupplier);
   try {{
     if (navigator.clipboard && navigator.clipboard.writeText) {{
       await navigator.clipboard.writeText(text);
@@ -903,7 +1183,7 @@ async function copyOrderToClipboard() {{
       document.execCommand('copy');
       document.body.removeChild(textarea);
     }}
-    showToast('📋 Заказ скопирован! Можно отправлять в чат');
+    showToast(`📋 Заказ [${{sup.shortName}}] скопирован!`);
   }} catch (err) {{
     console.error('Copy failed', err);
     showToast('Не удалось скопировать, выделите текст в окне', true);
@@ -912,11 +1192,12 @@ async function copyOrderToClipboard() {{
 
 // Share via Web Share API
 async function shareOrder() {{
-  const text = generateOrderText();
+  const text = generateOrderText(modalActiveSupplier);
+  const sup = getSupplierById(modalActiveSupplier);
   if (navigator.share) {{
     try {{
       await navigator.share({{
-        title: 'Заказ снеков',
+        title: `Заказ: ${{sup.name}}`,
         text: text
       }});
     }} catch (e) {{
@@ -936,13 +1217,15 @@ function downloadOrderExcel() {{
     return;
   }}
 
-  const totals = getOrderTotals();
+  const sup = getSupplierById(modalActiveSupplier);
+  const totals = getOrderTotals(modalActiveSupplier);
   if (totals.count === 0) {{
-    showToast('Заказ пуст!', true);
+    showToast(`Заказ для «${{sup.shortName}}» пуст!`, true);
     return;
   }}
 
   const rows = [
+    [`ЗАКАЗ: ${{sup.name.toUpperCase()}}`, '', '', '', ''],
     ['№', 'Категория', 'Наименование товара', 'Количество', 'Единица']
   ];
 
@@ -950,7 +1233,7 @@ function downloadOrderExcel() {{
   for (const [id, qty] of Object.entries(order)) {{
     if (qty > 0) {{
       const it = catalog.find(i => i.id === id);
-      if (!it) continue;
+      if (!it || it.supplier !== modalActiveSupplier) continue;
       rows.push([
         num++,
         it.category || '',
@@ -961,7 +1244,7 @@ function downloadOrderExcel() {{
     }}
   }}
 
-  manualItems.forEach(it => {{
+  manualItems.filter(m => (m.supplier || 'snacks') === modalActiveSupplier).forEach(it => {{
     rows.push([
       num++,
       it.category || 'Вручную',
@@ -988,26 +1271,51 @@ function downloadOrderExcel() {{
     {{ wch: 10 }}
   ];
 
-  XLSX.utils.book_append_sheet(wb, ws, "Заказ");
+  XLSX.utils.book_append_sheet(wb, ws, `Заказ_${{sup.shortName}}`);
 
   const today = new Date().toISOString().slice(0, 10);
-  XLSX.writeFile(wb, `Заказ_снеков_${{today}}.xlsx`);
-  showToast('📥 Файл Excel скачан!');
+  XLSX.writeFile(wb, `Заказ_${{sup.shortName}}_${{today}}.xlsx`);
+  showToast(`📥 Excel для «${{sup.shortName}}» скачан!`);
+}}
+
+// Reset current supplier order
+function confirmResetCurrentSupplier() {{
+  const sup = getSupplierById(modalActiveSupplier);
+  openConfirmDialog(
+    `Очистить заказ [${{sup.shortName}}]?`,
+    `Все выбранные товары поставщика «${{sup.name}}» будут удалены из заказа. Заказы других поставщиков останутся нетронутыми.`,
+    () => {{
+      for (const id of Object.keys(order)) {{
+        const it = catalog.find(i => i.id === id);
+        if (it && it.supplier === modalActiveSupplier) {{
+          delete order[id];
+        }}
+      }}
+      manualItems = manualItems.filter(m => (m.supplier || 'snacks') !== modalActiveSupplier);
+      saveState();
+      renderOrderModalContent();
+      renderSupplierNav();
+      updateOrderBar();
+      renderCatalog();
+      showToast(`🗑️ Заказ [${{sup.shortName}}] очищен`);
+    }}
+  );
 }}
 
 // Reset entire order dialog
 function confirmResetOrder() {{
   openConfirmDialog(
-    'Очистить заказ?',
-    'Все выбранные количества товаров и позиции свободного ввода будут сброшены.',
+    'Очистить все заказы?',
+    'Будут сброшены заказы ВСЕХ поставщиков (Снеки, Расходники, Ярмарка) и все добавленные вручную позиции.',
     () => {{
       order = {{}};
       manualItems = [];
       saveState();
+      renderSupplierNav();
       renderCatalog();
       updateOrderBar();
       closeOrderModal();
-      showToast('🗑️ Заказ полностью очищен');
+      showToast('🗑️ Все заказы полностью очищены');
     }}
   );
 }}
@@ -1159,7 +1467,6 @@ function escapeRegex(str) {{
 
 // Setup global event listeners
 function setupEventListeners() {{
-  // Search input
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {{
     searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
@@ -1170,7 +1477,6 @@ function setupEventListeners() {{
     searchClear.addEventListener('click', resetSearch);
   }}
 
-  // Floating back to top button visibility
   window.addEventListener('scroll', () => {{
     const btn = document.getElementById('btnScrollTop');
     if (!btn) return;
@@ -1181,7 +1487,6 @@ function setupEventListeners() {{
     }}
   }});
 
-  // Enter key inside prompt dialog
   const dInput = document.getElementById('dialogInput');
   if (dInput) {{
     dInput.addEventListener('keydown', (e) => {{
@@ -1202,5 +1507,4 @@ document.addEventListener('DOMContentLoaded', initApp);
 with open('js/app.js', 'w', encoding='utf-8') as f:
     f.write(js_content)
 
-print(f'Successfully generated js/app.js ({len(js_content)} bytes)')
-
+print(f'Successfully built js/app.js ({len(js_content)} bytes)')

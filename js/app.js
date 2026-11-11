@@ -1,9 +1,12 @@
 /**
  * Заказ Снеков — PWA / Mobile Web App
- * Designed for beer snack orders, optimized for mobile devices.
- * Contains all 14 categories (389 items) and live multi-sheet synchronization.
- *
- * Updated: only 'Наименование' is displayed; 'Фасовка' defines order multiplicity (step).
+ * Multi-Supplier ordering system for beer stores and bars.
+ * Supports:
+ *  - 🍺 Снеки и закуски (325 items)
+ *  - 🧻 Расходники и тара (49 items)
+ *  - 🎪 Ярмарка (15 items)
+ *  - Automatic dynamic supplier reading from Google Sheets
+ *  - Independent carts, export, and WhatsApp summaries per supplier
  */
 
 const DEFAULT_CATALOG = [
@@ -13,7 +16,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_002",
@@ -21,7 +25,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_003",
@@ -29,7 +34,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_004",
@@ -37,7 +43,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_005",
@@ -45,7 +52,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_006",
@@ -53,7 +61,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_007",
@@ -61,7 +70,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_008",
@@ -69,7 +79,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_009",
@@ -77,7 +88,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_010",
@@ -85,7 +97,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_011",
@@ -93,7 +106,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_012",
@@ -101,7 +115,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_013",
@@ -109,7 +124,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_014",
@@ -117,7 +133,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_015",
@@ -125,7 +142,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_016",
@@ -133,7 +151,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_017",
@@ -141,7 +160,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_018",
@@ -149,7 +169,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_019",
@@ -157,7 +178,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_020",
@@ -165,7 +187,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_021",
@@ -173,7 +196,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_022",
@@ -181,7 +205,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_023",
@@ -189,7 +214,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_024",
@@ -197,7 +223,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_025",
@@ -205,7 +232,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_026",
@@ -213,7 +241,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_027",
@@ -221,7 +250,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_028",
@@ -229,7 +259,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_029",
@@ -237,7 +268,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_030",
@@ -245,7 +277,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_031",
@@ -253,7 +286,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_032",
@@ -261,7 +295,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_033",
@@ -269,7 +304,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_034",
@@ -277,7 +313,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_035",
@@ -285,7 +322,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_036",
@@ -293,7 +331,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_037",
@@ -301,7 +340,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_038",
@@ -309,7 +349,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_039",
@@ -317,7 +358,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_040",
@@ -325,7 +367,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_041",
@@ -333,7 +376,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_042",
@@ -341,7 +385,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_043",
@@ -349,7 +394,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_044",
@@ -357,7 +403,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_045",
@@ -365,7 +412,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_046",
@@ -373,7 +421,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_047",
@@ -381,7 +430,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_048",
@@ -389,7 +439,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_049",
@@ -397,7 +448,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_050",
@@ -405,7 +457,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_051",
@@ -413,7 +466,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_052",
@@ -421,7 +475,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_053",
@@ -429,7 +484,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_054",
@@ -437,7 +493,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_055",
@@ -445,7 +502,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_056",
@@ -453,7 +511,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_057",
@@ -461,7 +520,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_058",
@@ -469,7 +529,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_059",
@@ -477,7 +538,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_060",
@@ -485,7 +547,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_061",
@@ -493,7 +556,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_062",
@@ -501,7 +565,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_063",
@@ -509,7 +574,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_064",
@@ -517,7 +583,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_065",
@@ -525,7 +592,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_066",
@@ -533,7 +601,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_067",
@@ -541,7 +610,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_068",
@@ -549,7 +619,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_069",
@@ -557,7 +628,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_070",
@@ -565,7 +637,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_071",
@@ -573,7 +646,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_072",
@@ -581,7 +655,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Весовые",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_073",
@@ -589,7 +664,8 @@ const DEFAULT_CATALOG = [
     "category": "Сырные Сухие",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_074",
@@ -597,7 +673,8 @@ const DEFAULT_CATALOG = [
     "category": "Сырные Сухие",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_075",
@@ -605,7 +682,8 @@ const DEFAULT_CATALOG = [
     "category": "Сырные Сухие",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_076",
@@ -613,7 +691,8 @@ const DEFAULT_CATALOG = [
     "category": "Сырные Сухие",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_077",
@@ -621,7 +700,8 @@ const DEFAULT_CATALOG = [
     "category": "Сырные Сухие",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_078",
@@ -629,7 +709,8 @@ const DEFAULT_CATALOG = [
     "category": "Сырные Сухие",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_079",
@@ -637,7 +718,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_080",
@@ -645,7 +727,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_081",
@@ -653,7 +736,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_082",
@@ -661,7 +745,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_083",
@@ -669,7 +754,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_084",
@@ -677,7 +763,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_085",
@@ -685,7 +772,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_086",
@@ -693,7 +781,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_087",
@@ -701,7 +790,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_088",
@@ -709,7 +799,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_089",
@@ -717,7 +808,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_090",
@@ -725,7 +817,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_091",
@@ -733,7 +826,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_092",
@@ -741,7 +835,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_093",
@@ -749,7 +844,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт"
+    "display_step": "кратность 3 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_094",
@@ -757,7 +853,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_095",
@@ -765,7 +862,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_096",
@@ -773,7 +871,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_097",
@@ -781,7 +880,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_098",
@@ -789,7 +889,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_099",
@@ -797,7 +898,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_100",
@@ -805,7 +907,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_101",
@@ -813,7 +916,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_102",
@@ -821,7 +925,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_103",
@@ -829,7 +934,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_104",
@@ -837,7 +943,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 4.0,
     "unit": "шт",
-    "display_step": "кратность 4 шт"
+    "display_step": "кратность 4 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_105",
@@ -845,7 +952,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 4.0,
     "unit": "шт",
-    "display_step": "кратность 4 шт"
+    "display_step": "кратность 4 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_106",
@@ -853,7 +961,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 4.0,
     "unit": "шт",
-    "display_step": "кратность 4 шт"
+    "display_step": "кратность 4 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_107",
@@ -861,7 +970,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_108",
@@ -869,7 +979,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_109",
@@ -877,7 +988,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_110",
@@ -885,7 +997,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_111",
@@ -893,7 +1006,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_112",
@@ -901,7 +1015,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_113",
@@ -909,7 +1024,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_114",
@@ -917,7 +1033,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_115",
@@ -925,7 +1042,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_116",
@@ -933,7 +1051,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_117",
@@ -941,7 +1060,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_118",
@@ -949,7 +1069,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_119",
@@ -957,7 +1078,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_120",
@@ -965,7 +1087,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_121",
@@ -973,7 +1096,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_122",
@@ -981,7 +1105,8 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_123",
@@ -989,7 +1114,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_124",
@@ -997,7 +1123,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_125",
@@ -1005,7 +1132,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_126",
@@ -1013,7 +1141,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_127",
@@ -1021,7 +1150,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_128",
@@ -1029,7 +1159,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_129",
@@ -1037,7 +1168,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_130",
@@ -1045,7 +1177,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_131",
@@ -1053,7 +1186,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_132",
@@ -1061,7 +1195,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_133",
@@ -1069,7 +1204,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_134",
@@ -1077,7 +1213,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_135",
@@ -1085,7 +1222,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_136",
@@ -1093,7 +1231,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_137",
@@ -1101,7 +1240,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_138",
@@ -1109,7 +1249,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_139",
@@ -1117,7 +1258,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_140",
@@ -1125,7 +1267,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_141",
@@ -1133,7 +1276,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_142",
@@ -1141,7 +1285,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_143",
@@ -1149,7 +1294,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_144",
@@ -1157,7 +1303,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_145",
@@ -1165,7 +1312,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_146",
@@ -1173,7 +1321,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_147",
@@ -1181,7 +1330,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_148",
@@ -1189,7 +1339,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_149",
@@ -1197,7 +1348,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_150",
@@ -1205,7 +1357,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_151",
@@ -1213,7 +1366,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_152",
@@ -1221,7 +1375,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_153",
@@ -1229,7 +1384,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_154",
@@ -1237,7 +1393,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_155",
@@ -1245,7 +1402,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_156",
@@ -1253,7 +1411,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_157",
@@ -1261,7 +1420,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_158",
@@ -1269,7 +1429,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_159",
@@ -1277,7 +1438,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_160",
@@ -1285,7 +1447,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_161",
@@ -1293,7 +1456,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_162",
@@ -1301,7 +1465,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_163",
@@ -1309,7 +1474,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_164",
@@ -1317,7 +1483,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_165",
@@ -1325,7 +1492,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_166",
@@ -1333,7 +1501,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_167",
@@ -1341,7 +1510,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_168",
@@ -1349,7 +1519,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_169",
@@ -1357,7 +1528,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_170",
@@ -1365,7 +1537,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_171",
@@ -1373,7 +1546,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_172",
@@ -1381,7 +1555,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_173",
@@ -1389,7 +1564,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_174",
@@ -1397,7 +1573,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_175",
@@ -1405,7 +1582,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_176",
@@ -1413,7 +1591,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_177",
@@ -1421,7 +1600,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_178",
@@ -1429,7 +1609,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_179",
@@ -1437,7 +1618,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_180",
@@ -1445,7 +1627,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_181",
@@ -1453,7 +1636,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_182",
@@ -1461,7 +1645,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_183",
@@ -1469,7 +1654,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_184",
@@ -1477,7 +1663,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_185",
@@ -1485,7 +1672,8 @@ const DEFAULT_CATALOG = [
     "category": "Орехи",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_186",
@@ -1493,7 +1681,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_187",
@@ -1501,7 +1690,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_188",
@@ -1509,7 +1699,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_189",
@@ -1517,7 +1708,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "snacks"
   },
   {
     "id": "item_190",
@@ -1525,7 +1717,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор"
+    "display_step": "кратность 1 набор",
+    "supplier": "snacks"
   },
   {
     "id": "item_191",
@@ -1533,7 +1726,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор"
+    "display_step": "кратность 1 набор",
+    "supplier": "snacks"
   },
   {
     "id": "item_192",
@@ -1541,7 +1735,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор"
+    "display_step": "кратность 1 набор",
+    "supplier": "snacks"
   },
   {
     "id": "item_193",
@@ -1549,7 +1744,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор"
+    "display_step": "кратность 1 набор",
+    "supplier": "snacks"
   },
   {
     "id": "item_194",
@@ -1557,7 +1753,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор"
+    "display_step": "кратность 1 набор",
+    "supplier": "snacks"
   },
   {
     "id": "item_195",
@@ -1565,7 +1762,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор"
+    "display_step": "кратность 1 набор",
+    "supplier": "snacks"
   },
   {
     "id": "item_196",
@@ -1573,7 +1771,8 @@ const DEFAULT_CATALOG = [
     "category": "Начос и лавашики",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор"
+    "display_step": "кратность 1 набор",
+    "supplier": "snacks"
   },
   {
     "id": "item_197",
@@ -1581,7 +1780,8 @@ const DEFAULT_CATALOG = [
     "category": "Соусы",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_198",
@@ -1589,7 +1789,8 @@ const DEFAULT_CATALOG = [
     "category": "Соусы",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_199",
@@ -1597,7 +1798,8 @@ const DEFAULT_CATALOG = [
     "category": "Соусы",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_200",
@@ -1605,7 +1807,8 @@ const DEFAULT_CATALOG = [
     "category": "Соусы",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_201",
@@ -1613,7 +1816,8 @@ const DEFAULT_CATALOG = [
     "category": "Соусы",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_202",
@@ -1621,7 +1825,8 @@ const DEFAULT_CATALOG = [
     "category": "Соусы",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_203",
@@ -1629,7 +1834,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_204",
@@ -1637,7 +1843,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_205",
@@ -1645,7 +1852,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_206",
@@ -1653,7 +1861,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_207",
@@ -1661,7 +1870,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_208",
@@ -1669,7 +1879,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_209",
@@ -1677,7 +1888,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_210",
@@ -1685,7 +1897,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_211",
@@ -1693,7 +1906,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_212",
@@ -1701,7 +1915,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_213",
@@ -1709,7 +1924,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_214",
@@ -1717,7 +1933,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_215",
@@ -1725,7 +1942,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_216",
@@ -1733,7 +1951,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_217",
@@ -1741,7 +1960,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_218",
@@ -1749,7 +1969,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_219",
@@ -1757,7 +1978,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_220",
@@ -1765,7 +1987,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_221",
@@ -1773,7 +1996,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_222",
@@ -1781,7 +2005,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_223",
@@ -1789,7 +2014,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_224",
@@ -1797,7 +2023,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_225",
@@ -1805,7 +2032,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_226",
@@ -1813,7 +2041,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_227",
@@ -1821,7 +2050,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_228",
@@ -1829,7 +2059,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_229",
@@ -1837,7 +2068,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_230",
@@ -1845,7 +2077,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_231",
@@ -1853,7 +2086,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_232",
@@ -1861,7 +2095,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_233",
@@ -1869,7 +2104,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_234",
@@ -1877,7 +2113,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_235",
@@ -1885,7 +2122,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_236",
@@ -1893,7 +2131,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_237",
@@ -1901,7 +2140,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_238",
@@ -1909,7 +2149,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_239",
@@ -1917,7 +2158,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_240",
@@ -1925,7 +2167,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_241",
@@ -1933,7 +2176,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_242",
@@ -1941,7 +2185,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_243",
@@ -1949,7 +2194,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_244",
@@ -1957,7 +2203,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_245",
@@ -1965,7 +2212,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_246",
@@ -1973,7 +2221,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_247",
@@ -1981,7 +2230,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_248",
@@ -1989,7 +2239,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_249",
@@ -1997,7 +2248,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_250",
@@ -2005,7 +2257,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_251",
@@ -2013,7 +2266,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_252",
@@ -2021,7 +2275,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_253",
@@ -2029,7 +2284,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_254",
@@ -2037,7 +2293,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_255",
@@ -2045,7 +2302,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_256",
@@ -2053,7 +2311,8 @@ const DEFAULT_CATALOG = [
     "category": "Рыбные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_257",
@@ -2061,7 +2320,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_258",
@@ -2069,7 +2329,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_259",
@@ -2077,7 +2338,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_260",
@@ -2085,7 +2347,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_261",
@@ -2093,7 +2356,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_262",
@@ -2101,7 +2365,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_263",
@@ -2109,7 +2374,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_264",
@@ -2117,7 +2383,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_265",
@@ -2125,7 +2392,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_266",
@@ -2133,7 +2401,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_267",
@@ -2141,7 +2410,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_268",
@@ -2149,7 +2419,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_269",
@@ -2157,7 +2428,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг"
+    "display_step": "кратность 1 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_270",
@@ -2165,7 +2437,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_271",
@@ -2173,7 +2446,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_272",
@@ -2181,7 +2455,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_273",
@@ -2189,7 +2464,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_274",
@@ -2197,7 +2473,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_275",
@@ -2205,7 +2482,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_276",
@@ -2213,7 +2491,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_277",
@@ -2221,7 +2500,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_278",
@@ -2229,7 +2509,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_279",
@@ -2237,7 +2518,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_280",
@@ -2245,7 +2527,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_281",
@@ -2253,7 +2536,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_282",
@@ -2261,7 +2545,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_283",
@@ -2269,7 +2554,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_284",
@@ -2277,7 +2563,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_285",
@@ -2285,7 +2572,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_286",
@@ -2293,7 +2581,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_287",
@@ -2301,7 +2590,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_288",
@@ -2309,7 +2599,8 @@ const DEFAULT_CATALOG = [
     "category": "Сыры",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_289",
@@ -2317,7 +2608,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_290",
@@ -2325,7 +2617,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_291",
@@ -2333,7 +2626,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_292",
@@ -2341,7 +2635,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_293",
@@ -2349,7 +2644,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_294",
@@ -2357,7 +2653,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_295",
@@ -2365,7 +2662,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_296",
@@ -2373,7 +2671,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_297",
@@ -2381,7 +2680,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_298",
@@ -2389,7 +2689,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_299",
@@ -2397,7 +2698,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_300",
@@ -2405,7 +2707,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_301",
@@ -2413,7 +2716,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_302",
@@ -2421,7 +2725,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_303",
@@ -2429,7 +2734,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_304",
@@ -2437,7 +2743,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_305",
@@ -2445,7 +2752,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_306",
@@ -2453,7 +2761,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "snacks"
   },
   {
     "id": "item_307",
@@ -2461,7 +2770,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_308",
@@ -2469,7 +2779,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_309",
@@ -2477,7 +2788,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_310",
@@ -2485,7 +2797,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_311",
@@ -2493,7 +2806,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_312",
@@ -2501,7 +2815,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_313",
@@ -2509,7 +2824,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_314",
@@ -2517,7 +2833,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_315",
@@ -2525,7 +2842,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_316",
@@ -2533,7 +2851,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_317",
@@ -2541,7 +2860,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_318",
@@ -2549,7 +2869,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_319",
@@ -2557,7 +2878,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_320",
@@ -2565,7 +2887,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_321",
@@ -2573,7 +2896,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_322",
@@ -2581,7 +2905,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_323",
@@ -2589,7 +2914,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_324",
@@ -2597,7 +2923,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_325",
@@ -2605,7 +2932,8 @@ const DEFAULT_CATALOG = [
     "category": "Мясные ЗАВОД",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "snacks"
   },
   {
     "id": "item_326",
@@ -2613,7 +2941,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_327",
@@ -2621,7 +2950,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_328",
@@ -2629,7 +2959,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_329",
@@ -2637,7 +2968,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_330",
@@ -2645,7 +2977,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_331",
@@ -2653,7 +2986,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_332",
@@ -2661,7 +2995,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_333",
@@ -2669,7 +3004,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_334",
@@ -2677,7 +3013,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп"
+    "display_step": "кратность 1 уп",
+    "supplier": "consumables"
   },
   {
     "id": "item_335",
@@ -2685,7 +3022,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_336",
@@ -2693,7 +3031,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп"
+    "display_step": "кратность 1 уп",
+    "supplier": "consumables"
   },
   {
     "id": "item_337",
@@ -2701,7 +3040,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп"
+    "display_step": "кратность 1 уп",
+    "supplier": "consumables"
   },
   {
     "id": "item_338",
@@ -2709,7 +3049,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_339",
@@ -2717,7 +3058,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_340",
@@ -2725,7 +3067,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_341",
@@ -2733,7 +3076,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_342",
@@ -2741,7 +3085,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_343",
@@ -2749,7 +3094,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_344",
@@ -2757,7 +3103,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_345",
@@ -2765,7 +3112,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_346",
@@ -2773,7 +3121,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "рулон",
-    "display_step": "кратность 1 рулон"
+    "display_step": "кратность 1 рулон",
+    "supplier": "consumables"
   },
   {
     "id": "item_347",
@@ -2781,7 +3130,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_348",
@@ -2789,7 +3139,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_349",
@@ -2797,7 +3148,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_350",
@@ -2805,7 +3157,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_351",
@@ -2813,7 +3166,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_352",
@@ -2821,7 +3175,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_353",
@@ -2829,7 +3184,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_354",
@@ -2837,7 +3193,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_355",
@@ -2845,7 +3202,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_356",
@@ -2853,7 +3211,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_357",
@@ -2861,7 +3220,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_358",
@@ -2869,7 +3229,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_359",
@@ -2877,7 +3238,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_360",
@@ -2885,7 +3247,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_361",
@@ -2893,7 +3256,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп"
+    "display_step": "кратность 1 уп",
+    "supplier": "consumables"
   },
   {
     "id": "item_362",
@@ -2901,7 +3265,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_363",
@@ -2909,7 +3274,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_364",
@@ -2917,7 +3283,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_365",
@@ -2925,7 +3292,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп"
+    "display_step": "кратность 1 уп",
+    "supplier": "consumables"
   },
   {
     "id": "item_366",
@@ -2933,7 +3301,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп"
+    "display_step": "кратность 1 уп",
+    "supplier": "consumables"
   },
   {
     "id": "item_367",
@@ -2941,7 +3310,8 @@ const DEFAULT_CATALOG = [
     "category": "Расходники",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "consumables"
   },
   {
     "id": "item_368",
@@ -2949,7 +3319,8 @@ const DEFAULT_CATALOG = [
     "category": "Контейнеры",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "consumables"
   },
   {
     "id": "item_369",
@@ -2957,7 +3328,8 @@ const DEFAULT_CATALOG = [
     "category": "Контейнеры",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "consumables"
   },
   {
     "id": "item_370",
@@ -2965,7 +3337,8 @@ const DEFAULT_CATALOG = [
     "category": "Контейнеры",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "consumables"
   },
   {
     "id": "item_371",
@@ -2973,7 +3346,8 @@ const DEFAULT_CATALOG = [
     "category": "Контейнеры",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "consumables"
   },
   {
     "id": "item_372",
@@ -2981,7 +3355,8 @@ const DEFAULT_CATALOG = [
     "category": "Контейнеры",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "consumables"
   },
   {
     "id": "item_373",
@@ -2989,7 +3364,8 @@ const DEFAULT_CATALOG = [
     "category": "Контейнеры",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "consumables"
   },
   {
     "id": "item_374",
@@ -2997,7 +3373,8 @@ const DEFAULT_CATALOG = [
     "category": "Контейнеры",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "consumables"
   },
   {
     "id": "item_375",
@@ -3005,7 +3382,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор"
+    "display_step": "кратность 1 кор",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_376",
@@ -3013,7 +3391,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 5.0,
     "unit": "кг",
-    "display_step": "кратность 5 кг"
+    "display_step": "кратность 5 кг",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_377",
@@ -3021,7 +3400,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_378",
@@ -3029,7 +3409,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 5.0,
     "unit": "кг",
-    "display_step": "кратность 5 кг"
+    "display_step": "кратность 5 кг",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_379",
@@ -3037,7 +3418,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_380",
@@ -3045,7 +3427,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 2.0,
     "unit": "кг",
-    "display_step": "кратность 2 кг"
+    "display_step": "кратность 2 кг",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_381",
@@ -3053,7 +3436,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 2.0,
     "unit": "кг",
-    "display_step": "кратность 2 кг"
+    "display_step": "кратность 2 кг",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_382",
@@ -3061,7 +3445,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 5.0,
     "unit": "кг",
-    "display_step": "кратность 5 кг"
+    "display_step": "кратность 5 кг",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_383",
@@ -3069,7 +3454,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_384",
@@ -3077,7 +3463,8 @@ const DEFAULT_CATALOG = [
     "category": "Заморозка",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг"
+    "display_step": "кратность 0.5 кг",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_385",
@@ -3085,7 +3472,8 @@ const DEFAULT_CATALOG = [
     "category": "Вкусняшки и прочее",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_386",
@@ -3093,7 +3481,8 @@ const DEFAULT_CATALOG = [
     "category": "Вкусняшки и прочее",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп"
+    "display_step": "кратность 1 уп",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_387",
@@ -3101,7 +3490,8 @@ const DEFAULT_CATALOG = [
     "category": "Вкусняшки и прочее",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_388",
@@ -3109,7 +3499,8 @@ const DEFAULT_CATALOG = [
     "category": "Вкусняшки и прочее",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "yarmarka"
   },
   {
     "id": "item_389",
@@ -3117,22 +3508,58 @@ const DEFAULT_CATALOG = [
     "category": "Вкусняшки и прочее",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "display_step": "кратность 1 шт",
+    "supplier": "yarmarka"
   }
 ];
 
-let catalog = [...DEFAULT_CATALOG];
-let order = {}; // { itemId: quantity }
-let manualItems = []; // [ { id, name, category, quantity, unit, step } ]
-let activeCategory = 'all';
-let searchQuery = '';
+// Standard / Fallback Suppliers Configuration
+const DEFAULT_SUPPLIERS = [
+  {
+    id: 'snacks',
+    name: 'Снеки и закуски',
+    shortName: 'Снеки',
+    icon: '🍺',
+    categories: [
+      'Гренки Весовые',
+      'Сырные Сухие',
+      'Гренки Чипсы и снеки ЗАВОДСКИЕ',
+      'Орехи',
+      'Начос и лавашики',
+      'Соусы',
+      'Рыбные',
+      'Сыры',
+      'Мясные',
+      'Мясные ЗАВОД'
+    ]
+  },
+  {
+    id: 'consumables',
+    name: 'Расходники и тара',
+    shortName: 'Расходники',
+    icon: '🧻',
+    categories: [
+      'Расходники',
+      'Контейнеры'
+    ]
+  },
+  {
+    id: 'yarmarka',
+    name: 'Ярмарка',
+    shortName: 'Ярмарка',
+    icon: '🎪',
+    categories: [
+      'Заморозка',
+      'Вкусняшки и прочее'
+    ]
+  }
+];
 
-const CATALOG_CACHE_KEY = 'snack_catalog_cache_v5';
-const ORDER_STORAGE_KEY = 'snack_order';
-const MANUAL_STORAGE_KEY = 'snack_manual_items';
-const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
-
-const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
+const KNOWN_SUPPLIER_META = {
+  'snacks': { name: 'Снеки и закуски', shortName: 'Снеки', icon: '🍺' },
+  'consumables': { name: 'Расходники и тара', shortName: 'Расходники', icon: '🧻' },
+  'yarmarka': { name: 'Ярмарка', shortName: 'Ярмарка', icon: '🎪' }
+};
 
 // Category metadata: labels and icons
 const CATEGORY_META = {
@@ -3154,23 +3581,24 @@ const CATEGORY_META = {
   'manual': { label: 'Свободный ввод', icon: '✏️' }
 };
 
-// Preferred category display order
-const CATEGORY_ORDER = [
-  'Гренки Весовые',
-  'Сырные Сухие',
-  'Гренки Чипсы и снеки ЗАВОДСКИЕ',
-  'Орехи',
-  'Начос и лавашики',
-  'Соусы',
-  'Рыбные',
-  'Сыры',
-  'Мясные',
-  'Мясные ЗАВОД',
-  'Расходники',
-  'Контейнеры',
-  'Заморозка',
-  'Вкусняшки и прочее'
-];
+// Application State
+let catalog = [...DEFAULT_CATALOG];
+let suppliers = [...DEFAULT_SUPPLIERS];
+let activeSupplier = 'snacks';
+let modalActiveSupplier = 'snacks';
+let activeCategory = 'all';
+let searchQuery = '';
+let order = {}; // { itemId: quantity }
+let manualItems = []; // [ { id, name, category, quantity, unit, step, supplier } ]
+
+const CATALOG_CACHE_KEY = 'snack_catalog_cache_v6';
+const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v6';
+const ORDER_STORAGE_KEY = 'snack_order_v6';
+const MANUAL_STORAGE_KEY = 'snack_manual_items_v6';
+const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v6';
+const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
+
+const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
 
 // SVG Icons helper
 const ICONS = {
@@ -3189,6 +3617,7 @@ async function initApp() {
   loadSavedState();
   await loadCatalog();
   setupEventListeners();
+  renderSupplierNav();
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
@@ -3197,11 +3626,14 @@ async function initApp() {
 // LocalStorage helpers
 function loadSavedState() {
   try {
-    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY);
+    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY) || localStorage.getItem('snack_order');
     if (savedOrder) order = JSON.parse(savedOrder);
 
-    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY);
+    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY) || localStorage.getItem('snack_manual_items');
     if (savedManual) manualItems = JSON.parse(savedManual);
+
+    const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY);
+    if (savedSupplier) activeSupplier = savedSupplier;
   } catch (e) {
     console.error('Failed to load localStorage', e);
   }
@@ -3211,6 +3643,7 @@ function saveState() {
   try {
     localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
     localStorage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(manualItems));
+    localStorage.setItem(ACTIVE_SUPPLIER_KEY, activeSupplier);
   } catch (e) {
     console.error('Failed to save localStorage', e);
   }
@@ -3219,11 +3652,16 @@ function saveState() {
 // Load Catalog from cache or fallback to embedded DEFAULT_CATALOG
 async function loadCatalog() {
   const cachedCatalog = localStorage.getItem(CATALOG_CACHE_KEY);
+  const cachedSuppliers = localStorage.getItem(SUPPLIERS_CACHE_KEY);
+
   if (cachedCatalog) {
     try {
       const parsed = JSON.parse(cachedCatalog);
-      if (Array.isArray(parsed) && parsed.length >= 350 && parsed[0].display_step !== undefined) {
+      if (Array.isArray(parsed) && parsed.length >= 350 && parsed[0].supplier !== undefined) {
         catalog = parsed;
+        if (cachedSuppliers) {
+          suppliers = JSON.parse(cachedSuppliers);
+        }
         return;
       }
     } catch (e) {
@@ -3232,7 +3670,14 @@ async function loadCatalog() {
   }
 
   catalog = [...DEFAULT_CATALOG];
+  suppliers = [...DEFAULT_SUPPLIERS];
   localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
+  localStorage.setItem(SUPPLIERS_CACHE_KEY, JSON.stringify(suppliers));
+}
+
+// Helper to get supplier metadata by ID
+function getSupplierById(id) {
+  return suppliers.find(s => s.id === id) || suppliers[0] || { id, name: id, shortName: id, icon: '📦' };
 }
 
 // Parse packaging / multiplicity information from cell value
@@ -3296,7 +3741,7 @@ function parsePackInfo(name, packStr, cat) {
   return { step: 1.0, unit: unit, display: `кратность 1 ${unit}` };
 }
 
-// Synchronize from Google Sheets directly via XLSX export (all 14 tabs)
+// Synchronize from Google Sheets directly via XLSX export
 async function syncFromGoogleSheets(notify = true) {
   const btn = document.getElementById('btnSync');
   if (btn) btn.classList.add('syncing');
@@ -3313,14 +3758,26 @@ async function syncFromGoogleSheets(notify = true) {
     }
 
     const wb = XLSX.read(arrayBuffer, { type: 'array' });
-    const parsedItems = parseGoogleSheetWorkbook(wb);
+    const parsedData = parseGoogleSheetWorkbook(wb);
 
-    if (parsedItems && parsedItems.length > 0) {
-      catalog = parsedItems;
+    if (parsedData && parsedData.items && parsedData.items.length > 0) {
+      catalog = parsedData.items;
+      if (parsedData.suppliers && parsedData.suppliers.length > 0) {
+        suppliers = parsedData.suppliers;
+      }
       localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
+      localStorage.setItem(SUPPLIERS_CACHE_KEY, JSON.stringify(suppliers));
+
+      // Validate active supplier
+      if (!suppliers.some(s => s.id === activeSupplier)) {
+        activeSupplier = suppliers[0].id;
+      }
+
+      renderSupplierNav();
       renderCategoryTabs();
       renderCatalog();
-      if (notify) showToast(`✅ Каталог обновлен: ${parsedItems.length} позиций во всех вкладках!`);
+      updateOrderBar();
+      if (notify) showToast(`✅ Каталог обновлен: ${parsedData.items.length} позиций во всех вкладках!`);
     } else {
       throw new Error('Не удалось прочитать позиции из таблицы');
     }
@@ -3332,16 +3789,33 @@ async function syncFromGoogleSheets(notify = true) {
   }
 }
 
-// Parse all sheets in the Excel workbook
+// Dynamic parser for multi-sheet Google Sheets workbook
 function parseGoogleSheetWorkbook(wb) {
   const items = [];
   let index = 1;
 
-  let sheetNames = wb.SheetNames;
-  const hasCategories = sheetNames.some(s => s !== 'Весь ассортимент');
-  if (hasCategories) {
-    sheetNames = sheetNames.filter(s => s !== 'Весь ассортимент');
+  // 1. Check for dedicated 'Поставщики' sheet if user created one
+  const sheetToSupplierMap = {
+    'Расходники': 'consumables',
+    'Контейнеры': 'consumables',
+    'Заморозка': 'yarmarka',
+    'Вкусняшки и прочее': 'yarmarka'
+  };
+
+  const supSheetName = wb.SheetNames.find(s => s.toLowerCase().includes('поставщик') || s.toLowerCase().includes('supplier'));
+  if (supSheetName) {
+    const supWs = wb.Sheets[supSheetName];
+    const supRows = XLSX.utils.sheet_to_json(supWs, { header: 1 });
+    if (supRows && supRows.length > 1) {
+      supRows.slice(1).forEach(r => {
+        if (r && r[0] && r[1]) {
+          sheetToSupplierMap[String(r[0]).trim()] = String(r[1]).trim();
+        }
+      });
+    }
   }
+
+  let sheetNames = wb.SheetNames.filter(s => s !== 'Весь ассортимент' && s !== supSheetName);
 
   for (const sheetName of sheetNames) {
     const ws = wb.Sheets[sheetName];
@@ -3353,7 +3827,7 @@ function parseGoogleSheetWorkbook(wb) {
     const header = rows[0] || [];
     let nameCol = -1;
     let packCol = -1;
-    let catCol = -1;
+    let supCol = -1;
 
     header.forEach((col, idx) => {
       if (!col) return;
@@ -3362,13 +3836,13 @@ function parseGoogleSheetWorkbook(wb) {
         nameCol = idx;
       } else if (cLower.includes('фасовка') || cLower.includes('кратность')) {
         packCol = idx;
-      } else if (cLower.includes('категория')) {
-        catCol = idx;
+      } else if (cLower.includes('поставщик')) {
+        supCol = idx;
       }
     });
 
-    if (nameCol === -1) nameCol = (sheetName === 'Весь ассортимент') ? 1 : 0;
-    if (packCol === -1) packCol = (sheetName === 'Весь ассортимент') ? 4 : 3;
+    if (nameCol === -1) nameCol = 0;
+    if (packCol === -1) packCol = 3;
 
     for (let r = 1; r < rows.length; r++) {
       const row = rows[r];
@@ -3381,17 +3855,23 @@ function parseGoogleSheetWorkbook(wb) {
       if (cleanName.toLowerCase() === 'наименование' || cleanName.toLowerCase() === 'название') continue;
 
       const rawPack = row[packCol];
-      let cat = sheetName;
-      if (sheetName === 'Весь ассортимент' && catCol !== -1 && row[catCol]) {
-        cat = String(row[catCol]).trim();
-      }
+      const packInfo = parsePackInfo(cleanName, rawPack, sheetName);
 
-      const packInfo = parsePackInfo(cleanName, rawPack, cat);
+      // Determine supplier
+      let supplierId = 'snacks';
+      if (supCol !== -1 && row[supCol] && String(row[supCol]).trim()) {
+        const supVal = String(row[supCol]).trim();
+        supplierId = slugify(supVal);
+      } else if (sheetToSupplierMap[sheetName]) {
+        const supVal = sheetToSupplierMap[sheetName];
+        supplierId = slugify(supVal);
+      }
 
       items.push({
         id: `item_${String(index++).padStart(3, '0')}`,
         name: cleanName,
-        category: cat,
+        category: sheetName,
+        supplier: supplierId,
         step: packInfo.step,
         unit: packInfo.unit,
         display_step: packInfo.display
@@ -3399,22 +3879,109 @@ function parseGoogleSheetWorkbook(wb) {
     }
   }
 
-  return items;
+  // Build dynamic suppliers array from discovered items
+  const discoveredSupplierIds = [...new Set(items.map(i => i.supplier))];
+  const dynamicSuppliers = [];
+
+  discoveredSupplierIds.forEach(id => {
+    const known = KNOWN_SUPPLIER_META[id];
+    const categoriesForSup = [...new Set(items.filter(i => i.supplier === id).map(i => i.category))];
+
+    if (known) {
+      dynamicSuppliers.push({
+        id,
+        name: known.name,
+        shortName: known.shortName,
+        icon: known.icon,
+        categories: categoriesForSup
+      });
+    } else {
+      dynamicSuppliers.push({
+        id,
+        name: unslugify(id),
+        shortName: unslugify(id),
+        icon: '📦',
+        categories: categoriesForSup
+      });
+    }
+  });
+
+  return {
+    items,
+    suppliers: dynamicSuppliers.length > 0 ? dynamicSuppliers : DEFAULT_SUPPLIERS
+  };
 }
 
-// Category Tabs Navigation
+function slugify(text) {
+  const lower = String(text).toLowerCase().trim();
+  if (lower.includes('снек') || lower.includes('закус')) return 'snacks';
+  if (lower.includes('расход') || lower.includes('контейнер') || lower.includes('тара')) return 'consumables';
+  if (lower.includes('ярм')) return 'yarmarka';
+  return lower.replace(/[^a-zа-я0-9]+/gi, '_').replace(/^_+|_+$/g, '');
+}
+
+function unslugify(slug) {
+  if (slug === 'snacks') return 'Снеки';
+  if (slug === 'consumables') return 'Расходники';
+  if (slug === 'yarmarka') return 'Ярмарка';
+  return slug.charAt(0).toUpperCase() + slug.slice(1);
+}
+
+// Top-Level Supplier Navigation Bar
+function renderSupplierNav() {
+  const container = document.getElementById('supplierNav');
+  if (!container) return;
+
+  container.innerHTML = suppliers.map(sup => {
+    const totals = getOrderTotals(sup.id);
+    const isActive = activeSupplier === sup.id ? 'active' : '';
+    const hasItems = totals.count > 0 ? 'has-items' : '';
+
+    return `
+      <button class="supplier-tab ${isActive}" data-supplier="${sup.id}">
+        <span>${sup.icon}</span>
+        <span>${escapeHtml(sup.shortName)}</span>
+        <span class="supplier-badge ${hasItems}" id="badge-sup-${sup.id}">${totals.count}</span>
+      </button>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.supplier-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const supId = btn.getAttribute('data-supplier');
+      switchSupplier(supId);
+    });
+  });
+}
+
+function switchSupplier(supId) {
+  activeSupplier = supId;
+  saveState();
+  activeCategory = 'all';
+  renderSupplierNav();
+  renderCategoryTabs();
+  renderCatalog();
+  updateOrderBar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Category Tabs Navigation (Scoped to Active Supplier)
 function renderCategoryTabs() {
   const container = document.getElementById('categoryNav');
   if (!container) return;
 
-  const presentCategories = new Set(catalog.map(i => i.category));
+  const currentSup = getSupplierById(activeSupplier);
+  const itemsInSup = catalog.filter(i => i.supplier === activeSupplier);
+  const presentCategories = new Set(itemsInSup.map(i => i.category));
+
   const orderedCats = ['all'];
 
-  CATEGORY_ORDER.forEach(cat => {
-    if (presentCategories.has(cat)) orderedCats.push(cat);
-  });
+  if (currentSup && Array.isArray(currentSup.categories)) {
+    currentSup.categories.forEach(cat => {
+      if (presentCategories.has(cat)) orderedCats.push(cat);
+    });
+  }
 
-  // Include any extra categories not in standard list
   presentCategories.forEach(cat => {
     if (!orderedCats.includes(cat)) orderedCats.push(cat);
   });
@@ -3424,11 +3991,11 @@ function renderCategoryTabs() {
   container.innerHTML = orderedCats.map(cat => {
     let count = 0;
     if (cat === 'all') {
-      count = catalog.length;
+      count = itemsInSup.length;
     } else if (cat === 'manual') {
-      count = manualItems.length;
+      count = manualItems.filter(m => (m.supplier || 'snacks') === activeSupplier).length;
     } else {
-      count = catalog.filter(i => i.category === cat).length;
+      count = itemsInSup.filter(i => i.category === cat).length;
     }
 
     const meta = CATEGORY_META[cat] || { label: cat, icon: '🏷️' };
@@ -3448,13 +4015,12 @@ function renderCategoryTabs() {
       activeCategory = btn.getAttribute('data-cat');
       renderCategoryTabs();
       renderCatalog();
-      // Scroll to top of catalog smoothly
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 }
 
-// Render Products Catalog List
+// Render Products Catalog List (Scoped to Active Supplier)
 function renderCatalog() {
   const container = document.getElementById('catalogContent');
   if (!container) return;
@@ -3464,7 +4030,9 @@ function renderCatalog() {
     return;
   }
 
-  let filtered = catalog.filter(item => {
+  const itemsInSup = catalog.filter(item => item.supplier === activeSupplier);
+
+  let filtered = itemsInSup.filter(item => {
     const matchCat = activeCategory === 'all' || item.category === activeCategory;
     let matchSearch = true;
 
@@ -3478,12 +4046,34 @@ function renderCatalog() {
   });
 
   if (filtered.length === 0) {
+    // Check if query exists in another supplier
+    let otherFoundHtml = '';
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const otherMatches = catalog.filter(i => i.supplier !== activeSupplier && i.name.toLowerCase().includes(q));
+      if (otherMatches.length > 0) {
+        const otherSupId = otherMatches[0].supplier;
+        const otherSup = getSupplierById(otherSupId);
+        otherFoundHtml = `
+          <div style="margin-top: 14px; padding: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px;">
+            <p style="margin: 0 0 8px; font-size: 0.88rem; color: #fde68a;">
+              Найдено в поставщике <strong>${escapeHtml(otherSup.name)}</strong> (${otherMatches.length} поз.)
+            </p>
+            <button class="btn-action-primary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="switchSupplier('${otherSupId}')">
+              Перейти к ${escapeHtml(otherSup.shortName)} ➔
+            </button>
+          </div>
+        `;
+      }
+    }
+
     container.innerHTML = `
       <div class="empty-state">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
           <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <p>Ничего не найдено по запросу "${escapeHtml(searchQuery)}"</p>
+        <p>Ничего не найдено в разделе «${escapeHtml(getSupplierById(activeSupplier).shortName)}» по запросу "${escapeHtml(searchQuery)}"</p>
+        ${otherFoundHtml}
         <button class="btn-action-secondary" style="margin: 12px auto; display: inline-flex;" onclick="resetSearch()">Сбросить поиск</button>
       </div>
     `;
@@ -3574,6 +4164,7 @@ function attachStepperEvents(container) {
 
       saveState();
       updateProductCard(id);
+      renderSupplierNav();
       updateOrderBar();
     });
   });
@@ -3589,11 +4180,11 @@ function attachStepperEvents(container) {
         if (newVal <= 0) {
           delete order[id];
         } else {
-          // Arbitrary manual entry allowed per user requirement
           order[id] = Math.round(newVal * 1000) / 1000;
         }
         saveState();
         updateProductCard(id);
+        renderSupplierNav();
         updateOrderBar();
       });
     });
@@ -3628,15 +4219,18 @@ function updateProductCard(id) {
 
 // Manual Items Form & List
 function renderManualSection(container) {
+  const currentSup = getSupplierById(activeSupplier);
+  const itemsInCurrentSup = manualItems.filter(m => (m.supplier || 'snacks') === activeSupplier);
+
   let manualListHtml = '';
-  if (manualItems.length > 0) {
+  if (itemsInCurrentSup.length > 0) {
     manualListHtml = `
       <div class="section-group" style="margin-top: 16px;">
         <div class="section-header">
-          <div class="section-title">Добавленные вручную (${manualItems.length})</div>
+          <div class="section-title">Добавлено вручную для «${escapeHtml(currentSup.shortName)}» (${itemsInCurrentSup.length})</div>
         </div>
         <div class="product-cards-list">
-          ${manualItems.map(item => `
+          ${itemsInCurrentSup.map(item => `
             <div class="product-card has-order" data-id="${item.id}">
               <div class="product-info">
                 <div class="product-title">${escapeHtml(item.name)}</div>
@@ -3660,12 +4254,12 @@ function renderManualSection(container) {
   container.innerHTML = `
     <div class="manual-card">
       <div class="manual-card-title">
-        ✏️ Добавить нестандартную или редкую позицию
+        ✏️ Добавить позицию для «${escapeHtml(currentSup.name)}»
       </div>
       <form id="formManual" class="manual-form-grid" onsubmit="handleManualSubmit(event)">
         <div class="form-group">
           <label>Наименование товара</label>
-          <input type="text" id="manualName" class="form-control" placeholder="Например: Сыр чечил спагетти 1кг" required />
+          <input type="text" id="manualName" class="form-control" placeholder="Например: Пакеты фасовочные 500 шт" required />
         </div>
         <div class="form-row">
           <div class="form-group" style="flex: 2;">
@@ -3675,21 +4269,20 @@ function renderManualSection(container) {
           <div class="form-group" style="flex: 2;">
             <label>Ед. измерения</label>
             <select id="manualUnit" class="form-control">
-              <option value="кг">кг</option>
               <option value="шт">шт</option>
-              <option value="кор">кор</option>
               <option value="уп">уп</option>
-              <option value="пачка">пачка</option>
+              <option value="кор">кор</option>
+              <option value="кг">кг</option>
               <option value="ведро">ведро</option>
             </select>
           </div>
         </div>
         <div class="form-group">
           <label>Раздел (необязательно)</label>
-          <input type="text" id="manualCat" class="form-control" placeholder="Например: Снеки весовые" />
+          <input type="text" id="manualCat" class="form-control" placeholder="Например: Свободный ввод" />
         </div>
         <button type="submit" class="btn-add-manual">
-          ${ICONS.plus} Добавить в заказ
+          ${ICONS.plus} Добавить в заказ ${escapeHtml(currentSup.shortName)}
         </button>
       </form>
     </div>
@@ -3712,6 +4305,7 @@ function handleManualSubmit(e) {
     id: `manual_${Date.now()}`,
     name,
     category: cat,
+    supplier: activeSupplier,
     quantity: qty,
     unit: unit,
     step: unit === 'кг' ? 0.5 : 1
@@ -3720,6 +4314,7 @@ function handleManualSubmit(e) {
   manualItems.push(newItem);
   saveState();
   showToast(`Добавлено: ${name} (${qty} ${unit})`);
+  renderSupplierNav();
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
@@ -3752,6 +4347,7 @@ function attachManualEvents(container) {
           }
           saveState();
           renderCatalog();
+          renderSupplierNav();
           updateOrderBar();
         });
         return;
@@ -3759,6 +4355,7 @@ function attachManualEvents(container) {
 
       saveState();
       renderCatalog();
+      renderSupplierNav();
       updateOrderBar();
     });
   });
@@ -3770,8 +4367,8 @@ function formatQty(qty, unit) {
   return `${qty} ${unit}`;
 }
 
-// Calculate Total Order Statistics
-function getOrderTotals() {
+// Calculate Total Order Statistics (Scoped to a Supplier or All)
+function getOrderTotals(supplierId = activeSupplier) {
   let count = 0;
   let totalKg = 0;
   let totalBuckets = 0;
@@ -3779,22 +4376,25 @@ function getOrderTotals() {
 
   for (const [id, qty] of Object.entries(order)) {
     if (qty > 0) {
-      count++;
       const item = catalog.find(i => i.id === id);
-      if (item) {
-        if (item.unit === 'кг') {
-          totalKg += qty;
-        } else if (item.name.toLowerCase().includes('ведро')) {
-          totalBuckets += qty;
-        } else {
-          totalPieces += qty;
-        }
+      if (!item) continue;
+      if (supplierId && item.supplier !== supplierId) continue;
+
+      count++;
+      if (item.unit === 'кг') {
+        totalKg += qty;
+      } else if (item.name.toLowerCase().includes('ведро')) {
+        totalBuckets += qty;
+      } else {
+        totalPieces += qty;
       }
     }
   }
 
   manualItems.forEach(it => {
     if (it.quantity > 0) {
+      if (supplierId && (it.supplier || 'snacks') !== supplierId) return;
+
       count++;
       if (it.unit === 'кг') {
         totalKg += it.quantity;
@@ -3821,26 +4421,44 @@ function updateOrderBar() {
   const totalEl = document.getElementById('orderBarTotal');
   if (!bar) return;
 
-  const totals = getOrderTotals();
+  const currentSup = getSupplierById(activeSupplier);
+  const totals = getOrderTotals(activeSupplier);
 
-  if (totals.count > 0) {
+  // Check if other suppliers also have active orders
+  const otherActiveSups = suppliers
+    .filter(s => s.id !== activeSupplier && getOrderTotals(s.id).count > 0);
+
+  if (totals.count > 0 || otherActiveSups.length > 0) {
     bar.classList.add('visible');
-    countEl.textContent = `В заказе: ${totals.count} поз.`;
 
-    const parts = [];
-    if (totals.totalKg > 0) parts.push(`${totals.totalKg} кг`);
-    if (totals.totalBuckets > 0) parts.push(`${totals.totalBuckets} ведер`);
-    if (totals.totalPieces > 0) parts.push(`${totals.totalPieces} шт/кор`);
+    if (totals.count > 0) {
+      countEl.textContent = `[${currentSup.shortName}]: ${totals.count} поз.`;
 
-    totalEl.textContent = parts.join(' • ') || `${totals.count} поз.`;
+      const parts = [];
+      if (totals.totalKg > 0) parts.push(`${totals.totalKg} кг`);
+      if (totals.totalBuckets > 0) parts.push(`${totals.totalBuckets} ведер`);
+      if (totals.totalPieces > 0) parts.push(`${totals.totalPieces} шт/кор`);
+
+      let totalStr = parts.join(' • ') || `${totals.count} поз.`;
+      if (otherActiveSups.length > 0) {
+        const otherStr = otherActiveSups.map(s => `${s.icon} ${getOrderTotals(s.id).count}`).join(' ');
+        totalStr += ` | др: ${otherStr}`;
+      }
+      totalEl.textContent = totalStr;
+    } else {
+      countEl.textContent = `В [${currentSup.shortName}] пусто`;
+      const otherStr = otherActiveSups.map(s => `${s.icon} ${s.shortName}: ${getOrderTotals(s.id).count} поз.`).join(', ');
+      totalEl.textContent = otherStr;
+    }
   } else {
     bar.classList.remove('visible');
   }
 }
 
-// Generate Clean Text for WhatsApp / Telegram
-function generateOrderText() {
-  const totals = getOrderTotals();
+// Generate WhatsApp / Telegram Order Text for a Specific Supplier
+function generateOrderText(supplierId = modalActiveSupplier) {
+  const sup = getSupplierById(supplierId);
+  const totals = getOrderTotals(supplierId);
   const dateStr = new Date().toLocaleString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
@@ -3854,7 +4472,7 @@ function generateOrderText() {
   for (const [id, qty] of Object.entries(order)) {
     if (qty > 0) {
       const it = catalog.find(i => i.id === id);
-      if (!it) continue;
+      if (!it || it.supplier !== supplierId) continue;
       const cat = it.category || 'Прочее';
       if (!grouped[cat]) grouped[cat] = [];
       grouped[cat].push({
@@ -3865,16 +4483,17 @@ function generateOrderText() {
     }
   }
 
-  if (manualItems.length > 0) {
+  const supManual = manualItems.filter(m => (m.supplier || 'snacks') === supplierId);
+  if (supManual.length > 0) {
     const key = '✏️ Дополнительно (вручную)';
-    grouped[key] = manualItems.map(it => ({
+    grouped[key] = supManual.map(it => ({
       name: it.name,
       qty: it.quantity,
       unit: it.unit
     }));
   }
 
-  let text = `📦 ЗАКАЗ СНЕКОВ\n`;
+  let text = `📦 ЗАКАЗ: ${sup.name.toUpperCase()}\n`;
   text += `📅 Дата: ${dateStr}\n`;
   text += `------------------------------------\n\n`;
 
@@ -3900,16 +4519,63 @@ function generateOrderText() {
   return text;
 }
 
-// Open Order Drawer Modal
+// Open Order Drawer Modal with Supplier Switcher
 function openOrderModal() {
   const modal = document.getElementById('orderModal');
-  const body = document.getElementById('orderModalBody');
-  if (!modal || !body) return;
+  if (!modal) return;
 
-  const totals = getOrderTotals();
+  // Open with active supplier initially
+  modalActiveSupplier = activeSupplier;
+  renderOrderModalContent();
+  modal.classList.add('active');
+}
+
+function closeOrderModal() {
+  const modal = document.getElementById('orderModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function switchModalSupplier(supId) {
+  modalActiveSupplier = supId;
+  renderOrderModalContent();
+}
+
+// Render Content Inside Order Modal Drawer
+function renderOrderModalContent() {
+  const body = document.getElementById('orderModalBody');
+  if (!body) return;
+
+  const currentSup = getSupplierById(modalActiveSupplier);
+  const totals = getOrderTotals(modalActiveSupplier);
+
+  // Supplier Switcher Tabs in Cart
+  const supplierTabsHtml = `
+    <div class="modal-supplier-nav">
+      ${suppliers.map(s => {
+        const sTotals = getOrderTotals(s.id);
+        const isActive = s.id === modalActiveSupplier ? 'active' : '';
+        const badgeClass = sTotals.count > 0 ? 'has-items' : '';
+        return `
+          <button class="modal-sup-tab ${isActive}" onclick="switchModalSupplier('${s.id}')">
+            <span>${s.icon}</span>
+            <span>${escapeHtml(s.shortName)}</span>
+            <span class="badge ${badgeClass}">${sTotals.count}</span>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  `;
+
   if (totals.count === 0) {
-    body.innerHTML = `<div class="empty-state"><p>Заказ пока пуст. Выберите нужные товары в каталоге.</p></div>`;
-    modal.classList.add('active');
+    body.innerHTML = `
+      ${supplierTabsHtml}
+      <div class="empty-state" style="padding: 24px 12px;">
+        <p>В заказе для <strong>«${escapeHtml(currentSup.name)}»</strong> пока нет товаров.</p>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+          Выберите нужные позиции в каталоге или переключите поставщика вверху.
+        </p>
+      </div>
+    `;
     return;
   }
 
@@ -3917,7 +4583,7 @@ function openOrderModal() {
   for (const [id, qty] of Object.entries(order)) {
     if (qty > 0) {
       const it = catalog.find(i => i.id === id);
-      if (!it) continue;
+      if (!it || it.supplier !== modalActiveSupplier) continue;
       const meta = CATEGORY_META[it.category] || { label: it.category };
       itemsHtml += `
         <div class="order-item-row" data-id="${it.id}">
@@ -3936,7 +4602,7 @@ function openOrderModal() {
     }
   }
 
-  manualItems.forEach(it => {
+  manualItems.filter(m => (m.supplier || 'snacks') === modalActiveSupplier).forEach(it => {
     itemsHtml += `
       <div class="order-item-row" data-id="${it.id}">
         <div style="flex: 1; min-width: 0;">
@@ -3953,36 +4619,37 @@ function openOrderModal() {
     `;
   });
 
-  const previewText = generateOrderText();
+  const previewText = generateOrderText(modalActiveSupplier);
 
   body.innerHTML = `
+    ${supplierTabsHtml}
+
     <div style="margin-bottom: 16px;">
-      <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; font-weight: 700;">
-        Выбранные позиции (${totals.count}):
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 0.82rem; color: var(--text-secondary); text-transform: uppercase; font-weight: 700;">
+          Товары [${escapeHtml(currentSup.shortName)}] (${totals.count}):
+        </div>
+        <button class="btn-text-danger" onclick="confirmResetCurrentSupplier()" style="font-size: 0.75rem; background: none; border: none; color: #ef4444; cursor: pointer;">
+          Очистить ${escapeHtml(currentSup.shortName)}
+        </button>
       </div>
       ${itemsHtml}
     </div>
 
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 18px;">
       <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; font-weight: 700;">
-        Предпросмотр сообщения для отправки:
+        Сообщение для поставщика «${escapeHtml(currentSup.name)}»:
       </div>
-      <textarea id="orderTextPreview" class="form-control" style="height: 140px; font-family: monospace; font-size: 0.8rem; line-height: 1.4; resize: none;" readonly>${escapeHtml(previewText)}</textarea>
+      <textarea id="orderTextPreview" class="form-control" style="height: 130px; font-family: monospace; font-size: 0.8rem; line-height: 1.4; resize: none;" readonly>${escapeHtml(previewText)}</textarea>
     </div>
   `;
-
-  modal.classList.add('active');
-}
-
-function closeOrderModal() {
-  const modal = document.getElementById('orderModal');
-  if (modal) modal.classList.remove('active');
 }
 
 function removeOrderItem(id) {
   delete order[id];
   saveState();
-  openOrderModal();
+  renderOrderModalContent();
+  renderSupplierNav();
   updateOrderBar();
   renderCatalog();
 }
@@ -3990,14 +4657,16 @@ function removeOrderItem(id) {
 function removeManualItem(id) {
   manualItems = manualItems.filter(i => i.id !== id);
   saveState();
-  openOrderModal();
+  renderOrderModalContent();
+  renderSupplierNav();
   updateOrderBar();
   renderCatalog();
 }
 
 // Copy order text for WhatsApp / Telegram
 async function copyOrderToClipboard() {
-  const text = generateOrderText();
+  const text = generateOrderText(modalActiveSupplier);
+  const sup = getSupplierById(modalActiveSupplier);
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(text);
@@ -4009,7 +4678,7 @@ async function copyOrderToClipboard() {
       document.execCommand('copy');
       document.body.removeChild(textarea);
     }
-    showToast('📋 Заказ скопирован! Можно отправлять в чат');
+    showToast(`📋 Заказ [${sup.shortName}] скопирован!`);
   } catch (err) {
     console.error('Copy failed', err);
     showToast('Не удалось скопировать, выделите текст в окне', true);
@@ -4018,11 +4687,12 @@ async function copyOrderToClipboard() {
 
 // Share via Web Share API
 async function shareOrder() {
-  const text = generateOrderText();
+  const text = generateOrderText(modalActiveSupplier);
+  const sup = getSupplierById(modalActiveSupplier);
   if (navigator.share) {
     try {
       await navigator.share({
-        title: 'Заказ снеков',
+        title: `Заказ: ${sup.name}`,
         text: text
       });
     } catch (e) {
@@ -4042,13 +4712,15 @@ function downloadOrderExcel() {
     return;
   }
 
-  const totals = getOrderTotals();
+  const sup = getSupplierById(modalActiveSupplier);
+  const totals = getOrderTotals(modalActiveSupplier);
   if (totals.count === 0) {
-    showToast('Заказ пуст!', true);
+    showToast(`Заказ для «${sup.shortName}» пуст!`, true);
     return;
   }
 
   const rows = [
+    [`ЗАКАЗ: ${sup.name.toUpperCase()}`, '', '', '', ''],
     ['№', 'Категория', 'Наименование товара', 'Количество', 'Единица']
   ];
 
@@ -4056,7 +4728,7 @@ function downloadOrderExcel() {
   for (const [id, qty] of Object.entries(order)) {
     if (qty > 0) {
       const it = catalog.find(i => i.id === id);
-      if (!it) continue;
+      if (!it || it.supplier !== modalActiveSupplier) continue;
       rows.push([
         num++,
         it.category || '',
@@ -4067,7 +4739,7 @@ function downloadOrderExcel() {
     }
   }
 
-  manualItems.forEach(it => {
+  manualItems.filter(m => (m.supplier || 'snacks') === modalActiveSupplier).forEach(it => {
     rows.push([
       num++,
       it.category || 'Вручную',
@@ -4094,26 +4766,51 @@ function downloadOrderExcel() {
     { wch: 10 }
   ];
 
-  XLSX.utils.book_append_sheet(wb, ws, "Заказ");
+  XLSX.utils.book_append_sheet(wb, ws, `Заказ_${sup.shortName}`);
 
   const today = new Date().toISOString().slice(0, 10);
-  XLSX.writeFile(wb, `Заказ_снеков_${today}.xlsx`);
-  showToast('📥 Файл Excel скачан!');
+  XLSX.writeFile(wb, `Заказ_${sup.shortName}_${today}.xlsx`);
+  showToast(`📥 Excel для «${sup.shortName}» скачан!`);
+}
+
+// Reset current supplier order
+function confirmResetCurrentSupplier() {
+  const sup = getSupplierById(modalActiveSupplier);
+  openConfirmDialog(
+    `Очистить заказ [${sup.shortName}]?`,
+    `Все выбранные товары поставщика «${sup.name}» будут удалены из заказа. Заказы других поставщиков останутся нетронутыми.`,
+    () => {
+      for (const id of Object.keys(order)) {
+        const it = catalog.find(i => i.id === id);
+        if (it && it.supplier === modalActiveSupplier) {
+          delete order[id];
+        }
+      }
+      manualItems = manualItems.filter(m => (m.supplier || 'snacks') !== modalActiveSupplier);
+      saveState();
+      renderOrderModalContent();
+      renderSupplierNav();
+      updateOrderBar();
+      renderCatalog();
+      showToast(`🗑️ Заказ [${sup.shortName}] очищен`);
+    }
+  );
 }
 
 // Reset entire order dialog
 function confirmResetOrder() {
   openConfirmDialog(
-    'Очистить заказ?',
-    'Все выбранные количества товаров и позиции свободного ввода будут сброшены.',
+    'Очистить все заказы?',
+    'Будут сброшены заказы ВСЕХ поставщиков (Снеки, Расходники, Ярмарка) и все добавленные вручную позиции.',
     () => {
       order = {};
       manualItems = [];
       saveState();
+      renderSupplierNav();
       renderCatalog();
       updateOrderBar();
       closeOrderModal();
-      showToast('🗑️ Заказ полностью очищен');
+      showToast('🗑️ Все заказы полностью очищены');
     }
   );
 }
@@ -4265,7 +4962,6 @@ function escapeRegex(str) {
 
 // Setup global event listeners
 function setupEventListeners() {
-  // Search input
   const searchInput = document.getElementById('searchInput');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => handleSearch(e.target.value));
@@ -4276,7 +4972,6 @@ function setupEventListeners() {
     searchClear.addEventListener('click', resetSearch);
   }
 
-  // Floating back to top button visibility
   window.addEventListener('scroll', () => {
     const btn = document.getElementById('btnScrollTop');
     if (!btn) return;
@@ -4287,7 +4982,6 @@ function setupEventListeners() {
     }
   });
 
-  // Enter key inside prompt dialog
   const dInput = document.getElementById('dialogInput');
   if (dInput) {
     dInput.addEventListener('keydown', (e) => {
