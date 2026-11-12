@@ -3986,6 +3986,7 @@ function parseGoogleSheetWorkbook(wb) {
     let nameCol = -1;
     let packCol = -1;
     let supCol = -1;
+    let photoCol = -1;
 
     header.forEach((col, idx) => {
       if (!col) return;
@@ -3996,11 +3997,18 @@ function parseGoogleSheetWorkbook(wb) {
         packCol = idx;
       } else if (cLower.includes('поставщик')) {
         supCol = idx;
+      } else if (cLower.includes('фото') || cLower.includes('изображен') || cLower.includes('картинк') || cLower.includes('image') || cLower.includes('photo')) {
+        photoCol = idx;
       }
     });
 
     if (nameCol === -1) nameCol = 0;
     if (packCol === -1) packCol = 3;
+    if (photoCol === -1 && (sheetName === 'Pringles' || sheetName.toLowerCase().includes('pringles'))) {
+      if (header.length >= 7) {
+        photoCol = 6;
+      }
+    }
 
     for (let r = 1; r < rows.length; r++) {
       const row = rows[r];
@@ -4014,6 +4022,7 @@ function parseGoogleSheetWorkbook(wb) {
 
       const rawPack = row[packCol];
       const packInfo = parsePackInfo(cleanName, rawPack, sheetName);
+      const rawPhoto = photoCol !== -1 && row[photoCol] ? String(row[photoCol]).trim() : '';
 
       // Determine supplier
       let supplierId = 'snacks';
@@ -4046,7 +4055,8 @@ function parseGoogleSheetWorkbook(wb) {
         supplier: supplierId,
         step: packInfo.step,
         unit: packInfo.unit,
-        display_step: packInfo.display
+        display_step: packInfo.display,
+        image: rawPhoto || ''
       });
     }
   }
@@ -4258,6 +4268,80 @@ function renderCatalog() {
   attachStepperEvents(container);
 }
 
+// Product Thumbnail Stub SVG
+const PRINGLES_THUMB_STUB_SVG = `
+  <div class="product-thumb-stub" title="Фото отсутствует">
+    <svg class="thumb-stub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+      <path d="m21 15-5-5L5 21"></path>
+    </svg>
+    <span class="thumb-stub-text">Pringles</span>
+  </div>
+`;
+
+// Helper for rendering product photo thumbnail (56x56 px, contain, rounded corners, referrerPolicy)
+function renderProductThumbnail(item) {
+  const imageUrl = item && item.image ? String(item.image).trim() : '';
+  const escapedName = escapeHtml(item && item.name ? item.name : 'Pringles');
+
+  if (!imageUrl) {
+    return `
+      <div class="product-thumb has-stub" title="Фото отсутствует">
+        ${PRINGLES_THUMB_STUB_SVG}
+      </div>
+    `;
+  }
+
+  return `
+    <div class="product-thumb" onclick="toggleThumbZoom(this, event)" title="Нажмите для увеличения (280px)">
+      <img 
+        src="${escapeHtml(imageUrl)}" 
+        alt="${escapedName}" 
+        class="product-thumb-img" 
+        loading="lazy" 
+        referrerpolicy="no-referrer" 
+        referrerPolicy="no-referrer" 
+        onerror="handleThumbError(this)" 
+      />
+    </div>
+  `;
+}
+
+// Error handler for broken thumbnail images
+function handleThumbError(img) {
+  if (!img) return;
+  img.onerror = null;
+  const parent = img.closest('.product-thumb');
+  if (parent) {
+    parent.classList.add('has-stub');
+    parent.classList.remove('zoomed');
+    parent.closest('.product-card')?.classList.remove('card-zoomed');
+    parent.title = 'Фото отсутствует';
+    parent.onclick = null;
+    parent.innerHTML = PRINGLES_THUMB_STUB_SVG;
+  }
+}
+
+// Click/tap zoom toggle for 280px preview
+function toggleThumbZoom(el, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  if (!el || el.classList.contains('has-stub')) return;
+
+  const isZoomed = el.classList.contains('zoomed');
+  document.querySelectorAll('.product-thumb.zoomed').forEach(t => {
+    t.classList.remove('zoomed');
+    t.closest('.product-card')?.classList.remove('card-zoomed');
+  });
+
+  if (!isZoomed) {
+    el.classList.add('zoomed');
+    el.closest('.product-card')?.classList.add('card-zoomed');
+  }
+}
+
 // Single Product Card HTML
 function renderProductCard(item) {
   const currentQty = order[item.id] || 0;
@@ -4265,8 +4349,15 @@ function renderProductCard(item) {
   const qtyFormatted = formatQty(currentQty, item.unit);
   const activeClass = currentQty > 0 ? 'active' : '';
 
+  const isPringles = item.category === 'Pringles' || item.supplier === 'pivnye_zakuski' || (item.name && /pringles|принглс/i.test(item.name));
+  const hasImage = Boolean(item.image && String(item.image).trim());
+  const showThumb = isPringles || hasImage || (item.image !== undefined && item.image !== null);
+
+  const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
+
   return `
     <div class="product-card ${hasOrder}" data-id="${item.id}">
+      ${thumbHtml}
       <div class="product-info">
         <div class="product-title">${highlightSearch(item.name, searchQuery)}</div>
         <div class="product-meta">
@@ -5140,6 +5231,16 @@ function setupEventListeners() {
       }
     });
   }
+
+  // Close zoomed thumbnail on click outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.product-thumb')) {
+      document.querySelectorAll('.product-thumb.zoomed').forEach(t => {
+        t.classList.remove('zoomed');
+        t.closest('.product-card')?.classList.remove('card-zoomed');
+      });
+    }
+  });
 }
 
 // Start application when DOM is ready

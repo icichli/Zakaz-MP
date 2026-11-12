@@ -21,8 +21,9 @@
 const CONFIG = {
   SHEET_NAME: 'Pringles',
   SOURCE_URL: 'https://xn--80adjicenawr3ax3h.xn--p1ai/products/category/chipsi',
+  BASE_DOMAIN: 'https://xn--80adjicenawr3ax3h.xn--p1ai',
   TIMEZONE: 'Europe/Moscow',
-  HEADERS: ['Наименование', 'Бренд', 'Вид продукта', 'Фасовка', 'Поставщик', 'Обновлено'],
+  HEADERS: ['Наименование', 'Бренд', 'Вид продукта', 'Фасовка', 'Поставщик', 'Обновлено', 'Фото'],
   DEFAULT_BRAND: 'Pringles',
   DEFAULT_CATEGORY: 'Чипсы',
   DEFAULT_SUPPLIER: 'Пивные закуски'
@@ -107,13 +108,14 @@ function checkPringlesStock() {
   const now = new Date();
   const formattedDate = Utilities.formatDate(now, CONFIG.TIMEZONE, 'dd.MM HH:mm');
 
-  // 6. Формирование строк таблицы (A1:F1)
+  // 6. Формирование строк таблицы (A1:G1)
   //  A: Наименование
   //  B: Бренд
   //  C: Вид продукта
   //  D: Фасовка
   //  E: Поставщик
   //  F: Обновлено
+  //  G: Фото
   const rows = items.map(function(item) {
     return [
       item.name,                // A: точное название товара со страницы поставщика
@@ -121,7 +123,8 @@ function checkPringlesStock() {
       CONFIG.DEFAULT_CATEGORY,  // C: Чипсы
       item.weight,              // D: автоматически извлеченный вес (165 г, 40 г, 160 г и т.д.)
       CONFIG.DEFAULT_SUPPLIER,  // E: Пивные закуски
-      formattedDate             // F: дата и время (dd.MM HH:mm)
+      formattedDate,            // F: дата и время (dd.MM HH:mm)
+      item.imageUrl || ''       // G: URL фотографии товара (или пустая строка)
     ];
   });
 
@@ -170,39 +173,182 @@ function extractPringlesItems(html) {
   // Основной паттерн для Nethouse: карточки товаров с названиями в <p class="product-link..."><span class="-table-cell"><a ... class="blue">
   const regexPrimary = /<p\s+[^>]*class="[^"]*product-link[^"]*"[^>]*>[\s\S]*?<a[^>]+class="[^"]*blue[^"]*"[^>]*>([\s\S]*?)<\/a>/gi;
   let match;
+  let lastMatchEnd = 0;
 
   while ((match = regexPrimary.exec(html)) !== null) {
     const cleanName = cleanProductTitle(match[1]);
-    if (!cleanName || seen[cleanName]) continue;
+    const matchIndex = match.index;
+    const matchLength = match[0].length;
+
+    if (!cleanName || seen[cleanName]) {
+      lastMatchEnd = matchIndex + matchLength;
+      continue;
+    }
 
     if (isValidPringlesProduct(cleanName)) {
       seen[cleanName] = true;
+
+      // Извлекаем href товара (например /products/12345)
+      let productHref = '';
+      const hrefMatch = /href=["']([^"']+)["']/i.exec(match[0]);
+      if (hrefMatch && hrefMatch[1]) {
+        productHref = hrefMatch[1].trim();
+      }
+
+      // Извлекаем URL фотографии карточки товара
+      const imageUrl = findProductImage(html, matchIndex, matchLength, productHref, lastMatchEnd);
+
       items.push({
         name: cleanName,
-        weight: extractWeightFromName(cleanName)
+        weight: extractWeightFromName(cleanName),
+        imageUrl: imageUrl || ''
       });
     }
+
+    lastMatchEnd = matchIndex + matchLength;
   }
 
-  // Запасной паттерн (по ссылкам вида /products/\d+ с классом blue)
+  // Запасной паттерн (по ссылкам вида /products/\d+)
   if (items.length === 0) {
-    const regexFallback = /<a\s+[^>]*href="[^"]*\/products\/\d+"[^>]*class="[^"]*blue[^"]*"[^>]*>([\s\S]*?)<\/a>/gi;
+    const regexFallback = /<a\s+[^>]*href=["']([^"']*\/products\/\d+)["'][^>]*>([\s\S]*?)<\/a>/gi;
     let fbMatch;
+    let fbLastEnd = 0;
+
     while ((fbMatch = regexFallback.exec(html)) !== null) {
-      const cleanName = cleanProductTitle(fbMatch[1]);
-      if (!cleanName || seen[cleanName]) continue;
+      if (fbMatch[0].indexOf('blue') === -1) continue;
+      const cleanName = cleanProductTitle(fbMatch[2]);
+      const matchIndex = fbMatch.index;
+      const matchLength = fbMatch[0].length;
+
+      if (!cleanName || seen[cleanName]) {
+        fbLastEnd = matchIndex + matchLength;
+        continue;
+      }
 
       if (isValidPringlesProduct(cleanName)) {
         seen[cleanName] = true;
+        const productHref = fbMatch[1] ? fbMatch[1].trim() : '';
+        const imageUrl = findProductImage(html, matchIndex, matchLength, productHref, fbLastEnd);
+
         items.push({
           name: cleanName,
-          weight: extractWeightFromName(cleanName)
+          weight: extractWeightFromName(cleanName),
+          imageUrl: imageUrl || ''
         });
       }
+
+      fbLastEnd = matchIndex + matchLength;
     }
   }
 
   return items;
+}
+
+/**
+ * Поиск тега <img>, относящегося к данной карточке товара
+ */
+function findProductImage(html, matchIndex, matchLength, productHref, lastMatchEnd) {
+  // 1. Если известен href товара, ищем в блоке перед заголовком ссылку с таким же href и тегом <img>
+  if (productHref) {
+    const escapedHref = productHref.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const chunkStart = Math.max(lastMatchEnd, matchIndex - 3000);
+    const chunkBefore = html.substring(chunkStart, matchIndex);
+
+    // Паттерн: <a href="productHref"...>...<img...>
+    const linkImgRegex = new RegExp('<a\\s+[^>]*href=["\']' + escapedHref + '["\'][^>]*>[\\s\\S]*?(<img\\b[^>]*>)[\\s\\S]*?<\\/a>', 'i');
+    const linkImgMatch = linkImgRegex.exec(chunkBefore);
+    if (linkImgMatch && linkImgMatch[1]) {
+      const url = extractImageUrlFromTag(linkImgMatch[1]);
+      if (url) return url;
+    }
+  }
+
+  // 2. Ищем последний тег <img> перед заголовком товара в пределах текущей карточки
+  const chunkStart = Math.max(lastMatchEnd, matchIndex - 3000);
+  const chunkBefore = html.substring(chunkStart, matchIndex);
+  const imgRegex = /<img\b[^>]*>/gi;
+  let imgMatch;
+  let lastImgTag = '';
+
+  while ((imgMatch = imgRegex.exec(chunkBefore)) !== null) {
+    lastImgTag = imgMatch[0];
+  }
+
+  if (lastImgTag) {
+    const url = extractImageUrlFromTag(lastImgTag);
+    if (url) return url;
+  }
+
+  // 3. Запасной поиск: тег <img> внутри самого заголовка/ссылки
+  const matchChunk = html.substring(matchIndex, matchIndex + matchLength);
+  const insideImgMatch = /<img\b[^>]*>/i.exec(matchChunk);
+  if (insideImgMatch) {
+    const url = extractImageUrlFromTag(insideImgMatch[0]);
+    if (url) return url;
+  }
+
+  // 4. Запасной поиск: сразу после заголовка (в пределах 1500 символов)
+  const chunkAfter = html.substring(matchIndex + matchLength, matchIndex + matchLength + 1500);
+  const afterImgMatch = /<img\b[^>]*>/i.exec(chunkAfter);
+  if (afterImgMatch) {
+    const url = extractImageUrlFromTag(afterImgMatch[0]);
+    if (url) return url;
+  }
+
+  return '';
+}
+
+/**
+ * Извлечение URL фотографии из тега <img> с проверкой атрибутов
+ * (data-src, data-original, src, игнорирование data:image)
+ * и приведением относительных путей к полному виду с доменом
+ */
+function extractImageUrlFromTag(imgTag) {
+  if (!imgTag) return '';
+
+  const attrNames = ['data-src', 'data-original', 'src'];
+  for (let i = 0; i < attrNames.length; i++) {
+    const attr = attrNames[i];
+    const regex = new RegExp('\\b' + attr + '\\s*=\\s*["\']([^"\']+)["\']', 'i');
+    const match = regex.exec(imgTag);
+    if (match && match[1]) {
+      const val = match[1].trim();
+      if (val && val.toLowerCase().indexOf('data:image') === -1) {
+        return normalizeImageUrl(val);
+      }
+    }
+  }
+
+  return '';
+}
+
+/**
+ * Нормализация URL изображения (добавление домена к относительным путям)
+ */
+function normalizeImageUrl(url) {
+  if (!url) return '';
+  const cleanUrl = String(url).trim();
+  if (!cleanUrl || cleanUrl.toLowerCase().indexOf('data:image') !== -1) {
+    return '';
+  }
+
+  // Протокол-относительные URL (//example.com/img.jpg)
+  if (cleanUrl.indexOf('//') === 0) {
+    return 'https:' + cleanUrl;
+  }
+
+  // Полные абсолютные URL (http:// или https://)
+  if (/^https?:\/\//i.test(cleanUrl)) {
+    return cleanUrl;
+  }
+
+  // Относительные пути
+  const baseDomain = CONFIG.BASE_DOMAIN || 'https://xn--80adjicenawr3ax3h.xn--p1ai';
+  if (cleanUrl.indexOf('/') === 0) {
+    return baseDomain + cleanUrl;
+  } else {
+    return baseDomain + '/' + cleanUrl;
+  }
 }
 
 /**
