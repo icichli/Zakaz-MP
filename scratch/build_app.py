@@ -10,8 +10,9 @@ js_content = f"""/**
  * Multi-Supplier ordering system for beer stores and bars.
  * Supports:
  *  - 🍺 Снеки и закуски (325 items)
- *  - 🧻 Расходники и тара (49 items)
+ *  - 🧻 Расходники и тара (43 items)
  *  - 🎪 Ярмарка (15 items)
+ *  - 🥔 Пивные закуски / Pringles (15 items)
  *  - Automatic dynamic supplier reading from Google Sheets
  *  - Independent carts, export, and WhatsApp summaries per supplier
  */
@@ -57,13 +58,23 @@ const DEFAULT_SUPPLIERS = [
       'Заморозка',
       'Вкусняшки и прочее'
     ]
+  }},
+  {{
+    id: 'pivnye_zakuski',
+    name: 'Пивные закуски',
+    shortName: 'Пивные закуски',
+    icon: '🥔',
+    categories: [
+      'Pringles'
+    ]
   }}
 ];
 
 const KNOWN_SUPPLIER_META = {{
   'snacks': {{ name: 'Снеки и закуски', shortName: 'Снеки', icon: '🍺' }},
   'consumables': {{ name: 'Расходники и тара', shortName: 'Расходники', icon: '🧻' }},
-  'yarmarka': {{ name: 'Ярмарка', shortName: 'Ярмарка', icon: '🎪' }}
+  'yarmarka': {{ name: 'Ярмарка', shortName: 'Ярмарка', icon: '🎪' }},
+  'pivnye_zakuski': {{ name: 'Пивные закуски', shortName: 'Пивные закуски', icon: '🥔' }}
 }};
 
 // Category metadata: labels and icons
@@ -83,6 +94,7 @@ const CATEGORY_META = {{
   'Контейнеры': {{ label: 'Контейнеры', icon: '🥡' }},
   'Заморозка': {{ label: 'Заморозка', icon: '❄️' }},
   'Вкусняшки и прочее': {{ label: 'Вкусняшки', icon: '🍬' }},
+  'Pringles': {{ label: 'Pringles', icon: '🥔' }},
   'manual': {{ label: 'Свободный ввод', icon: '✏️' }}
 }};
 
@@ -96,11 +108,11 @@ let searchQuery = '';
 let order = {{}}; // {{ itemId: quantity }}
 let manualItems = []; // [ {{ id, name, category, quantity, unit, step, supplier }} ]
 
-const CATALOG_CACHE_KEY = 'snack_catalog_cache_v6';
-const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v6';
-const ORDER_STORAGE_KEY = 'snack_order_v6';
-const MANUAL_STORAGE_KEY = 'snack_manual_items_v6';
-const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v6';
+const CATALOG_CACHE_KEY = 'snack_catalog_cache_v7';
+const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v7';
+const ORDER_STORAGE_KEY = 'snack_order_v7';
+const MANUAL_STORAGE_KEY = 'snack_manual_items_v7';
+const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v7';
 const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
 
 const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
@@ -131,10 +143,10 @@ async function initApp() {{
 // LocalStorage helpers
 function loadSavedState() {{
   try {{
-    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY) || localStorage.getItem('snack_order');
+    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY) || localStorage.getItem('snack_order_v6') || localStorage.getItem('snack_order');
     if (savedOrder) order = JSON.parse(savedOrder);
 
-    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY) || localStorage.getItem('snack_manual_items');
+    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY) || localStorage.getItem('snack_manual_items_v6') || localStorage.getItem('snack_manual_items');
     if (savedManual) manualItems = JSON.parse(savedManual);
 
     const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY);
@@ -182,7 +194,7 @@ async function loadCatalog() {{
 
 // Helper to get supplier metadata by ID
 function getSupplierById(id) {{
-  return suppliers.find(s => s.id === id) || suppliers[0] || {{ id, name: id, shortName: id, icon: '📦' }};
+  return suppliers.find(s => s.id === id) || KNOWN_SUPPLIER_META[id] || suppliers[0] || {{ id, name: id, shortName: id, icon: '📦' }};
 }}
 
 // Parse packaging / multiplicity information from cell value
@@ -233,7 +245,7 @@ function parsePackInfo(name, packStr, cat) {{
     return {{ step: num, unit: 'шт', display: `кратность ${{valStr}} шт` }};
   }}
 
-  // 6. Grams in factory packs (e.g. 60 г, 80 г) -> step 1 шт
+  // 6. Grams in factory packs (e.g. 40 г, 60 г, 80 г, 160 г, 165 г) -> step 1 шт
   if (/\\b[0-9]+\\s*г\\b/i.test(p)) {{
     return {{ step: 1.0, unit: 'шт', display: 'кратность 1 шт' }};
   }}
@@ -244,6 +256,54 @@ function parsePackInfo(name, packStr, cat) {{
     unit = 'уп';
   }}
   return {{ step: 1.0, unit: unit, display: `кратность 1 ${{unit}}` }};
+}}
+
+// Transliterate Russian string to clean latin slug
+function transliterate(text) {{
+  const cyr = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+  const lat = ['a','b','v','g','d','e','yo','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','kh','ts','ch','sh','shch','','y','','e','yu','ya'];
+  let res = '';
+  const s = String(text || '').trim();
+  for (let i = 0; i < s.length; i++) {{
+    const ch = s[i];
+    const low = ch.toLowerCase();
+    const idx = cyr.indexOf(low);
+    if (idx !== -1) {{
+      res += lat[idx];
+    }} else {{
+      res += ch;
+    }}
+  }}
+  return res.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '').toLowerCase() || 'custom';
+}}
+
+// Convert supplier name into clean unique ID
+function slugify(text) {{
+  if (!text) return 'snacks';
+  const t = String(text).trim();
+  const lower = t.toLowerCase();
+
+  // Explicit mappings to our known base IDs
+  if (lower === 'снеки' || lower === 'снеки и закуски' || lower === 'snacks') return 'snacks';
+  if (lower === 'расходники' || lower === 'расходники и тара' || lower === 'consumables') return 'consumables';
+  if (lower === 'ярмарка' || lower === 'yarmarka') return 'yarmarka';
+  if (lower === 'пивные закуски' || lower === 'пивныезакуски' || lower === 'pivnye_zakuski') return 'pivnye_zakuski';
+
+  return transliterate(t);
+}}
+
+function chooseSupplierIcon(name) {{
+  const l = String(name || '').toLowerCase();
+  if (l.includes('pringles') || l.includes('чипс') || l.includes('пивные закуски')) return '🥔';
+  if (l.includes('пив') || l.includes('пиво')) return '🍻';
+  if (l.includes('рыб')) return '🐟';
+  if (l.includes('мяс')) return '🥩';
+  if (l.includes('расход') || l.includes('тара') || l.includes('контейнер')) return '🧻';
+  if (l.includes('ярм')) return '🎪';
+  if (l.includes('напит') || l.includes('лимонад') || l.includes('сок')) return '🥤';
+  if (l.includes('кофе') || l.includes('чай')) return '☕';
+  if (l.includes('слад') || l.includes('конфет') || l.includes('мармелад')) return '🍬';
+  return '📦';
 }}
 
 // Synchronize from Google Sheets directly via XLSX export
@@ -299,14 +359,23 @@ function parseGoogleSheetWorkbook(wb) {{
   const items = [];
   let index = 1;
 
-  // 1. Check for dedicated 'Поставщики' sheet if user created one
+  // Default sheet to supplier mapping
   const sheetToSupplierMap = {{
     'Расходники': 'consumables',
     'Контейнеры': 'consumables',
     'Заморозка': 'yarmarka',
-    'Вкусняшки и прочее': 'yarmarka'
+    'Вкусняшки и прочее': 'yarmarka',
+    'Pringles': 'pivnye_zakuski'
   }};
 
+  const dynamicSupplierLabels = {{
+    'snacks': {{ name: 'Снеки и закуски', shortName: 'Снеки', icon: '🍺' }},
+    'consumables': {{ name: 'Расходники и тара', shortName: 'Расходники', icon: '🧻' }},
+    'yarmarka': {{ name: 'Ярмарка', shortName: 'Ярмарка', icon: '🎪' }},
+    'pivnye_zakuski': {{ name: 'Пивные закуски', shortName: 'Пивные закуски', icon: '🥔' }}
+  }};
+
+  // 1. Check for dedicated 'Поставщики' sheet if user created one
   const supSheetName = wb.SheetNames.find(s => s.toLowerCase().includes('поставщик') || s.toLowerCase().includes('supplier'));
   if (supSheetName) {{
     const supWs = wb.Sheets[supSheetName];
@@ -314,7 +383,15 @@ function parseGoogleSheetWorkbook(wb) {{
     if (supRows && supRows.length > 1) {{
       supRows.slice(1).forEach(r => {{
         if (r && r[0] && r[1]) {{
-          sheetToSupplierMap[String(r[0]).trim()] = String(r[1]).trim();
+          const tab = String(r[0]).trim();
+          const sup = String(r[1]).trim();
+          sheetToSupplierMap[tab] = sup;
+          const supId = slugify(sup);
+          dynamicSupplierLabels[supId] = {{
+            name: sup,
+            shortName: sup,
+            icon: chooseSupplierIcon(sup)
+          }};
         }}
       }});
     }}
@@ -365,11 +442,25 @@ function parseGoogleSheetWorkbook(wb) {{
       // Determine supplier
       let supplierId = 'snacks';
       if (supCol !== -1 && row[supCol] && String(row[supCol]).trim()) {{
-        const supVal = String(row[supCol]).trim();
-        supplierId = slugify(supVal);
+        const rawSupVal = String(row[supCol]).trim();
+        supplierId = slugify(rawSupVal);
+        if (!dynamicSupplierLabels[supplierId]) {{
+          dynamicSupplierLabels[supplierId] = {{
+            name: rawSupVal,
+            shortName: rawSupVal,
+            icon: chooseSupplierIcon(rawSupVal)
+          }};
+        }}
       }} else if (sheetToSupplierMap[sheetName]) {{
-        const supVal = sheetToSupplierMap[sheetName];
-        supplierId = slugify(supVal);
+        const rawSupVal = sheetToSupplierMap[sheetName];
+        supplierId = slugify(rawSupVal);
+        if (!dynamicSupplierLabels[supplierId]) {{
+          dynamicSupplierLabels[supplierId] = {{
+            name: rawSupVal,
+            shortName: rawSupVal,
+            icon: chooseSupplierIcon(rawSupVal)
+          }};
+        }}
       }}
 
       items.push({{
@@ -389,47 +480,22 @@ function parseGoogleSheetWorkbook(wb) {{
   const dynamicSuppliers = [];
 
   discoveredSupplierIds.forEach(id => {{
-    const known = KNOWN_SUPPLIER_META[id];
+    const meta = dynamicSupplierLabels[id] || KNOWN_SUPPLIER_META[id] || {{ name: id, shortName: id, icon: '📦' }};
     const categoriesForSup = [...new Set(items.filter(i => i.supplier === id).map(i => i.category))];
 
-    if (known) {{
-      dynamicSuppliers.push({{
-        id,
-        name: known.name,
-        shortName: known.shortName,
-        icon: known.icon,
-        categories: categoriesForSup
-      }});
-    }} else {{
-      dynamicSuppliers.push({{
-        id,
-        name: unslugify(id),
-        shortName: unslugify(id),
-        icon: '📦',
-        categories: categoriesForSup
-      }});
-    }}
+    dynamicSuppliers.push({{
+      id,
+      name: meta.name,
+      shortName: meta.shortName,
+      icon: meta.icon,
+      categories: categoriesForSup
+    }});
   }});
 
   return {{
     items,
     suppliers: dynamicSuppliers.length > 0 ? dynamicSuppliers : DEFAULT_SUPPLIERS
   }};
-}}
-
-function slugify(text) {{
-  const lower = String(text).toLowerCase().trim();
-  if (lower.includes('снек') || lower.includes('закус')) return 'snacks';
-  if (lower.includes('расход') || lower.includes('контейнер') || lower.includes('тара')) return 'consumables';
-  if (lower.includes('ярм')) return 'yarmarka';
-  return lower.replace(/[^a-zа-я0-9]+/gi, '_').replace(/^_+|_+$/g, '');
-}}
-
-function unslugify(slug) {{
-  if (slug === 'snacks') return 'Снеки';
-  if (slug === 'consumables') return 'Расходники';
-  if (slug === 'yarmarka') return 'Ярмарка';
-  return slug.charAt(0).toUpperCase() + slug.slice(1);
 }}
 
 // Top-Level Supplier Navigation Bar
@@ -1306,7 +1372,7 @@ function confirmResetCurrentSupplier() {{
 function confirmResetOrder() {{
   openConfirmDialog(
     'Очистить все заказы?',
-    'Будут сброшены заказы ВСЕХ поставщиков (Снеки, Расходники, Ярмарка) и все добавленные вручную позиции.',
+    'Будут сброшены заказы ВСЕХ поставщиков (Снеки, Расходники, Ярмарка, Пивные закуски) и все добавленные вручную позиции.',
     () => {{
       order = {{}};
       manualItems = [];

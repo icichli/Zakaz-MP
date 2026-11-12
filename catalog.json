@@ -3,3501 +3,3582 @@
     "id": "item_001",
     "name": "ВЕДРО ЮБИЛЕЙНЫЕ МАНГАЛ КЕБАБ 0,9кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_002",
     "name": "ВЕДРО ЮБИЛЕЙНЫЕ САЛО С ГОРЧИЦЕЙ 0,9кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_003",
     "name": "ВЕДРО ЮБИЛЕЙНЫЕ ТОМ ЯМ 0,9кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_004",
     "name": "ВЕДРО ЮБИЛЕЙНЫЕ ЧЁРНЫЙ ТРЮФЕЛЬ 0,9кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_005",
     "name": "ВЕДРО ЮБИЛЕЙНЫЕ ЧЕСНОК 0,9кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_006",
     "name": "Гренки Бро (КАЛЬМАР НА СМОКЕРЕ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_007",
     "name": "Гренки Бро (МЕКСИКАНСКОЕ БУРРИТО) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_008",
     "name": "Гренки Бро (ПИЦЦА 4 СЫРА) 1 кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_009",
     "name": "Гренки Бро (ТАЙСКИЙ ПЕРЕЦ) 1 кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_010",
     "name": "Гренки Бро (ТЕРИЯКИ ЧИКЕН) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_011",
     "name": "Гренки пшеничные Лутовские (БАВАРСКИЕ КОЛБАСКИ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_012",
     "name": "Гренки пшеничные Лутовские (ВЕТЧИНА-СЫР) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_013",
     "name": "Гренки пшеничные Лутовские (ГРИБЫ СМЕТАНА) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_014",
     "name": "Гренки пшеничные Лутовские (КАРАМЕЛИЗОВАННЫЙ ЛУК) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_015",
     "name": "Гренки пшеничные Лутовские (КЕТЧУП) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_016",
     "name": "Гренки пшеничные Лутовские (КОПЧЕНЫЙ ЛОСОСЬ) 1кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_017",
     "name": "Гренки пшеничные Лутовские (КРАБ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_018",
     "name": "Гренки пшеничные Лутовские (КРАСНАЯ ИКРА) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_019",
     "name": "Гренки пшеничные Лутовские (КРЫЛЫШКИ БАРБЕКЮ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_020",
     "name": "Гренки пшеничные Лутовские (КУРИЦА В БРУСНИЧ.СОУСЕ) 1кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_021",
     "name": "Гренки пшеничные Лутовские (МАРИНОВАННЫЕ ОГУРЦЫ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_022",
     "name": "Гренки пшеничные Лутовские (ПИЦЦА) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_023",
     "name": "Гренки пшеничные Лутовские (САЛО-ГОРЧИЦА) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_024",
     "name": "Гренки пшеничные Лутовские (СЕМГА) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_025",
     "name": "Гренки пшеничные Лутовские (СМЕТАНА-ЛУК) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_026",
     "name": "Гренки пшеничные Лутовские (СЫР-ЧЕСНОК) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_027",
     "name": "Гренки пшеничные Лутовские (СЫР) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_028",
     "name": "Гренки пшеничные Лутовские (ТАЙСКИЙ ПЕРЕЦ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_029",
     "name": "Гренки пшеничные Лутовские (ТОМАТ-ЗЕЛЕНЬ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_030",
     "name": "Гренки пшеничные Лутовские (УТКА ПО ПЕКИНСКИ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_031",
     "name": "Гренки пшеничные Лутовские (Фо Бо) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_032",
     "name": "Гренки пшеничные Лутовские (ШАШЛЫК) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_033",
     "name": "Гренки пшеничные Лутовские (ШКВАРКИ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_034",
     "name": "Гренки ржаные Лутовские (БЕКОН) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_035",
     "name": "Гренки ржаные Лутовские (ПАПРИКА С ЧЕСНОКОМ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_036",
     "name": "Гренки ржаные Лутовские (ТЕЛЯТИНА НА ГРИЛЕ) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_037",
     "name": "Гренки ржаные Лутовские (ХОЛОДЕЦ-ХРЕН) 1кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_038",
     "name": "Гренки ржаные Лутовские (ЧЕСНОК) 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_039",
     "name": "Гренки СНАПСЫ \"Аджика\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_040",
     "name": "Гренки СНАПСЫ \"Бекон\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_041",
     "name": "Гренки СНАПСЫ \"Соль\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_042",
     "name": "Гренки СНАПСЫ \"Тайский перец\" 1 кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_043",
     "name": "Гренки СНАПСЫ \"ТОМАТ-БАЗИЛИК\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_044",
     "name": "Гренки СНАПСЫ \"Хрен\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_045",
     "name": "Гренки СНАПСЫ \"Чеснок\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_046",
     "name": "Гренки СНАПСЫ пшенич.\"КРАСНАЯ ИКРА\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_047",
     "name": "Гренки СНАПСЫ пшенич.\"МАРИНОВ.ОГУРЦЫ\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_048",
     "name": "Гренки СНАПСЫ пшенич.\"РАКИ-УКРОП\" 1 кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_049",
     "name": "Сухари \"АДЖИКА\" 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_050",
     "name": "Сухари \"БУЖЕНИНА\" 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_051",
     "name": "Сухари \"СЫР\" 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_052",
     "name": "Сухари \"ХОЛОДЕЦ-ХРЕН\" 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_053",
     "name": "Сухари \"ЧЕСНОК\" 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_054",
     "name": "Сухари \"ШАШЛЫК\" 1кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_055",
     "name": "Сухари Демидовские (БАРАНИНА С ЧЕСНОКОМ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_056",
     "name": "Сухари Демидовские (БЕКОН) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_057",
     "name": "Сухари Демидовские (КОРОЛЕВСКИЙ КРАБ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_058",
     "name": "Сухари Демидовские (ЛУК-ШАЛОТ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_059",
     "name": "Сухари Демидовские (МЕКСИКАНСКИЕ ПРЯНОСТИ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_060",
     "name": "Сухари Демидовские (ОСТРАЯ АДЖИКА) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_061",
     "name": "Сухари Демидовские (РЁБРЫШКИ ГРИЛЬ) 1кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_062",
     "name": "Сухари Демидовские (ТАЙСКИЙ ПЕРЕЦ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_063",
     "name": "Сухари Демидовские (ХАЛАПЕНЬО С ОГУРЧИКОМ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_064",
     "name": "Сухари Демидовские (ХОЛОДЕЦ С ХРЕНОМ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_065",
     "name": "Сухари Демидовские (ЧЕСНОК С КОПЧЕНЫМ ШПИКОМ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_066",
     "name": "Сухари Житницкие багет (ВАРЕНЫЕ РАКИ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_067",
     "name": "Сухари Житницкие багет (ГРИБЫ СО СМЕТАНОЙ) 1 кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_068",
     "name": "Сухари Житницкие багет (КОПЧЕНЫЙ СЫР) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_069",
     "name": "Сухари Житницкие багет (КРАСНАЯ ИКРА) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_070",
     "name": "Сухари Житницкие багет (ОХОТНИЧЬИ КОЛБАСКИ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_071",
     "name": "Сухари Житницкие багет (С ЧЕСНОЧКОМ) 1 кг, шт",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_072",
     "name": "Сухари Житницкие багет (СМЕТАНА-ЗЕЛЕНЬ) 1 кг",
     "category": "Гренки Весовые",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_073",
     "name": "Копчёные БОЧОНКИ 0,5 кг",
     "category": "Сырные Сухие",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_074",
     "name": "Шарики БЕКОН 0.5кг (продукт белково-жировой)",
     "category": "Сырные Сухие",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_075",
     "name": "Шарики МИКС 0.5кг (продукт белково-жировой), шт",
     "category": "Сырные Сухие",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_076",
     "name": "Шарики ОРИГИНАЛЬНЫЕ 0.5кг (продукт белково-жировой), шт",
     "category": "Сырные Сухие",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_077",
     "name": "Шарики ПАРМЕЗАН 0.5кг CHEE CORN (продукт белково-жировой), шт",
     "category": "Сырные Сухие",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_078",
     "name": "Шарики ТАЙСКИЙ ПЕРЕЦ 0.5кг (продукт белково-жировой)",
     "category": "Сырные Сухие",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_079",
     "name": "Гренки Сурские АДЖИКА 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_080",
     "name": "Гренки Сурские БАВАРСКИЕ 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_081",
     "name": "Гренки Сурские БУЖЕНИНА 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_082",
     "name": "Гренки Сурские КРАБ 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_083",
     "name": "Гренки Сурские КРАСНАЯ ИКРА 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_084",
     "name": "Гренки Сурские КРЫЛЫШКИ БАФФАЛО 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_085",
     "name": "Гренки Сурские СМЕТАНА-ЛУК 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_086",
     "name": "Гренки Сурские СЫР 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_087",
     "name": "Гренки Сурские ТАЙСКИЙ ПЕРЧИК 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_088",
     "name": "Гренки Сурские ТЕЛЯТИНА 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_089",
     "name": "Гренки Сурские ТОМАТ 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_090",
     "name": "Гренки Сурские ХОЛОДЕЦ-ГОРЧИЦА 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_091",
     "name": "Гренки Сурские ЧЕСНОК 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_092",
     "name": "Гренки Сурские ЧЕСНОК-ЗЕЛЕНЬ 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_093",
     "name": "Гренки Сурские ШАШЛЫК 100гр., шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 3.0,
     "unit": "шт",
-    "display_step": "кратность 3 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 3 шт"
   },
   {
     "id": "item_094",
     "name": "Картошка \"Bruto\" РОЗОВЫЙ ПЕРЕЦ 120 гр*17шт.",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_095",
     "name": "Картошка \"Bruto\" С ПЕРЦЕМ 120 гр*17шт.",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_096",
     "name": "Картошка \"Bruto\" С ПЕРЦЕМ 60 гр*12шт.",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_097",
     "name": "Картошка \"Bruto\" С СОЛЬЮ 60 гр*12шт. , кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_098",
     "name": "КОРНЕЛЛИ кукурузные сухари ВАССАБИ 80гр*12, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_099",
     "name": "КОРНЕЛЛИ кукурузные сухари КОПЧЕНАЯ КОЛБАСКА 80гр*12, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_100",
     "name": "КОРНЕЛЛИ кукурузные сухари РАК УКРОП 80гр*12, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_101",
     "name": "КОРНЕЛЛИ кукурузные сухари СЫР ПРОВАНСКИЕ 80гр*12, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_102",
     "name": "КОРНЕЛЛИ кукурузные сухари ТАЙСКИЙ ПЕРЕЦ 80гр*12, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_103",
     "name": "КОРНЕЛЛИ кукурузные сухари УТКА БРУСНИКА 80гр*12, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_104",
     "name": "Морская капуста КИМЧИ 5гр, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 4.0,
     "unit": "шт",
-    "display_step": "кратность 4 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 4 шт"
   },
   {
     "id": "item_105",
     "name": "Морская капуста КРАБ 5гр, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 4.0,
     "unit": "шт",
-    "display_step": "кратность 4 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 4 шт"
   },
   {
     "id": "item_106",
     "name": "Морская капуста ТОКИ ПОКИ 5гр, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 4.0,
     "unit": "шт",
-    "display_step": "кратность 4 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 4 шт"
   },
   {
     "id": "item_107",
     "name": "Семечки от\"МАРТИНА\"100г*50 отборные (КРАСНАЯ КОРОБКА) 100гр, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_108",
     "name": "Семечки от\"МАРТИНА\"100г*50 с солью (СИНЯЯ КОРОБКА) 100гр, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_109",
     "name": "Семечки от\"МАРТИНА\"150гр*32шт БЕКОН ПОЛОСАТЫЕ 150гр, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_110",
     "name": "Семечки от\"МАРТИНА\"150гр*32шт ПОЛОСАТЫЕ 150гр, шт",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_111",
     "name": "Чипсы Бингре \"БЕКОН\" 40гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_112",
     "name": "Чипсы Бингре \"ВАСАБИ\" 40гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_113",
     "name": "Чипсы Бингре \"ЗЯКИ-ЗЯКИ\" 50гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_114",
     "name": "Чипсы Бингре \"КАЛЬМАР\" 50гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_115",
     "name": "Чипсы Бингре \"КРАБ ЧИПСЫ\" 50гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_116",
     "name": "Чипсы Бингре \"КРЕВЕТКА\" 50гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_117",
     "name": "Чипсы Бингре \"ЛУКОВЫЕ КОЛЬЦА\" 50гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_118",
     "name": "Чипсы Бингре \"МОРСКАЯ КАПУСТА\" 40гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_119",
     "name": "Чипсы Бингре \"ОСТРЫЙ ДЖАМПОНГ\" 40гр*24, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_120",
     "name": "Чипсы Bruto \"БЕКОН\" 120 гр. 1*18 шт., кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_121",
     "name": "Чипсы Bruto \"СМЕТАНА ЗЕЛЕНЬ\" 120 гр. 1*18 шт., кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_122",
     "name": "Чипсы Bruto (рифлёные) \"РЁБРЫШКИ БАРБЕКЮ\" 120 гр. 1*18 шт., кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_123",
     "name": "Арахис в глазури Сильвер ЧЕТЫРЕ СЫРА 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_124",
     "name": "Арахис в хруст.корочке ФомаЛукич БАРБЕКЮ 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_125",
     "name": "Арахис в хруст.корочке ФомаЛукич БЕКОН 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_126",
     "name": "Арахис в хруст.корочке ФомаЛукич ВАСАБИ 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_127",
     "name": "Арахис в хруст.корочке ФомаЛукич КРЕВЕТКА 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_128",
     "name": "Арахис в хруст.корочке ФомаЛукич МЕКСИКАНСКИЙ СОУС 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_129",
     "name": "Арахис в хруст.корочке ФомаЛукич МИКС 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_130",
     "name": "Арахис в хруст.корочке ФомаЛукич СМЕТАНА-ЛУК 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_131",
     "name": "Арахис в хруст.корочке ФомаЛукич СЫР 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_132",
     "name": "Арахис в хруст.корочке ФомаЛукич ШАШЛЫК 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_133",
     "name": "Арахис Ж/С 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_134",
     "name": "Арахис ж/с ХРУСТЯЩИЙ КОПЧЕНЫЙ 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_135",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ ВАСАБИ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_136",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ КИМЧИ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_137",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ КОПЧЕНЫЙ МИКС 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_138",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ ЛОБСТЕР 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_139",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ СЫР 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_140",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ ТОМ ЯМ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_141",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ ХОЛОДЕЦ ХРЕН 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_142",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ ЧЕСНОК 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_143",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СО ВКУСОМ ШАШЛЫК 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_144",
     "name": "Арахис ж/с ХРУСТЯЩИЙ СОЛЬ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_145",
     "name": "Арахис жс АДЖИКА ОСТРАЯ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_146",
     "name": "Арахис жс БАРБЕКЮ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_147",
     "name": "Арахис жс БЕКОН 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_148",
     "name": "Арахис жс ВАСАБИ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_149",
     "name": "Арахис жс ГРИБЫ-СМЕТАНА 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_150",
     "name": "Арахис жс КРАСНАЯ ИКРА 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_151",
     "name": "Арахис жс КРЕВЕТКА 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_152",
     "name": "Арахис жс ЛОСОСЬ 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_153",
     "name": "Арахис жс МАЛОСОЛЬНЫЕ ОГУРЧИКИ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_154",
     "name": "Арахис жс МЕКСИКАНСКИЙ СОУС 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_155",
     "name": "Арахис жс РАК С УКРОПОМ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_156",
     "name": "Арахис жс САЛЯМИ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_157",
     "name": "Арахис жс СЕМГА-СЫР 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_158",
     "name": "Арахис жс СМЕТАНА-ЗЕЛЕНЬ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_159",
     "name": "Арахис жс СЫР 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_160",
     "name": "Арахис жс СЫР-ЧЕСНОК 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_161",
     "name": "Арахис жс ТАЙСКИЙ ПЕРЕЦ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_162",
     "name": "Арахис жс ХОЛОДЕЦ ХРЕН 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_163",
     "name": "Арахис жс ШАШЛЫК 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_164",
     "name": "Арахис Averton в глазури АЗИАТСКИЙ МИКС 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_165",
     "name": "Арахис Averton в глазури БАРБЕКЮ 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_166",
     "name": "Арахис Averton в глазури ВАСАБИ 1кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_167",
     "name": "Арахис Averton в глазури КИМЧИ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_168",
     "name": "Арахис Averton в глазури КРЕВЕТКА 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_169",
     "name": "Арахис Averton в глазури МИКС 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_170",
     "name": "Арахис Averton в глазури МОРСКОЙ КОКТЕЙЛЬ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_171",
     "name": "Арахис Averton в глазури ТАЙСКИЙ ПЕРЕЦ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_172",
     "name": "Арахис Averton в глазури ТОМ ЯМ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_173",
     "name": "Кешью жс 1 кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_174",
     "name": "Кешью с розмарином 1 кг",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_175",
     "name": "КУКУРУЗА жареная со вкусом БАРБЕКЮ 0.5 кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_176",
     "name": "КУКУРУЗА жареная со вкусом СОЛЬ 0.5 кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_177",
     "name": "КУКУРУЗА жареная со вкусом СЫР 0.5 кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_178",
     "name": "Миндаль жс 1 кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_179",
     "name": "Миндаль КОПЧЕНЫЙ 1 кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_180",
     "name": "Ореховая смесь (кешью, миндаль, арахис) 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_181",
     "name": "Фисташка КОПЧЕНАЯ 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_182",
     "name": "Фисташки (КЕРМАН) 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_183",
     "name": "Фисташки со вкусом \"ВАСАБИ\" 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_184",
     "name": "Фисташки со вкусом \"ТАБАСКО\" 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_185",
     "name": "Фисташки со вкусом \"ЧИЛИ\" 1кг, шт",
     "category": "Орехи",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_186",
     "name": "Чипсы из лаваша \"АДЖИКА\" 1 кг",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_187",
     "name": "Чипсы из лаваша \"СМЕТАНА-ЛУК\" 1 кг",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_188",
     "name": "Чипсы из лаваша \"ХОЛОДЕЦ ХРЕН\" 1 кг",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_189",
     "name": "Чипсы из лаваша \"ШАШЛЫК\" 1 кг",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_190",
     "name": "Чипсы кукурузные \"Начос\" \"БАРБЕКЮ\" 0,5 кг, шт",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 набор"
   },
   {
     "id": "item_191",
     "name": "Чипсы кукурузные \"Начос\" \"БЕКОН\" 0,5 кг, шт",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 набор"
   },
   {
     "id": "item_192",
     "name": "Чипсы кукурузные \"Начос\" \"ИТАЛЬЯНСКАЯ ПИЦЦА\" 0,5 кг, шт",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 набор"
   },
   {
     "id": "item_193",
     "name": "Чипсы кукурузные \"Начос\" \"ОРИГИНАЛЬНЫЕ\" 0,5 кг, шт",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 набор"
   },
   {
     "id": "item_194",
     "name": "Чипсы кукурузные \"Начос\" \"СМЕТАНА-ЛУК\" 0,5 кг, шт",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 набор"
   },
   {
     "id": "item_195",
     "name": "Чипсы кукурузные \"Начос\" \"СЫР\" 0,5 кг, шт",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 набор"
   },
   {
     "id": "item_196",
     "name": "Чипсы кукурузные \"Начос\" \"ТАЙСКИЙ ПЕРЕЦ\" 0,5 кг, шт",
     "category": "Начос и лавашики",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "набор",
-    "display_step": "кратность 1 набор",
-    "supplier": "snacks"
+    "display_step": "кратность 1 набор"
   },
   {
     "id": "item_197",
     "name": "Соус  \"Сливочно-чесночный\" 80гр.\n Базилио",
     "category": "Соусы",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_198",
     "name": "Соус \"Блю Чиз\" 90 гр., шт",
     "category": "Соусы",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_199",
     "name": "Соус \"Гаукомоле\" 90 гр., шт",
     "category": "Соусы",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_200",
     "name": "Соус \"Острый Сальса\" 90 гр., шт",
     "category": "Соусы",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_201",
     "name": "Соус \"Сырный\" 90гр., шт",
     "category": "Соусы",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_202",
     "name": "Соус \"Трюфельный\" 90 гр., шт",
     "category": "Соусы",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_203",
     "name": "Анчоус 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_204",
     "name": "Вкусовые пяточки Карри 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_205",
     "name": "Вкусовые пяточки Сыр и чили 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_206",
     "name": "Вкусовые пяточки Териаки 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_207",
     "name": "Вкусовые пяточки Томаты с базиликом 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_208",
     "name": "Желтый полосатик 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_209",
     "name": "Икра ВОБЛЫ 0.5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_210",
     "name": "Икра КОЛБАСКИ 500гр, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_211",
     "name": "Икра МИНТАЯ 500гр, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_212",
     "name": "Икра СЕЛЬДИ 500гр, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_213",
     "name": "Икра СУДАКА 500гр",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_214",
     "name": "Икра ФОРЕЛИ 0.5кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_215",
     "name": "Императорский полосатик 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_216",
     "name": "КАЛЬМАР КУСОЧКИ сол.суш (ЭКСТРА) 1КГ",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_217",
     "name": "Кальмар ПОЛУКОЛЬЦА 1 кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_218",
     "name": "Кальмар полукольца СО ВКУСОМ МЯСА КРАБА 1кг , шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_219",
     "name": "Кальмар рваный ПО-ШАНХАЙСКИ 1 кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_220",
     "name": "КАЛЬМАР соломка (ЯПОНСКИЙ ДЕЛИКАТЕС) 1кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_221",
     "name": "Кальмар СТРУЖКА 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_222",
     "name": "Кальмар СТРУЖКА ПО-ШАНХАЙСКИ 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_223",
     "name": "Кальмар стружка со вкусом краба 1кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_224",
     "name": "Кальмар ХОТ-ТЕЙСТ 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_225",
     "name": "Камбала Филе 0,5 кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_226",
     "name": "Камбалка деликатесная 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_227",
     "name": "Камбалка СОЛОМКА с/с 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_228",
     "name": "Креветка (Солено-сушеная ) 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_229",
     "name": "Креветка азиатская ХОТ СПЕЙСИ 0.5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_230",
     "name": "ЛАКЕДРА сол.суш 1кг , шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_231",
     "name": "МИНТАЙ стружка с перцем 1кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_232",
     "name": "Морской ЛИЗУН (АСТРАХАНКИНА) 1кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_233",
     "name": "Мясо КРАБА (Астраханкина) 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_234",
     "name": "Мясо КРАБА Экстра (РОНГ-ЧЕНГ) 1КГ",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_235",
     "name": "Палочки ГОРБУШИ (Солено-сушеная) 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_236",
     "name": "ПАЛОЧКИ КЕТЫ натур. 1 кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_237",
     "name": "Палочки КИЖУЧ 1 кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_238",
     "name": "Палочки СОМА 0.5 кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_239",
     "name": "Палочки ФОРЕЛИ 500гр, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_240",
     "name": "Палочки ЩУКИ 0.5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_241",
     "name": "Паутинка ВОБЛЫ 0.5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_242",
     "name": "Паутинка ТУНЦА с перцем 1 кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_243",
     "name": "Паутинка ФОРЕЛИ 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_244",
     "name": "ПЯТОЧКИ КАЛЬМАРА кусочки сушеные 1 кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_245",
     "name": "Слайсы из филе КИЖУЧ 0,5кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_246",
     "name": "Слайсы Карпа 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_247",
     "name": "Слайсы Кеты 0,5кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_248",
     "name": "Соломка Минтая (Лизун) 1кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_249",
     "name": "Соломка Таранка с перцем 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_250",
     "name": "Тунец с перцем (Астраханкина) 1 кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_251",
     "name": "Угорь солено-сушеный 1кг , шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_252",
     "name": "ФИЛЕ ТРЕСКИ с перцем/Рваный минтай с перцем 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_253",
     "name": "ФИЛЕ ТРЕСКИ/Рваный Минтай 1кг, шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_254",
     "name": "Чипсы \"ИКРЯНЫЕ\" солено-сушеные из морепродуктов 0,5кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_255",
     "name": "Чипсы СЁМГИ 1кг",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_256",
     "name": "Щечки СУДАКА вяленые 500гр , шт",
     "category": "Рыбные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_257",
     "name": "ДОНДУКОВСКИЙ БЕЛЫЕ ПРЯДИ 1 кг (продукт белково-жировой)",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_258",
     "name": "ДОНДУКОВСКИЙ ОХОТНИЧИЙ 1 кг (продукт белково-жировой)",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_259",
     "name": "ДОНДУКОВСКИЙ ПРЯДИ КОПЧ.1 кг (продукт белково-жировой)",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_260",
     "name": "Копчёный \"БОЧОНОК\" на ОЛЬХЕ 1кг",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_261",
     "name": "САНККИНО Балыковый КОПЧЕНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_262",
     "name": "САНККИНО Балыковый МОЛОЧНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_263",
     "name": "САНККИНО БОЧОНОК АДЖИКА 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_264",
     "name": "САНККИНО БОЧОНОК копченый 0,5 кг",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_265",
     "name": "САНККИНО БОЧОНОК КРАСНАЯ ИКРА 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_266",
     "name": "САНККИНО БОЧОНОК ПАПРИКА 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_267",
     "name": "САНККИНО БОЧОНОК УКРОП ЧЕСНОК 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_268",
     "name": "САНККИНО Коса копченый , кг",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_269",
     "name": "САНККИНО Коса МОЛОЧНАЯ, кг",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "кг",
-    "display_step": "кратность 1 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 1 кг"
   },
   {
     "id": "item_270",
     "name": "САНККИНО Спагетти КОПЧЕНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_271",
     "name": "САНККИНО Спагетти МОЛОЧНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_272",
     "name": "САНККИНО Спагетти ПАПРИКА 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_273",
     "name": "САНККИНО Спагетти УКРОП ЧЕСНОК 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_274",
     "name": "Сыр ЖАРЕНЫЙ Воздушный КРАСНАЯ ИКРА 0.5кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_275",
     "name": "Сыр жареный ХВОРОСТ 0.5кг (Вкусняшка)",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_276",
     "name": "ФЕРМЕРСКИЙ Балыковый КОПЧЕНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_277",
     "name": "ФЕРМЕРСКИЙ Балыковый МОЛОЧНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_278",
     "name": "ФЕРМЕРСКИЙ БОЧОНОК АДЖИКА 0,5 кг",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_279",
     "name": "ФЕРМЕРСКИЙ БОЧОНОК ПАПРИКА 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_280",
     "name": "ФЕРМЕРСКИЙ БОЧОНОК УКРОП ЧЕСНОК 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_281",
     "name": "ФЕРМЕРСКИЙ Коса КОПЧЕНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_282",
     "name": "ФЕРМЕРСКИЙ Коса МОЛОЧНАЯ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_283",
     "name": "ФЕРМЕРСКИЙ Спагетти БЕКОН 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_284",
     "name": "ФЕРМЕРСКИЙ Спагетти КОПЧЕНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_285",
     "name": "ФЕРМЕРСКИЙ Спагетти КРАСНАЯ ИКРА 0,5 кг",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_286",
     "name": "ФЕРМЕРСКИЙ Спагетти МОЛОЧНЫЙ 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_287",
     "name": "ФЕРМЕРСКИЙ Спагетти ПАПРИКА 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_288",
     "name": "ФЕРМЕРСКИЙ Спагетти УКРОП ЧЕСНОК 0,5 кг, шт",
     "category": "Сыры",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_289",
     "name": "Кнуты АДЖИКА 0,5 кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_290",
     "name": "Кнуты БРУСНИЧНЫЕ 0,5 кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_291",
     "name": "Кнуты КЛАССИЧЕСКИЕ 0,5 кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_292",
     "name": "Колбаски с/к с БЕКОНОМ 0,5 кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_293",
     "name": "Колбаски с/к с ПЕРЦЕМ ЧИЛИ 0,5 кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_294",
     "name": "Колбаски с/к с СЫРОМ 0,5 кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_295",
     "name": "МЯСНЫЕ чипсы \"УТКА ПО ПЕКИНСКИ\" Орёл 0,5кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_296",
     "name": "МЯСНЫЕ чипсы ГОВЯДИНА Орёл 0.5 кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_297",
     "name": "МЯСНЫЕ чипсы ГУСЬ ПО БАВАРСКИ Орёл 0,5кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_298",
     "name": "МЯСНЫЕ чипсы ИНДЕЙКА Орёл 0,5кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_299",
     "name": "МЯСНЫЕ чипсы КУРИЦА Орёл 0,5кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_300",
     "name": "МЯСНЫЕ чипсы СВИНИНА (ЧИЛИ) Орёл 0,5кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_301",
     "name": "МЯСНЫЕ чипсы СВИНИНА Орёл 0,5кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_302",
     "name": "МЯСНЫЕ чипсы ЧЕРНЫЙ КАБАН Орёл 0,5кг",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_303",
     "name": "Чипсы мясные ИНДЕЙКА 500гр (Гриль)",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_304",
     "name": "Чипсы мясные КУРИЦА 500гр (Халапеньо)",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_305",
     "name": "Чипсы мясные КУРИЦА 500гр (ЧЕСНОК)",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_306",
     "name": "Чипсы мясные СВИНИНА 500гр (Гриль)",
     "category": "Мясные",
+    "supplier": "snacks",
     "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "snacks"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_307",
     "name": "Мясо Рыцарское баранина 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_308",
     "name": "Мясо Рыцарское говядина 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_309",
     "name": "Мясо Рыцарское заяц 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_310",
     "name": "Мясо Рыцарское индейка 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_311",
     "name": "Мясо Рыцарское кабан 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_312",
     "name": "Мясо Рыцарское конина 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_313",
     "name": "Мясо Рыцарское курица 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_314",
     "name": "Мясо Рыцарское курица ОСТРАЯ 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_315",
     "name": "Мясо Рыцарское оленина 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_316",
     "name": "Мясо Рыцарское утка 50гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_317",
     "name": "Свиные ушки ГОРЧИЦА 90 гр.",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_318",
     "name": "Свиные ушки КЛАССИКА 90 гр.",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_319",
     "name": "Свиные ушки ОСТРЫЕ 90 гр.",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_320",
     "name": "Свиные ушки ПАПРИКА 90 гр.",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_321",
     "name": "Свиные ушки ХОЛОДЕЦ-ХРЕН 90 гр.",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_322",
     "name": "Свиные ушки ЧЕСНОК 90 гр.",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_323",
     "name": "УХО целое КЛАССИКА 180гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_324",
     "name": "УХО целое ПЕРЕЦ 180гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_325",
     "name": "УХО целое ЧЕСНОК 180гр",
     "category": "Мясные ЗАВОД",
+    "supplier": "snacks",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "snacks"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_326",
     "name": "Бумажные полотенца",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_327",
-    "name": "Бумажные полотенца",
+    "name": "Губка для посуды",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_328",
-    "name": "Губка для посуды",
+    "name": "ДИХЛОФОС (Чистый дом)",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_329",
-    "name": "ДИХЛОФОС (Чистый дом)",
+    "name": "Ершик для унитаза",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_330",
-    "name": "Ершик для унитаза",
+    "name": "Жесткая щётка",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_331",
-    "name": "Жесткая щётка",
+    "name": "Кассовая лента",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_332",
-    "name": "Кассовая лента",
+    "name": "Крафт пакеты на бутылку",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "уп",
+    "display_step": "кратность 1 уп"
   },
   {
     "id": "item_333",
-    "name": "Кассовая лента",
+    "name": "крючки с широкой подложкой",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_334",
-    "name": "Крафт пакеты на бутылку",
+    "name": "Лента для весов (уп)",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "уп",
-    "display_step": "кратность 1 уп",
-    "supplier": "consumables"
+    "display_step": "кратность 1 уп"
   },
   {
     "id": "item_335",
-    "name": "крючки с широкой подложкой",
+    "name": "Маркер-краска белый",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_336",
-    "name": "Лента для весов (уп)",
+    "name": "Маркер-краска черный",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "уп",
-    "display_step": "кратность 1 уп",
-    "supplier": "consumables"
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_337",
-    "name": "Лента для весов (уп)",
+    "name": "Металические Ценнико держатели",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "уп",
-    "display_step": "кратность 1 уп",
-    "supplier": "consumables"
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_338",
-    "name": "Маркер-краска белый",
+    "name": "мыло жидкое",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_339",
-    "name": "Маркер-краска черный",
+    "name": "Нож для рыбы",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_340",
-    "name": "Металические Ценнико держатели",
+    "name": "ножницы большие",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_341",
-    "name": "Металические Ценнико держатели",
+    "name": "Освежитель воздуха",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_342",
-    "name": "мыло жидкое",
+    "name": "Пергамент рулон",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "рулон",
+    "display_step": "кратность 1 рулон"
   },
   {
     "id": "item_343",
-    "name": "Нож для рыбы",
+    "name": "Перчатки Латекс, синие",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_344",
-    "name": "ножницы большие",
+    "name": "Перчатки целофан",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_345",
-    "name": "Освежитель воздуха",
+    "name": "Пластиковый ценникодержатель",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_346",
-    "name": "Пергамент рулон",
+    "name": "Полотенца вафельные",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "рулон",
-    "display_step": "кратность 1 рулон",
-    "supplier": "consumables"
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_347",
-    "name": "Перчатки Латекс, синие",
+    "name": "пульвизатор 1-1.5 л",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_348",
-    "name": "Перчатки Латекс, синие",
+    "name": "Ручка синяя",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_349",
-    "name": "Перчатки целофан",
+    "name": "Салфетки влажные",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_350",
-    "name": "Перчатки целофан",
+    "name": "Скотч двусторонний",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_351",
-    "name": "Пластиковый ценникодержатель",
+    "name": "Скотч прозрачный",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_352",
-    "name": "Полотенца вафельные",
+    "name": "Средство для пола, канистра 5 л.",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_353",
-    "name": "пульвизатор 1-1.5 л",
+    "name": "Средство для стекла (Хелп)",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_354",
-    "name": "Ручка синяя",
+    "name": "Средство для туалета",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_355",
-    "name": "Салфетки влажные",
+    "name": "Стаканы 0,5 (премиум)",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "уп",
+    "display_step": "кратность 1 уп"
   },
   {
     "id": "item_356",
-    "name": "Скотч двусторонний",
+    "name": "Стаканы Дегустация",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_357",
-    "name": "Скотч прозрачный",
+    "name": "тряпка для стекол",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_358",
-    "name": "Средство для пола, канистра 5 л.",
+    "name": "Туалетная Бумага",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_359",
-    "name": "Средство для стекла (Хелп)",
+    "name": "Уксус УП.",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "уп",
+    "display_step": "кратность 1 уп"
   },
   {
     "id": "item_360",
-    "name": "Средство для туалета",
+    "name": "Фасовачные пакеты 32/40 синие",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_361",
-    "name": "Стаканы 0,5 (премиум)",
+    "name": "Фейри",
     "category": "Расходники",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "уп",
-    "display_step": "кратность 1 уп",
-    "supplier": "consumables"
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_362",
-    "name": "Стаканы Дегустация",
-    "category": "Расходники",
+    "name": "ИП-30 (начос/большие креветки)",
+    "category": "Контейнеры",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_363",
-    "name": "тряпка для стекол",
-    "category": "Расходники",
+    "name": "КР-7 (лаваши)",
+    "category": "Контейнеры",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_364",
-    "name": "Туалетная Бумага",
-    "category": "Расходники",
+    "name": "РК-19 (фисташки)",
+    "category": "Контейнеры",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_365",
-    "name": "Уксус УП.",
-    "category": "Расходники",
+    "name": "РК-20 (сыр.шар)",
+    "category": "Контейнеры",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "уп",
-    "display_step": "кратность 1 уп",
-    "supplier": "consumables"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_366",
-    "name": "Фасовачные пакеты 32/40 синие",
-    "category": "Расходники",
+    "name": "РКС-350 (мокрые) (ИПР)",
+    "category": "Контейнеры",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "уп",
-    "display_step": "кратность 1 уп",
-    "supplier": "consumables"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_367",
-    "name": "Фейри",
-    "category": "Расходники",
+    "name": "С крышкой (сухие) 350гр",
+    "category": "Контейнеры",
+    "supplier": "consumables",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "consumables"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_368",
-    "name": "ИП-30 (начос/большие креветки)",
+    "name": "С крышкой (сухие) 500гр",
     "category": "Контейнеры",
+    "supplier": "consumables",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "consumables"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_369",
-    "name": "КР-7 (лаваши)",
-    "category": "Контейнеры",
+    "name": "Ванголе",
+    "category": "Заморозка",
+    "supplier": "yarmarka",
     "step": 1.0,
     "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "consumables"
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_370",
-    "name": "РК-19 (фисташки)",
-    "category": "Контейнеры",
-    "step": 1.0,
-    "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "consumables"
+    "name": "королевсие креветки 31/40",
+    "category": "Заморозка",
+    "supplier": "yarmarka",
+    "step": 5.0,
+    "unit": "кг",
+    "display_step": "кратность 5 кг"
   },
   {
     "id": "item_371",
-    "name": "РК-20 (сыр.шар)",
-    "category": "Контейнеры",
+    "name": "Креветка Отчищеная",
+    "category": "Заморозка",
+    "supplier": "yarmarka",
     "step": 1.0,
-    "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "consumables"
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_372",
-    "name": "РКС-350 (мокрые) (ИПР)",
-    "category": "Контейнеры",
-    "step": 1.0,
-    "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "consumables"
+    "name": "креветки 70/90",
+    "category": "Заморозка",
+    "supplier": "yarmarka",
+    "step": 5.0,
+    "unit": "кг",
+    "display_step": "кратность 5 кг"
   },
   {
     "id": "item_373",
-    "name": "С крышкой (сухие) 350гр",
-    "category": "Контейнеры",
+    "name": "Креветки Тигорвые",
+    "category": "Заморозка",
+    "supplier": "yarmarka",
     "step": 1.0,
-    "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "consumables"
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_374",
-    "name": "С крышкой (сухие) 500гр",
-    "category": "Контейнеры",
-    "step": 1.0,
-    "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "consumables"
+    "name": "лангустины БГ",
+    "category": "Заморозка",
+    "supplier": "yarmarka",
+    "step": 2.0,
+    "unit": "кг",
+    "display_step": "кратность 2 кг"
   },
   {
     "id": "item_375",
-    "name": "Ванголе",
+    "name": "Лангустины СГ",
     "category": "Заморозка",
-    "step": 1.0,
-    "unit": "кор",
-    "display_step": "кратность 1 кор",
-    "supplier": "yarmarka"
+    "supplier": "yarmarka",
+    "step": 2.0,
+    "unit": "кг",
+    "display_step": "кратность 2 кг"
   },
   {
     "id": "item_376",
-    "name": "королевсие креветки 31/40",
+    "name": "МАГАДАН",
     "category": "Заморозка",
+    "supplier": "yarmarka",
     "step": 5.0,
     "unit": "кг",
-    "display_step": "кратность 5 кг",
-    "supplier": "yarmarka"
+    "display_step": "кратность 5 кг"
   },
   {
     "id": "item_377",
-    "name": "Креветка Отчищеная",
+    "name": "Мидии синие",
     "category": "Заморозка",
+    "supplier": "yarmarka",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "yarmarka"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_378",
-    "name": "креветки 70/90",
+    "name": "Морской гребешок",
     "category": "Заморозка",
-    "step": 5.0,
+    "supplier": "yarmarka",
+    "step": 0.5,
     "unit": "кг",
-    "display_step": "кратность 5 кг",
-    "supplier": "yarmarka"
+    "display_step": "кратность 0.5 кг"
   },
   {
     "id": "item_379",
-    "name": "Креветки Тигорвые",
-    "category": "Заморозка",
+    "name": "Жеват.резинка ЛавИз",
+    "category": "Вкусняшки и прочее",
+    "supplier": "yarmarka",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "yarmarka"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_380",
-    "name": "лангустины БГ",
-    "category": "Заморозка",
-    "step": 2.0,
-    "unit": "кг",
-    "display_step": "кратность 2 кг",
-    "supplier": "yarmarka"
+    "name": "Карты игральные классика (уп)",
+    "category": "Вкусняшки и прочее",
+    "supplier": "yarmarka",
+    "step": 1.0,
+    "unit": "уп",
+    "display_step": "кратность 1 уп"
   },
   {
     "id": "item_381",
-    "name": "Лангустины СГ",
-    "category": "Заморозка",
-    "step": 2.0,
-    "unit": "кг",
-    "display_step": "кратность 2 кг",
-    "supplier": "yarmarka"
+    "name": "Мармеладки клубничка",
+    "category": "Вкусняшки и прочее",
+    "supplier": "yarmarka",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_382",
-    "name": "МАГАДАН",
-    "category": "Заморозка",
-    "step": 5.0,
-    "unit": "кг",
-    "display_step": "кратность 5 кг",
-    "supplier": "yarmarka"
+    "name": "Мармеладки хот-дог",
+    "category": "Вкусняшки и прочее",
+    "supplier": "yarmarka",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_383",
-    "name": "Мидии синие",
-    "category": "Заморозка",
+    "name": "Чупа чупсы",
+    "category": "Вкусняшки и прочее",
+    "supplier": "yarmarka",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "yarmarka"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_384",
-    "name": "Морской гребешок",
-    "category": "Заморозка",
-    "step": 0.5,
-    "unit": "кг",
-    "display_step": "кратность 0.5 кг",
-    "supplier": "yarmarka"
+    "name": "МИНИ Принглс Горячий и Острый (Hot & Spicy), 40 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_385",
-    "name": "Жеват.резинка ЛавИз",
-    "category": "Вкусняшки и прочее",
+    "name": "МИНИ Принглс оригинальный, 40 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "yarmarka"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_386",
-    "name": "Карты игральные классика (уп)",
-    "category": "Вкусняшки и прочее",
+    "name": "МИНИ Принглс ПАПРИКА, 40 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
     "step": 1.0,
-    "unit": "уп",
-    "display_step": "кратность 1 уп",
-    "supplier": "yarmarka"
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_387",
-    "name": "Мармеладки клубничка",
-    "category": "Вкусняшки и прочее",
+    "name": "МИНИ Принглс Техасский соус BBQ, 40 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "yarmarka"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_388",
-    "name": "Мармеладки хот-дог",
-    "category": "Вкусняшки и прочее",
+    "name": "Принглс БЕКОН, в упаковке 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "yarmarka"
+    "display_step": "кратность 1 шт"
   },
   {
     "id": "item_389",
-    "name": "Чупа чупсы",
-    "category": "Вкусняшки и прочее",
+    "name": "Принглс Оригинальный, 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
     "step": 1.0,
     "unit": "шт",
-    "display_step": "кратность 1 шт",
-    "supplier": "yarmarka"
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_390",
+    "name": "Принглс Паприка, 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_391",
+    "name": "Принглс Пицца, 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_392",
+    "name": "Принглс с ароматом ЧИЛИ И ЛАЙМА (CHILLI & LIME), Острая серия HOT, 160 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_393",
+    "name": "Принглс Сметана и лук, 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_394",
+    "name": "Принглс со вкусом Канадского Сладко - Копченого Барбекю (Canadian SWEET & SMOKY BBQ), 160 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_395",
+    "name": "Принглс СОЛЬ И УКСУС, в упаковке 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_396",
+    "name": "Принглс Сыр и лук, 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_397",
+    "name": "Принглс Сыр, в упаковке 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "item_398",
+    "name": "Принглс Таинственный вкус (Mystery Flavor), в упаковке 165 гр.",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
   }
 ]
