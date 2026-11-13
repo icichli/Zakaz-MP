@@ -9,7 +9,7 @@
   <meta name="description" content="Удобная система формирования заказа снеков для пивных магазинов">
   <title>Заказ Снеков</title>
   
-  <link rel="stylesheet" href="css/styles.css?v=2.2.0">
+  <link rel="stylesheet" href="css/styles.css?v=2.2.1">
   <link rel="manifest" href="manifest.json?v=2.2.0">
 </head>
 <body>
@@ -201,12 +201,21 @@
     </div>
   </div>
 
+  <!-- 280px Image Preview Modal -->
+  <div id="imagePreviewModal" class="image-preview-modal" onclick="closeImagePreviewModal()">
+    <div class="image-preview-box" onclick="event.stopPropagation()">
+      <img id="imagePreviewImg" class="image-preview-img" src="" alt="Превью Pringles" referrerpolicy="no-referrer" referrerPolicy="no-referrer" />
+      <div id="imagePreviewTitle" class="image-preview-title"></div>
+      <button class="image-preview-close" onclick="closeImagePreviewModal()" title="Закрыть">✕</button>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toastNotification" class="toast">Готово</div>
 
   <!-- Vendor Scripts & Application -->
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=2.2.0"></script>
+  <script src="js/app.js?v=2.2.1"></script>
 </body>
 </html>
 

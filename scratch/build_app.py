@@ -108,11 +108,11 @@ let searchQuery = '';
 let order = {{}}; // {{ itemId: quantity }}
 let manualItems = []; // [ {{ id, name, category, quantity, unit, step, supplier }} ]
 
-const CATALOG_CACHE_KEY = 'snack_catalog_cache_v7';
-const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v7';
-const ORDER_STORAGE_KEY = 'snack_order_v7';
-const MANUAL_STORAGE_KEY = 'snack_manual_items_v7';
-const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v7';
+const CATALOG_CACHE_KEY = 'snack_catalog_cache_v8';
+const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v8';
+const ORDER_STORAGE_KEY = 'snack_order_v8';
+const MANUAL_STORAGE_KEY = 'snack_manual_items_v8';
+const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v8';
 const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
 
 const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
@@ -138,18 +138,23 @@ async function initApp() {{
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
+
+  // Background auto-sync on startup to load fresh photos directly from Google Sheets
+  syncFromGoogleSheets(false).catch(err => {{
+    console.warn('Initial Google Sheets sync notice:', err);
+  }});
 }}
 
 // LocalStorage helpers
 function loadSavedState() {{
   try {{
-    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY) || localStorage.getItem('snack_order_v6') || localStorage.getItem('snack_order');
+    const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY) || localStorage.getItem('snack_order_v7') || localStorage.getItem('snack_order_v6') || localStorage.getItem('snack_order');
     if (savedOrder) order = JSON.parse(savedOrder);
 
-    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY) || localStorage.getItem('snack_manual_items_v6') || localStorage.getItem('snack_manual_items');
+    const savedManual = localStorage.getItem(MANUAL_STORAGE_KEY) || localStorage.getItem('snack_manual_items_v7') || localStorage.getItem('snack_manual_items_v6') || localStorage.getItem('snack_manual_items');
     if (savedManual) manualItems = JSON.parse(savedManual);
 
-    const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY);
+    const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY) || localStorage.getItem('snack_active_supplier_v7');
     if (savedSupplier) activeSupplier = savedSupplier;
   }} catch (e) {{
     console.error('Failed to load localStorage', e);
@@ -168,9 +173,14 @@ function saveState() {{
 
 // Load Catalog from cache or fallback to embedded DEFAULT_CATALOG
 async function loadCatalog() {{
+  // Clear stale v7 cache that didn't have photo fields
+  localStorage.removeItem('snack_catalog_cache_v7');
+  localStorage.removeItem('snack_suppliers_cache_v7');
+
   const cachedCatalog = localStorage.getItem(CATALOG_CACHE_KEY);
   const cachedSuppliers = localStorage.getItem(SUPPLIERS_CACHE_KEY);
 
+  let validCache = false;
   if (cachedCatalog) {{
     try {{
       const parsed = JSON.parse(cachedCatalog);
@@ -179,17 +189,17 @@ async function loadCatalog() {{
         if (cachedSuppliers) {{
           suppliers = JSON.parse(cachedSuppliers);
         }}
-        return;
+        validCache = true;
       }}
     }} catch (e) {{
       console.warn('Cache parse error', e);
     }}
   }}
 
-  catalog = [...DEFAULT_CATALOG];
-  suppliers = [...DEFAULT_SUPPLIERS];
-  localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
-  localStorage.setItem(SUPPLIERS_CACHE_KEY, JSON.stringify(suppliers));
+  if (!validCache) {{
+    catalog = [...DEFAULT_CATALOG];
+    suppliers = [...DEFAULT_SUPPLIERS];
+  }}
 }}
 
 // Helper to get supplier metadata by ID
@@ -354,6 +364,18 @@ async function syncFromGoogleSheets(notify = true) {{
   }}
 }}
 
+// Safely extract URL string from cell value, handling hyperlinks, formulas and objects
+function extractUrlValue(cell) {{
+  if (cell === null || cell === undefined) return '';
+  if (typeof cell === 'string') return cell.trim();
+  if (typeof cell === 'object') {{
+    if (cell.l && cell.l.Target) return String(cell.l.Target).trim();
+    if (cell.v !== undefined && cell.v !== null) return String(cell.v).trim();
+    if (cell.w !== undefined && cell.w !== null) return String(cell.w).trim();
+  }}
+  return String(cell).trim();
+}}
+
 // Dynamic parser for multi-sheet Google Sheets workbook
 function parseGoogleSheetWorkbook(wb) {{
   const items = [];
@@ -379,7 +401,7 @@ function parseGoogleSheetWorkbook(wb) {{
   const supSheetName = wb.SheetNames.find(s => s.toLowerCase().includes('поставщик') || s.toLowerCase().includes('supplier'));
   if (supSheetName) {{
     const supWs = wb.Sheets[supSheetName];
-    const supRows = XLSX.utils.sheet_to_json(supWs, {{ header: 1 }});
+    const supRows = XLSX.utils.sheet_to_json(supWs, {{ header: 1, defval: '' }});
     if (supRows && supRows.length > 1) {{
       supRows.slice(1).forEach(r => {{
         if (r && r[0] && r[1]) {{
@@ -403,7 +425,20 @@ function parseGoogleSheetWorkbook(wb) {{
     const ws = wb.Sheets[sheetName];
     if (!ws) continue;
 
-    const rows = XLSX.utils.sheet_to_json(ws, {{ header: 1 }});
+    // Ensure range covers up to column G (col index 6) so column G is never cropped
+    if (ws['!ref']) {{
+      try {{
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        if (range.e.c < 6) {{
+          range.e.c = 6;
+          ws['!ref'] = XLSX.utils.encode_range(range);
+        }}
+      }} catch (e) {{
+        console.warn('Range expansion error', e);
+      }}
+    }}
+
+    const rows = XLSX.utils.sheet_to_json(ws, {{ header: 1, defval: '' }});
     if (!rows || rows.length < 2) continue;
 
     const header = rows[0] || [];
@@ -413,15 +448,27 @@ function parseGoogleSheetWorkbook(wb) {{
     let photoCol = -1;
 
     header.forEach((col, idx) => {{
-      if (!col) return;
-      const cLower = String(col).toLowerCase().trim();
+      if (col === undefined || col === null) return;
+      const cStr = String(col).trim();
+      const cLower = cStr.toLowerCase().replace(/\s+/g, ' ');
       if (cLower.includes('наименование') || cLower.includes('название') || cLower.includes('товар')) {{
         nameCol = idx;
       }} else if (cLower.includes('фасовка') || cLower.includes('кратность')) {{
         packCol = idx;
       }} else if (cLower.includes('поставщик')) {{
         supCol = idx;
-      }} else if (cLower.includes('фото') || cLower.includes('изображен') || cLower.includes('картинк') || cLower.includes('image') || cLower.includes('photo')) {{
+      }} else if (
+        cLower === 'фото' ||
+        cLower === 'photo' ||
+        cLower === 'image' ||
+        cLower.includes('фото') ||
+        cLower.includes('photo') ||
+        cLower.includes('image') ||
+        cLower.includes('изображен') ||
+        cLower.includes('картинк') ||
+        cLower.includes('img') ||
+        cLower.includes('pic')
+      ) {{
         photoCol = idx;
       }}
     }});
@@ -429,9 +476,7 @@ function parseGoogleSheetWorkbook(wb) {{
     if (nameCol === -1) nameCol = 0;
     if (packCol === -1) packCol = 3;
     if (photoCol === -1 && (sheetName === 'Pringles' || sheetName.toLowerCase().includes('pringles'))) {{
-      if (header.length >= 7) {{
-        photoCol = 6;
-      }}
+      photoCol = 6; // Column G is index 6
     }}
 
     for (let r = 1; r < rows.length; r++) {{
@@ -446,7 +491,31 @@ function parseGoogleSheetWorkbook(wb) {{
 
       const rawPack = row[packCol];
       const packInfo = parsePackInfo(cleanName, rawPack, sheetName);
-      const rawPhoto = photoCol !== -1 && row[photoCol] ? String(row[photoCol]).trim() : '';
+
+      // Extract photo URL (handling column G, objects, hyperlinks, strings, and direct scan)
+      let rawPhoto = '';
+      if (photoCol !== -1 && row[photoCol] !== undefined && row[photoCol] !== null) {{
+        rawPhoto = extractUrlValue(row[photoCol]);
+      }}
+      // Fallback for column G (index 6)
+      if (!rawPhoto && row[6] !== undefined && row[6] !== null) {{
+        const candidate = extractUrlValue(row[6]);
+        if (/^https?:\/\//i.test(candidate)) {{
+          rawPhoto = candidate;
+        }}
+      }}
+      // Scan row for image URL if still empty on Pringles
+      if (!rawPhoto && (sheetName === 'Pringles' || sheetName.toLowerCase().includes('pringles'))) {{
+        for (let c = 0; c < row.length; c++) {{
+          const candidate = extractUrlValue(row[c]);
+          if (typeof candidate === 'string' && (candidate.includes('i.siteapi.org') || /^https?:\/\/.*\.(?:jpg|jpeg|png|webp|gif)/i.test(candidate))) {{
+            rawPhoto = candidate;
+            break;
+          }}
+        }}
+      }}
+
+      const cleanPhoto = rawPhoto ? String(rawPhoto).trim() : '';
 
       // Determine supplier
       let supplierId = 'snacks';
@@ -480,7 +549,10 @@ function parseGoogleSheetWorkbook(wb) {{
         step: packInfo.step,
         unit: packInfo.unit,
         display_step: packInfo.display,
-        image: rawPhoto || ''
+        image: cleanPhoto,
+        photo: cleanPhoto,
+        imageUrl: cleanPhoto,
+        'Фото': cleanPhoto
       }});
     }}
   }}
@@ -692,37 +764,46 @@ function renderCatalog() {{
   attachStepperEvents(container);
 }}
 
-// Product Thumbnail Stub SVG
+// Product Thumbnail Stub SVG (Crisp Pringles Can & Chips Icon)
 const PRINGLES_THUMB_STUB_SVG = `
   <div class="product-thumb-stub" title="Фото отсутствует">
-    <svg class="thumb-stub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <rect x="3" y="3" width="18" height="18" rx="4"></rect>
-      <circle cx="8.5" cy="8.5" r="1.5"></circle>
-      <path d="m21 15-5-5L5 21"></path>
+    <svg class="thumb-stub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2C9.5 2 7.5 3 7.5 4.5v15C7.5 21 9.5 22 12 22s4.5-1 4.5-2.5v-15C16.5 3 14.5 2 12 2z"></path>
+      <ellipse cx="12" cy="4.5" rx="4.5" ry="2.5"></ellipse>
+      <path d="M7.5 10c1.5.8 3.5 1 4.5 1s3-.2 4.5-1"></path>
+      <circle cx="12" cy="14" r="1.5" fill="currentColor"></circle>
     </svg>
     <span class="thumb-stub-text">Pringles</span>
   </div>
 `;
 
+// Helper for extracting photo URL across all possible keys
+function getProductImageUrl(item) {{
+  if (!item) return '';
+  const url = item.image || item.photo || item['Фото'] || item.imageUrl || '';
+  return typeof url === 'string' ? url.trim() : '';
+}}
+
 // Helper for rendering product photo thumbnail (56x56 px, contain, rounded corners, referrerPolicy)
 function renderProductThumbnail(item) {{
-  const imageUrl = item && item.image ? String(item.image).trim() : '';
+  const imageUrl = getProductImageUrl(item);
   const escapedName = escapeHtml(item && item.name ? item.name : 'Pringles');
 
   if (!imageUrl) {{
     return `
-      <div class="product-thumb has-stub" title="Фото отсутствует">
+      <div class="product-thumb has-stub" title="Фото отсутствует" style="width: 56px; height: 56px; min-width: 56px; flex-shrink: 0;">
         ${{PRINGLES_THUMB_STUB_SVG}}
       </div>
     `;
   }}
 
   return `
-    <div class="product-thumb" onclick="toggleThumbZoom(this, event)" title="Нажмите для увеличения (280px)">
+    <div class="product-thumb" onclick="toggleThumbZoom(this, event)" title="Нажмите для увеличения (280px)" style="width: 56px; height: 56px; min-width: 56px; flex-shrink: 0;">
       <img 
         src="${{escapeHtml(imageUrl)}}" 
         alt="${{escapedName}}" 
         class="product-thumb-img" 
+        style="width: 56px; height: 56px; min-width: 56px; flex-shrink: 0; object-fit: contain;" 
         loading="lazy" 
         referrerpolicy="no-referrer" 
         referrerPolicy="no-referrer" 
@@ -732,7 +813,7 @@ function renderProductThumbnail(item) {{
   `;
 }}
 
-// Error handler for broken thumbnail images
+// Error handler for broken thumbnail images (replaces with SVG stub on real error, never hides prematurely)
 function handleThumbError(img) {{
   if (!img) return;
   img.onerror = null;
@@ -747,12 +828,59 @@ function handleThumbError(img) {{
   }}
 }}
 
+// Open 280px Image Preview Modal on click
+function openImagePreviewModal(src, title) {{
+  let modal = document.getElementById('imagePreviewModal');
+  if (!modal) {{
+    modal = document.createElement('div');
+    modal.id = 'imagePreviewModal';
+    modal.className = 'image-preview-modal';
+    modal.onclick = closeImagePreviewModal;
+    modal.innerHTML = `
+      <div class="image-preview-box" onclick="event.stopPropagation()">
+        <img id="imagePreviewImg" class="image-preview-img" src="" alt="Pringles" referrerpolicy="no-referrer" referrerPolicy="no-referrer" />
+        <div id="imagePreviewTitle" class="image-preview-title"></div>
+        <button class="image-preview-close" onclick="closeImagePreviewModal()" title="Закрыть">✕</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }}
+
+  const imgEl = document.getElementById('imagePreviewImg');
+  const titleEl = document.getElementById('imagePreviewTitle');
+  if (imgEl) {{
+    imgEl.src = src;
+    imgEl.alt = title || 'Pringles';
+    imgEl.setAttribute('referrerpolicy', 'no-referrer');
+    imgEl.setAttribute('referrerPolicy', 'no-referrer');
+  }}
+  if (titleEl) {{
+    titleEl.textContent = title || '';
+  }}
+  modal.classList.add('active');
+}}
+
+function closeImagePreviewModal() {{
+  const modal = document.getElementById('imagePreviewModal');
+  if (modal) modal.classList.remove('active');
+  document.querySelectorAll('.product-thumb.zoomed').forEach(t => {{
+    t.classList.remove('zoomed');
+    t.closest('.product-card')?.classList.remove('card-zoomed');
+  }});
+}}
+
 // Click/tap zoom toggle for 280px preview
 function toggleThumbZoom(el, event) {{
   if (event) {{
     event.stopPropagation();
   }}
   if (!el || el.classList.contains('has-stub')) return;
+
+  const img = el.querySelector('.product-thumb-img');
+  const src = img ? (img.getAttribute('src') || img.src) : '';
+  const title = img ? (img.getAttribute('alt') || 'Pringles') : 'Pringles';
+
+  if (!src) return;
 
   const isZoomed = el.classList.contains('zoomed');
   document.querySelectorAll('.product-thumb.zoomed').forEach(t => {{
@@ -763,6 +891,9 @@ function toggleThumbZoom(el, event) {{
   if (!isZoomed) {{
     el.classList.add('zoomed');
     el.closest('.product-card')?.classList.add('card-zoomed');
+    openImagePreviewModal(src, title);
+  }} else {{
+    closeImagePreviewModal();
   }}
 }}
 
@@ -774,8 +905,8 @@ function renderProductCard(item) {{
   const activeClass = currentQty > 0 ? 'active' : '';
 
   const isPringles = item.category === 'Pringles' || item.supplier === 'pivnye_zakuski' || (item.name && /pringles|принглс/i.test(item.name));
-  const hasImage = Boolean(item.image && String(item.image).trim());
-  const showThumb = isPringles || hasImage || (item.image !== undefined && item.image !== null);
+  const hasImage = Boolean(getProductImageUrl(item));
+  const showThumb = isPringles || hasImage;
 
   const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
 
@@ -1656,13 +1787,16 @@ function setupEventListeners() {{
     }});
   }}
 
-  // Close zoomed thumbnail on click outside
+  // Close zoomed thumbnail or preview modal on click outside
   document.addEventListener('click', (e) => {{
-    if (!e.target.closest('.product-thumb')) {{
-      document.querySelectorAll('.product-thumb.zoomed').forEach(t => {{
-        t.classList.remove('zoomed');
-        t.closest('.product-card')?.classList.remove('card-zoomed');
-      }});
+    if (!e.target.closest('.product-thumb') && !e.target.closest('.image-preview-box')) {{
+      closeImagePreviewModal();
+    }}
+  }});
+
+  document.addEventListener('keydown', (e) => {{
+    if (e.key === 'Escape') {{
+      closeImagePreviewModal();
     }}
   }});
 }}
