@@ -3683,12 +3683,15 @@ let activeCategory = 'all';
 let searchQuery = '';
 let order = {}; // { itemId: quantity }
 let manualItems = []; // [ { id, name, category, quantity, unit, step, supplier } ]
+let favorites = new Set();
+let favFilterOnly = false;
 
 const CATALOG_CACHE_KEY = 'snack_catalog_cache_v8';
 const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v8';
 const ORDER_STORAGE_KEY = 'snack_order_v8';
 const MANUAL_STORAGE_KEY = 'snack_manual_items_v8';
 const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v8';
+const FAVORITES_STORAGE_KEY = 'snack_favorites_v1';
 const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
 
 const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
@@ -3702,7 +3705,9 @@ const ICONS = {
   excel: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="17"></line><line x1="16" y1="13" x2="8" y2="17"></line></svg>`,
   plus: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
   minus: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
-  check: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`
+  check: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+  starOutline: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
+  starFilled: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`
 };
 
 // Initialize Application
@@ -3711,6 +3716,7 @@ async function initApp() {
   await loadCatalog();
   setupEventListeners();
   renderSupplierNav();
+  updateFavBadge();
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
@@ -3732,8 +3738,99 @@ function loadSavedState() {
 
     const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY) || localStorage.getItem('snack_active_supplier_v7');
     if (savedSupplier) activeSupplier = savedSupplier;
+
+    const savedFavs = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    if (savedFavs) {
+      const arr = JSON.parse(savedFavs);
+      if (Array.isArray(arr)) favorites = new Set(arr);
+    }
   } catch (e) {
     console.error('Failed to load localStorage', e);
+  }
+}
+
+function saveFavorites() {
+  try {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(favorites)));
+  } catch (e) {
+    console.error('Failed to save favorites to localStorage', e);
+  }
+}
+
+function toggleFavorite(id, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  const item = catalog.find(i => i.id === id);
+  if (!item) return;
+
+  if (favorites.has(id)) {
+    favorites.delete(id);
+    showToast(`Удалено из избранного: ${item.name}`);
+  } else {
+    favorites.add(id);
+    showToast(`⭐ Добавлено в избранное: ${item.name}`);
+  }
+
+  saveFavorites();
+  updateFavBadge();
+
+  if (favFilterOnly) {
+    renderCategoryTabs();
+    renderCatalog();
+  } else {
+    updateCardFavState(id);
+    renderCategoryTabs();
+  }
+}
+
+function updateCardFavState(id) {
+  const card = document.querySelector(`.product-card[data-id="${id}"]`);
+  if (!card) return;
+  const btn = card.querySelector('.btn-fav');
+  if (!btn) return;
+  const isFav = favorites.has(id);
+  btn.classList.toggle('is-fav', isFav);
+  btn.title = isFav ? 'В избранном (нажмите, чтобы убрать)' : 'Добавить в избранное';
+  btn.setAttribute('aria-label', isFav ? 'В избранном' : 'Добавить в избранное');
+  btn.innerHTML = isFav ? ICONS.starFilled : ICONS.starOutline;
+}
+
+function toggleFavoritesFilter(forceState) {
+  if (typeof forceState === 'boolean') {
+    favFilterOnly = forceState;
+  } else {
+    favFilterOnly = !favFilterOnly;
+  }
+  updateFavBadge();
+  renderCategoryTabs();
+  renderCatalog();
+}
+
+function updateFavBadge() {
+  const badge = document.getElementById('favFilterBadge');
+  const btn = document.getElementById('btnFavFilter');
+  if (!btn) return;
+
+  const count = catalog.filter(i => i.supplier === activeSupplier && favorites.has(i.id)).length;
+
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  if (favFilterOnly) {
+    btn.classList.add('active');
+    btn.title = `Фильтр избранного включен (${count} поз.). Нажмите, чтобы отключить`;
+  } else {
+    btn.classList.remove('active');
+    btn.title = count > 0 
+      ? `Показать только избранные (${count} поз.)` 
+      : 'Показать только избранные (пока нет в этом разделе)';
   }
 }
 
@@ -3925,6 +4022,7 @@ async function syncFromGoogleSheets(notify = true) {
       }
 
       renderSupplierNav();
+      updateFavBadge();
       renderCategoryTabs();
       renderCatalog();
       updateOrderBar();
@@ -4188,6 +4286,7 @@ function switchSupplier(supId) {
   saveState();
   activeCategory = 'all';
   renderSupplierNav();
+  updateFavBadge();
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
@@ -4220,11 +4319,15 @@ function renderCategoryTabs() {
   container.innerHTML = orderedCats.map(cat => {
     let count = 0;
     if (cat === 'all') {
-      count = itemsInSup.length;
+      count = favFilterOnly 
+        ? itemsInSup.filter(i => favorites.has(i.id)).length 
+        : itemsInSup.length;
     } else if (cat === 'manual') {
       count = manualItems.filter(m => (m.supplier || 'snacks') === activeSupplier).length;
     } else {
-      count = itemsInSup.filter(i => i.category === cat).length;
+      count = favFilterOnly 
+        ? itemsInSup.filter(i => i.category === cat && favorites.has(i.id)).length 
+        : itemsInSup.filter(i => i.category === cat).length;
     }
 
     const meta = CATEGORY_META[cat] || { label: cat, icon: '🏷️' };
@@ -4271,10 +4374,29 @@ function renderCatalog() {
       matchSearch = target.includes(q);
     }
 
-    return matchCat && matchSearch;
+    const matchFav = !favFilterOnly || favorites.has(item.id);
+
+    return matchCat && matchSearch && matchFav;
   });
 
   if (filtered.length === 0) {
+    if (favFilterOnly) {
+      const supName = getSupplierById(activeSupplier).shortName;
+      container.innerHTML = `
+        <div class="empty-state">
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">⭐</div>
+          <p>В разделе «${escapeHtml(supName)}» нет избранных товаров${activeCategory !== 'all' ? ' в этой категории' : ''}</p>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 6px auto 14px; max-width: 280px; line-height: 1.4;">
+            Нажмите на звёздочку возле названия любого товара, чтобы добавить его в избранное
+          </p>
+          <button class="btn-action-secondary" style="margin: 0 auto; display: inline-flex;" onclick="toggleFavoritesFilter(false)">
+            Показать весь ассортимент
+          </button>
+        </div>
+      `;
+      return;
+    }
+
     // Check if query exists in another supplier
     let otherFoundHtml = '';
     if (searchQuery.trim()) {
@@ -4485,12 +4607,18 @@ function renderProductCard(item) {
   const showThumb = isPringles || hasImage;
 
   const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
+  const isFav = favorites.has(item.id);
 
   return `
     <div class="product-card ${hasOrder}" data-id="${item.id}">
       ${thumbHtml}
       <div class="product-info">
-        <div class="product-title">${highlightSearch(item.name, searchQuery)}</div>
+        <div class="product-title-row">
+          <div class="product-title">${highlightSearch(item.name, searchQuery)}</div>
+          <button type="button" class="btn-fav ${isFav ? 'is-fav' : ''}" onclick="toggleFavorite('${item.id}', event)" title="${isFav ? 'В избранном (нажмите, чтобы убрать)' : 'Добавить в избранное'}" aria-label="Избранное">
+            ${isFav ? ICONS.starFilled : ICONS.starOutline}
+          </button>
+        </div>
         <div class="product-meta">
           <span class="badge-step">${escapeHtml(item.display_step || `кратность ${item.step} ${item.unit}`)}</span>
         </div>
@@ -5170,7 +5298,7 @@ function confirmResetCurrentSupplier() {
 function confirmResetOrder() {
   openConfirmDialog(
     'Очистить все заказы?',
-    'Будут сброшены заказы ВСЕХ поставщиков (Снеки, Расходники, Ярмарка, Пивные закуски) и все добавленные вручную позиции.',
+    'Будут сброшены заказы ВСЕХ поставщиков (Снеки, Расходники, Ярмарка, Пивные закуски) и все добавленные вручную позиции. Избранные товары останутся сохранёнными.',
     () => {
       order = {};
       manualItems = [];
@@ -5179,7 +5307,7 @@ function confirmResetOrder() {
       renderCatalog();
       updateOrderBar();
       closeOrderModal();
-      showToast('🗑️ Все заказы полностью очищены');
+      showToast('🗑️ Все заказы очищены (избранное сохранено)');
     }
   );
 }
