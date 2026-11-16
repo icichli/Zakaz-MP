@@ -3709,6 +3709,7 @@ const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
 const APPS_SCRIPT_URL_KEY = 'snack_apps_script_url_v1';
 
 const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
+const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyR0Mjnf8-VhnvEYCdc-i0sqjvxj8Kdw8Kxjc3BdrNvckL0baNvkt3cBtWvhAanC_s/exec';
 
 // SVG Icons helper
 const ICONS = {
@@ -3742,6 +3743,9 @@ async function initApp() {
   // Background auto-sync on startup to load fresh photos and sheet favorites from Google Sheets
   syncFromGoogleSheets(false).catch(err => {
     console.warn('Initial Google Sheets sync notice:', err);
+  });
+  syncFavoritesFromAppsScript(false).catch(err => {
+    console.warn('Initial Apps Script favorites sync notice:', err);
   });
 }
 
@@ -3885,7 +3889,7 @@ async function restoreFavoritesFromIndexedDB() {
 
 // Background sync to Google Apps Script endpoint
 async function syncFavoriteToAppsScript(store, item, isFav) {
-  const url = localStorage.getItem(APPS_SCRIPT_URL_KEY);
+  const url = localStorage.getItem(APPS_SCRIPT_URL_KEY) || DEFAULT_APPS_SCRIPT_URL;
   if (!url || !url.startsWith('http')) return;
 
   try {
@@ -3905,6 +3909,46 @@ async function syncFavoriteToAppsScript(store, item, isFav) {
     });
   } catch (err) {
     console.warn('Apps Script background sync notice:', err);
+  }
+}
+
+// Synchronize live favorites directly from Google Apps Script Web App
+async function syncFavoritesFromAppsScript(notify = false) {
+  const url = localStorage.getItem(APPS_SCRIPT_URL_KEY) || DEFAULT_APPS_SCRIPT_URL;
+  if (!url || !url.startsWith('http')) return;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data && data.status === 'ok' && data.stores) {
+      let imported = 0;
+      STORES.forEach(s => {
+        if (Array.isArray(data.stores[s])) {
+          const idSet = new Set();
+          data.stores[s].forEach(itemObj => {
+            if (itemObj && itemObj.id) {
+              idSet.add(itemObj.id);
+            } else if (itemObj && itemObj.name) {
+              const found = catalog.find(c => c.name.toLowerCase() === itemObj.name.toLowerCase());
+              if (found) idSet.add(found.id);
+            }
+          });
+          if (idSet.size > 0 || (storeFavorites[s] && storeFavorites[s].size > 0)) {
+            storeFavorites[s] = idSet;
+            imported += idSet.size;
+          }
+        }
+      });
+      saveFavorites();
+      renderStorePills();
+      updateFavBadge();
+      if (notify && imported > 0) {
+        showToast(`⭐ Избранное синхронизировано (${imported} поз.)`);
+      }
+    }
+  } catch (err) {
+    console.warn('Apps Script GET sync notice:', err);
   }
 }
 
@@ -4482,6 +4526,8 @@ async function syncFromGoogleSheets(notify = true) {
       renderCategoryTabs();
       renderCatalog();
       updateOrderBar();
+      // Also sync live favorites from Apps Script Web App in parallel
+      syncFavoritesFromAppsScript(false).catch(() => {});
       if (notify) showToast(`✅ Каталог обновлен: ${parsedData.items.length} позиций во всех вкладках!`);
     } else {
       throw new Error('Не удалось прочитать позиции из таблицы');
@@ -5958,7 +6004,7 @@ function openSettingsModal() {
     input.value = localStorage.getItem(CUSTOM_SHEET_KEY) || DEFAULT_SHEET_XLSX_URL;
   }
   if (scriptInput) {
-    scriptInput.value = localStorage.getItem(APPS_SCRIPT_URL_KEY) || '';
+    scriptInput.value = localStorage.getItem(APPS_SCRIPT_URL_KEY) || DEFAULT_APPS_SCRIPT_URL;
   }
   if (modal) modal.classList.add('active');
 }
@@ -5976,11 +6022,13 @@ function saveSettings() {
     localStorage.setItem(CUSTOM_SHEET_KEY, val);
   }
   if (scriptInput) {
-    localStorage.setItem(APPS_SCRIPT_URL_KEY, scriptInput.value.trim());
+    const scriptVal = scriptInput.value.trim() || DEFAULT_APPS_SCRIPT_URL;
+    localStorage.setItem(APPS_SCRIPT_URL_KEY, scriptVal);
   }
   showToast('Настройки сохранены');
   closeSettingsModal();
   syncFromGoogleSheets(true);
+  syncFavoritesFromAppsScript(false);
 }
 
 // Toast Notifications

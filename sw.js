@@ -1,4 +1,4 @@
-const CACHE_NAME = 'snack-order-v11';
+const CACHE_NAME = 'snack-order-v12';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
