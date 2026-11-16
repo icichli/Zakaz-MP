@@ -4,15 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Удобная система формирования заказа снеков для пивных магазинов">
   <title>Заказ Снеков</title>
 
-  <link rel="stylesheet" href="css/styles.css?v=2.3.0">
-  <link rel="manifest" href="manifest.json?v=2.3.0">
+  <link rel="stylesheet" href="css/styles.css?v=2.4.0">
+  <link rel="manifest" href="manifest.json?v=2.4.0">
 </head>
 
 <body>
@@ -60,7 +60,7 @@
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
         <input type="text" id="searchInput" class="search-input" placeholder="Быстрый поиск по названию..."
-          autocomplete="off" autocorrect="off" spellcheck="false">
+          autocomplete="off" autocorrect="off" spellcheck="false" inputmode="search" enterkeyhint="search">
         <button id="searchClear" class="search-clear" style="display: none;" title="Очистить">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -120,6 +120,7 @@
   <!-- Order Modal Drawer (Bottom Sheet) -->
   <div id="orderModal" class="modal-overlay">
     <div class="modal-container">
+      <div class="modal-drag-handle"></div>
       <div class="modal-header">
         <div class="modal-title">
           <span>🛒</span>
@@ -164,6 +165,7 @@
   <!-- Settings Modal -->
   <div id="settingsModal" class="modal-overlay">
     <div class="modal-container">
+      <div class="modal-drag-handle"></div>
       <div class="modal-header">
         <div class="modal-title">⚙️ Настройки источника данных</div>
         <button class="modal-close" onclick="closeSettingsModal()">✕</button>

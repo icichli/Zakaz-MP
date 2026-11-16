@@ -5498,11 +5498,91 @@ function setupEventListeners() {
     }
   });
 
+  // Close modals when clicking directly on backdrop
+  document.querySelectorAll('.modal-overlay, .dialog-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        if (overlay.id === 'orderModal') closeOrderModal();
+        else if (overlay.id === 'settingsModal') closeSettingsModal();
+        else if (overlay.id === 'dialogOverlay') closeDialog();
+      }
+    });
+  });
+
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeImagePreviewModal();
+      closeOrderModal();
+      closeSettingsModal();
+      closeDialog();
     }
   });
+
+  setupSheetGestures();
+}
+
+// Gesture: Swipe-to-dismiss for Order Drawer Bottom Sheet (Emil Kowalski gestures skill)
+function setupSheetGestures() {
+  const modal = document.getElementById('orderModal');
+  if (!modal) return;
+  const container = modal.querySelector('.modal-container');
+  if (!container) return;
+
+  let startY = 0;
+  let currentY = 0;
+  let startTime = 0;
+  let isDragging = false;
+
+  container.addEventListener('pointerdown', (e) => {
+    const body = modal.querySelector('.modal-body');
+    const isHeaderOrHandle = e.target.closest('.modal-drag-handle') || e.target.closest('.modal-header');
+    const isBodyAtTop = body && body.scrollTop <= 0;
+
+    if (!isHeaderOrHandle && !isBodyAtTop) return;
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('textarea')) return;
+
+    startY = e.clientY;
+    currentY = 0;
+    startTime = Date.now();
+    isDragging = true;
+    container.style.transition = 'none'; // 1:1 direct tracking
+  });
+
+  window.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const deltaY = e.clientY - startY;
+    if (deltaY > 0) {
+      currentY = deltaY;
+      container.style.transform = `translateY(${deltaY}px)`;
+    } else {
+      // Rubber-band resistance at top boundary
+      const elastic = Math.pow(Math.abs(deltaY), 0.7);
+      currentY = -elastic;
+      container.style.transform = `translateY(${-elastic}px)`;
+    }
+  });
+
+  const handlePointerUp = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    container.style.transition = ''; // restore CSS drawer curve
+
+    const elapsedTime = Date.now() - startTime;
+    const velocity = currentY / Math.max(elapsedTime, 1);
+
+    // Dismiss on distance (>100px) or flick velocity (>0.4)
+    if (currentY > 100 || velocity > 0.4) {
+      closeOrderModal();
+      setTimeout(() => {
+        container.style.transform = '';
+      }, 320);
+    } else {
+      container.style.transform = '';
+    }
+  };
+
+  window.addEventListener('pointerup', handlePointerUp);
+  window.addEventListener('pointercancel', handlePointerUp);
 }
 
 // Start application when DOM is ready
