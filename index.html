@@ -11,8 +11,8 @@
   <meta name="description" content="Удобная система формирования заказа снеков для пивных магазинов">
   <title>Заказ Снеков</title>
 
-  <link rel="stylesheet" href="css/styles.css?v=2.4.0">
-  <link rel="manifest" href="manifest.json?v=2.4.0">
+  <link rel="stylesheet" href="css/styles.css?v=2.5.0">
+  <link rel="manifest" href="manifest.json?v=2.5.0">
 </head>
 
 <body>
@@ -48,6 +48,19 @@
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
           </svg>
         </button>
+      </div>
+    </div>
+
+    <!-- Store Selector Bar (Битца, Битца2, БП, Олимп) -->
+    <div class="store-bar">
+      <div class="store-bar-inner">
+        <span class="store-bar-badge" title="Выбор магазина для заказа и избранного">🏪</span>
+        <div class="store-pills" id="storePills">
+          <button type="button" class="store-pill active" onclick="switchActiveStore('Битца')">Битца</button>
+          <button type="button" class="store-pill" onclick="switchActiveStore('Битца2')">Битца2</button>
+          <button type="button" class="store-pill" onclick="switchActiveStore('БП')">БП</button>
+          <button type="button" class="store-pill" onclick="switchActiveStore('Олимп')">Олимп</button>
+        </div>
       </div>
     </div>
 
@@ -178,10 +191,44 @@
           <label>Ссылка на CSV Google Таблицы</label>
           <input type="text" id="settingsSheetUrl" class="form-control" style="font-size: 0.82rem;" />
         </div>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label>URL скрипта Apps Script (веб-приложение для избранного)</label>
+          <input type="text" id="settingsAppsScriptUrl" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" style="font-size: 0.82rem;" />
+        </div>
         <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
           💡 Чтобы обновить ассортимент, просто добавьте или измените строки в вашей таблице Google Sheets и нажмите
           кнопку обновления 🔄 в шапке приложения.
         </p>
+
+        <!-- Favorites Backup & Restore Section -->
+        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">
+            💾 Резервная копия избранного (Битца, Битца2, БП, Олимп)
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px;">
+            Сохраните файл бэкапа или перенесите избранное на телефон сменщика:
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+            <button type="button" class="btn-action-secondary" onclick="exportFavoritesJson()" style="font-size: 0.78rem; padding: 8px;">
+              📥 Скачать .json
+            </button>
+            <button type="button" class="btn-action-secondary" onclick="document.getElementById('importFavFileInput').click()" style="font-size: 0.78rem; padding: 8px;">
+              📤 Загрузить .json
+            </button>
+            <input type="file" id="importFavFileInput" accept=".json" style="display: none;" onchange="importFavoritesJsonFile(event)" />
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <button type="button" class="btn-action-secondary" onclick="copyFavoritesBackupText()" style="flex: 1; font-size: 0.78rem; padding: 8px;">
+              📋 Скопировать код
+            </button>
+            <button type="button" class="btn-action-secondary" onclick="promptImportFavoritesText()" style="flex: 1; font-size: 0.78rem; padding: 8px;">
+              📥 Вставить код
+            </button>
+          </div>
+          <button type="button" class="btn-action-secondary" onclick="shareStoreSetupLink()" style="width: 100%; font-size: 0.78rem; padding: 8px; color: var(--accent-amber); border-color: rgba(245, 158, 11, 0.4);">
+            🔗 Ссылка для настройки точки
+          </button>
+        </div>
 
         <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-color);">
           <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">
@@ -234,7 +281,7 @@
 
   <!-- Vendor Scripts & Application -->
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=2.3.0"></script>
+  <script src="js/app.js?v=2.5.0"></script>
 </body>
 
 </html>
