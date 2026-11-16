@@ -3723,7 +3723,8 @@ const ICONS = {
   check: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   starOutline: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
   starFilled: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
-  starBlue: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`
+  starBlue: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
+  starSplit: `<svg width="18" height="18" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="splitStarGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="50%" stop-color="#f59e0b" /><stop offset="50%" stop-color="#38bdf8" /></linearGradient></defs><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="url(#splitStarGrad)" stroke="url(#splitStarGrad)" stroke-width="1.5"></polygon></svg>`
 };
 
 // Initialize Application
@@ -4020,7 +4021,137 @@ function isItemFavForFilter(id) {
   return true;
 }
 
-// Favorite Selection Modal Sheet Logic
+// Pointer & Long-Press Handlers for Favorites
+let favPressTimer = null;
+let favIsLongPress = false;
+let favStartX = 0;
+let favStartY = 0;
+
+function handleFavPointerDown(id, event) {
+  if (event.button !== undefined && event.button !== 0) return;
+  favIsLongPress = false;
+  favStartX = event.clientX;
+  favStartY = event.clientY;
+
+  clearTimeout(favPressTimer);
+  favPressTimer = setTimeout(() => {
+    favIsLongPress = true;
+    if (navigator.vibrate) {
+      try { navigator.vibrate(60); } catch (_) {}
+    }
+    togglePrivateFavorite(id, event);
+  }, 400);
+}
+
+function handleFavPointerMove(event) {
+  if (!favPressTimer) return;
+  const diffX = Math.abs(event.clientX - favStartX);
+  const diffY = Math.abs(event.clientY - favStartY);
+  if (diffX > 8 || diffY > 8) {
+    clearTimeout(favPressTimer);
+    favPressTimer = null;
+  }
+}
+
+function handleFavPointerUp(id, event) {
+  if (favPressTimer) {
+    clearTimeout(favPressTimer);
+    favPressTimer = null;
+  }
+}
+
+function handleFavPointerCancel(event) {
+  if (favPressTimer) {
+    clearTimeout(favPressTimer);
+    favPressTimer = null;
+  }
+}
+
+function handleFavClick(id, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  if (favIsLongPress) {
+    favIsLongPress = false;
+    return;
+  }
+  toggleStoreFavorite(id, event);
+}
+
+function handleFavContextMenu(id, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  togglePrivateFavorite(id, event);
+}
+
+function toggleStoreFavorite(id, event) {
+  if (event) event.stopPropagation();
+  const item = catalog.find(i => i.id === id);
+  if (!item) return;
+
+  if (!storeFavorites[activeStore]) {
+    storeFavorites[activeStore] = new Set();
+  }
+
+  const isFav = storeFavorites[activeStore].has(id);
+  if (isFav) {
+    storeFavorites[activeStore].delete(id);
+    showToast(`Удалено из [${activeStore}]: ${item.name}`);
+    syncFavoriteToAppsScript(activeStore, item, false);
+  } else {
+    storeFavorites[activeStore].add(id);
+    showToast(`⭐ [${activeStore}] Добавлено в избранное: ${item.name}`);
+    syncFavoriteToAppsScript(activeStore, item, true);
+  }
+
+  saveFavorites();
+  renderStorePills();
+  updateFavBadge();
+
+  if (favFilterMode !== 'none') {
+    renderCategoryTabs();
+    renderCatalog();
+  } else {
+    updateCardFavState(id);
+    renderCategoryTabs();
+  }
+}
+
+function togglePrivateFavorite(id, event) {
+  if (event) event.stopPropagation();
+  const item = catalog.find(i => i.id === id);
+  if (!item) return;
+
+  const isFav = privateFavorites.has(id);
+  if (isFav) {
+    privateFavorites.delete(id);
+    showToast(`👤 Удалено из личного избранного: ${item.name}`);
+  } else {
+    privateFavorites.add(id);
+    showToast(`👤 Добавлено в личное избранное: ${item.name}`);
+  }
+
+  saveFavorites();
+  renderStorePills();
+  updateFavBadge();
+
+  if (favFilterMode !== 'none') {
+    renderCategoryTabs();
+    renderCatalog();
+  } else {
+    updateCardFavState(id);
+  }
+}
+
+// Backward compatible aliases
+function toggleFavorite(id, event) {
+  handleFavClick(id, event);
+}
+
+// Favorite Selection Modal Sheet Logic (Optional Settings Modal)
 let currentFavModalItemId = null;
 
 function openFavModal(id, event) {
@@ -4067,63 +4198,24 @@ function toggleFavModalCheck(type) {
   const item = catalog.find(i => i.id === currentFavModalItemId);
   if (!item) return;
 
+  if (type === 'store') {
+    toggleStoreFavorite(item.id);
+  } else if (type === 'private') {
+    togglePrivateFavorite(item.id);
+  }
+
   const checkStore = document.getElementById('favCheckStore');
   const checkPrivate = document.getElementById('favCheckPrivate');
   const cardStore = document.getElementById('favCardStore');
   const cardPrivate = document.getElementById('favCardPrivate');
 
-  if (type === 'store') {
-    const isNowFav = checkStore ? checkStore.checked : false;
-    if (!storeFavorites[activeStore]) storeFavorites[activeStore] = new Set();
-    
-    if (isNowFav) {
-      storeFavorites[activeStore].add(item.id);
-      showToast(`⭐ [${activeStore}] Добавлено в избранное`);
-      syncFavoriteToAppsScript(activeStore, item, true);
-    } else {
-      storeFavorites[activeStore].delete(item.id);
-      showToast(`[${activeStore}] Удалено из избранного`);
-      syncFavoriteToAppsScript(activeStore, item, false);
-    }
-    if (cardStore) cardStore.classList.toggle('checked', isNowFav);
-  } else if (type === 'private') {
-    const isNowPrivate = checkPrivate ? checkPrivate.checked : false;
-    if (isNowPrivate) {
-      privateFavorites.add(item.id);
-      showToast(`👤 Добавлено в личное избранное`);
-    } else {
-      privateFavorites.delete(item.id);
-      showToast(`👤 Удалено из личного избранного`);
-    }
-    if (cardPrivate) cardPrivate.classList.toggle('checked-private', isNowPrivate);
-  }
+  const isStore = isItemStoreFav(item.id);
+  const isPrivate = isItemPrivateFav(item.id);
 
-  saveFavorites();
-  renderStorePills();
-  updateFavBadge();
-
-  if (favFilterMode !== 'none') {
-    renderCategoryTabs();
-    renderCatalog();
-  } else {
-    updateCardFavState(item.id);
-    renderCategoryTabs();
-  }
-}
-
-// Backward compatible aliases
-function toggleFavorite(id, event) {
-  openFavModal(id, event);
-}
-
-function handleFavClick(id, event) {
-  openFavModal(id, event);
-}
-
-function handleFavTouchStart() {}
-function handleFavTouchEnd() {}
-function handleFavContextMenu(id, event) {
-  openFavModal(id, event);
+  if (checkStore) checkStore.checked = isStore;
+  if (checkPrivate) checkPrivate.checked = isPrivate;
+  if (cardStore) cardStore.classList.toggle('checked', isStore);
+  if (cardPrivate) cardPrivate.classList.toggle('checked-private', isPrivate);
 }
 
 function updateCardFavState(id) {
@@ -4138,20 +4230,24 @@ function updateCardFavState(id) {
   btn.classList.remove('is-fav', 'is-private-fav', 'is-both-fav');
 
   if (isStore && isPrivate) {
-    btn.classList.add('is-fav', 'is-both-fav');
-    btn.innerHTML = ICONS.starFilled;
-    btn.title = `В избранном [${activeStore}] и в личном (клик: ${activeStore}, удержание: личное)`;
+    btn.classList.add('is-both-fav');
+    btn.innerHTML = ICONS.starSplit;
+    btn.title = `В избранном [${activeStore}] (золото) и в личном (синий). Клик: магазин, удержание: личное`;
+    btn.setAttribute('aria-label', `В избранном ${activeStore} и в личном`);
   } else if (isStore) {
     btn.classList.add('is-fav');
     btn.innerHTML = ICONS.starFilled;
-    btn.title = `В избранном магазина [${activeStore}] (клик: убрать, удержание: в личное)`;
+    btn.title = `В избранном магазина [${activeStore}]. Клик: убрать, удержание: в личное`;
+    btn.setAttribute('aria-label', `В избранном ${activeStore}`);
   } else if (isPrivate) {
     btn.classList.add('is-private-fav');
     btn.innerHTML = ICONS.starBlue;
-    btn.title = `В личном избранном (клик: добавить в [${activeStore}], удержание: убрать)`;
+    btn.title = `В личном избранном. Клик: добавить в [${activeStore}], удержание: убрать из личного`;
+    btn.setAttribute('aria-label', `В личном избранном`);
   } else {
     btn.innerHTML = ICONS.starOutline;
-    btn.title = `Добавить в избранное [${activeStore}] (удержание: в личное)`;
+    btn.title = `Добавить в избранное. Клик: [${activeStore}], удержание: в личное`;
+    btn.setAttribute('aria-label', `Добавить в избранное`);
   }
 }
 
@@ -5258,17 +5354,19 @@ function renderProductCard(item) {
   let favTitle = `Добавить в избранное [${escapeHtml(activeStore)}] (удержание: в личное)`;
 
   if (isStore && isPrivate) {
-    favClass = 'is-fav is-both-fav';
-    favIcon = ICONS.starFilled;
-    favTitle = `В избранном [${escapeHtml(activeStore)}] и в личном (клик: ${escapeHtml(activeStore)}, удержание: личное)`;
+    favClass = 'is-both-fav';
+    favIcon = ICONS.starSplit;
+    favTitle = `В избранном [${escapeHtml(activeStore)}] (золото) и в личном (синий). Клик: магазин, удержание: личное`;
   } else if (isStore) {
     favClass = 'is-fav';
     favIcon = ICONS.starFilled;
-    favTitle = `В избранном магазина [${escapeHtml(activeStore)}] (клик: убрать, удержание: в личное)`;
+    favTitle = `В избранном магазина [${escapeHtml(activeStore)}]. Клик: убрать, удержание: в личное`;
   } else if (isPrivate) {
     favClass = 'is-private-fav';
     favIcon = ICONS.starBlue;
-    favTitle = `В личном избранном (клик: в [${escapeHtml(activeStore)}], удержание: убрать)`;
+    favTitle = `В личном избранном. Клик: добавить в [${escapeHtml(activeStore)}], удержание: убрать из личного`;
+  } else {
+    favTitle = `Добавить в избранное. Клик: [${escapeHtml(activeStore)}], удержание: в личное`;
   }
 
   return `
@@ -5278,7 +5376,12 @@ function renderProductCard(item) {
         <div class="product-title-row">
           <div class="product-title">${highlightSearch(item.name, searchQuery)}</div>
           <button type="button" class="btn-fav ${favClass}"
-            onclick="openFavModal('${item.id}', event)"
+            onclick="handleFavClick('${item.id}', event)"
+            onpointerdown="handleFavPointerDown('${item.id}', event)"
+            onpointerup="handleFavPointerUp('${item.id}', event)"
+            onpointermove="handleFavPointerMove(event)"
+            onpointercancel="handleFavPointerCancel(event)"
+            oncontextmenu="handleFavContextMenu('${item.id}', event)"
             title="${favTitle}" aria-label="Избранное">
             ${favIcon}
           </button>
