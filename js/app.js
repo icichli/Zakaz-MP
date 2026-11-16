@@ -3683,16 +3683,30 @@ let activeCategory = 'all';
 let searchQuery = '';
 let order = {}; // { itemId: quantity }
 let manualItems = []; // [ { id, name, category, quantity, unit, step, supplier } ]
-let favorites = new Set();
-let favFilterOnly = false;
+
+// 4 Stores configuration & Multi-store favorites
+const STORES = ['Битца', 'Битца2', 'БП', 'Олимп'];
+let activeStore = 'Битца';
+let storeFavorites = {
+  'Битца': new Set(),
+  'Битца2': new Set(),
+  'БП': new Set(),
+  'Олимп': new Set()
+};
+let privateFavorites = new Set();
+let favFilterMode = 'none'; // 'none' | 'store' | 'private'
 
 const CATALOG_CACHE_KEY = 'snack_catalog_cache_v8';
 const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v8';
 const ORDER_STORAGE_KEY = 'snack_order_v8';
 const MANUAL_STORAGE_KEY = 'snack_manual_items_v8';
 const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v8';
-const FAVORITES_STORAGE_KEY = 'snack_favorites_v1';
+const ACTIVE_STORE_KEY = 'snack_active_store_v1';
+const STORE_FAVORITES_KEY = 'snack_store_favorites_v2';
+const PRIVATE_FAVORITES_KEY = 'snack_private_favorites_v2';
+const FAVORITES_STORAGE_KEY = 'snack_favorites_v1'; // legacy fallback
 const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
+const APPS_SCRIPT_URL_KEY = 'snack_apps_script_url_v1';
 
 const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
 
@@ -3707,27 +3721,31 @@ const ICONS = {
   minus: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
   check: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
   starOutline: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
-  starFilled: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`
+  starFilled: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`,
+  starBlue: `<svg width="18" height="18" viewBox="0 0 24 24" fill="#38bdf8" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`
 };
 
 // Initialize Application
 async function initApp() {
   loadSavedState();
+  checkUrlHashConfig();
+  await restoreFavoritesFromIndexedDB();
   await loadCatalog();
   setupEventListeners();
+  renderStorePills();
   renderSupplierNav();
   updateFavBadge();
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
 
-  // Background auto-sync on startup to load fresh photos directly from Google Sheets
+  // Background auto-sync on startup to load fresh photos and sheet favorites from Google Sheets
   syncFromGoogleSheets(false).catch(err => {
     console.warn('Initial Google Sheets sync notice:', err);
   });
 }
 
-// LocalStorage helpers
+// LocalStorage & IndexedDB helpers
 function loadSavedState() {
   try {
     const savedOrder = localStorage.getItem(ORDER_STORAGE_KEY) || localStorage.getItem('snack_order_v7') || localStorage.getItem('snack_order_v6') || localStorage.getItem('snack_order');
@@ -3739,10 +3757,37 @@ function loadSavedState() {
     const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY) || localStorage.getItem('snack_active_supplier_v7');
     if (savedSupplier) activeSupplier = savedSupplier;
 
-    const savedFavs = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (savedFavs) {
-      const arr = JSON.parse(savedFavs);
-      if (Array.isArray(arr)) favorites = new Set(arr);
+    // Load active store
+    const savedStore = localStorage.getItem(ACTIVE_STORE_KEY);
+    if (savedStore && STORES.includes(savedStore)) {
+      activeStore = savedStore;
+    }
+
+    // Load store favorites
+    const savedStoreFavs = localStorage.getItem(STORE_FAVORITES_KEY);
+    if (savedStoreFavs) {
+      const parsed = JSON.parse(savedStoreFavs);
+      STORES.forEach(s => {
+        if (Array.isArray(parsed[s])) {
+          storeFavorites[s] = new Set(parsed[s]);
+        }
+      });
+    } else {
+      // Migrate legacy single favorites list into activeStore
+      const savedLegacyFavs = localStorage.getItem(FAVORITES_STORAGE_KEY);
+      if (savedLegacyFavs) {
+        const arr = JSON.parse(savedLegacyFavs);
+        if (Array.isArray(arr) && arr.length > 0) {
+          storeFavorites[activeStore] = new Set(arr);
+        }
+      }
+    }
+
+    // Load private favorites
+    const savedPrivateFavs = localStorage.getItem(PRIVATE_FAVORITES_KEY);
+    if (savedPrivateFavs) {
+      const arr = JSON.parse(savedPrivateFavs);
+      if (Array.isArray(arr)) privateFavorites = new Set(arr);
     }
   } catch (e) {
     console.error('Failed to load localStorage', e);
@@ -3751,31 +3796,219 @@ function loadSavedState() {
 
 function saveFavorites() {
   try {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(favorites)));
+    const serializable = {};
+    STORES.forEach(s => {
+      serializable[s] = Array.from(storeFavorites[s] || []);
+    });
+    localStorage.setItem(STORE_FAVORITES_KEY, JSON.stringify(serializable));
+    localStorage.setItem(PRIVATE_FAVORITES_KEY, JSON.stringify(Array.from(privateFavorites)));
+    
+    // Also save legacy key for backward compatibility
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(storeFavorites[activeStore] || [])));
+
+    // Save to IndexedDB as secondary persistent layer
+    saveFavoritesToIndexedDB(serializable, Array.from(privateFavorites));
   } catch (e) {
     console.error('Failed to save favorites to localStorage', e);
   }
 }
 
-function toggleFavorite(id, event) {
+// IndexedDB secondary storage (resists browser cache wipes)
+function initIndexedDB() {
+  return new Promise((resolve) => {
+    if (!window.indexedDB) return resolve(null);
+    try {
+      const request = indexedDB.open('SnackOrdersDB', 1);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('backup')) {
+          db.createObjectStore('backup');
+        }
+      };
+      request.onsuccess = (e) => resolve(e.target.result);
+      request.onerror = () => resolve(null);
+    } catch (err) {
+      resolve(null);
+    }
+  });
+}
+
+async function saveFavoritesToIndexedDB(storesObj, privateArr) {
+  try {
+    const db = await initIndexedDB();
+    if (!db) return;
+    const tx = db.transaction('backup', 'readwrite');
+    const store = tx.objectStore('backup');
+    store.put(storesObj, 'storeFavorites');
+    store.put(privateArr, 'privateFavorites');
+  } catch (e) {
+    console.warn('IDB write notice', e);
+  }
+}
+
+async function restoreFavoritesFromIndexedDB() {
+  try {
+    const db = await initIndexedDB();
+    if (!db) return false;
+    return new Promise((resolve) => {
+      const tx = db.transaction('backup', 'readonly');
+      const store = tx.objectStore('backup');
+      const reqStores = store.get('storeFavorites');
+      const reqPriv = store.get('privateFavorites');
+      tx.oncomplete = () => {
+        let restored = false;
+        if (reqStores.result) {
+          STORES.forEach(s => {
+            if (Array.isArray(reqStores.result[s]) && reqStores.result[s].length > 0) {
+              if (!storeFavorites[s] || storeFavorites[s].size === 0) {
+                storeFavorites[s] = new Set(reqStores.result[s]);
+                restored = true;
+              }
+            }
+          });
+        }
+        if (reqPriv.result && Array.isArray(reqPriv.result) && privateFavorites.size === 0) {
+          privateFavorites = new Set(reqPriv.result);
+          restored = true;
+        }
+        if (restored) {
+          saveFavorites();
+        }
+        resolve(restored);
+      };
+      tx.onerror = () => resolve(false);
+    });
+  } catch (e) {
+    return false;
+  }
+}
+
+// Background sync to Google Apps Script endpoint
+async function syncFavoriteToAppsScript(store, item, isFav) {
+  const url = localStorage.getItem(APPS_SCRIPT_URL_KEY);
+  if (!url || !url.startsWith('http')) return;
+
+  try {
+    const payload = {
+      action: 'toggleFavorite',
+      store: store,
+      itemId: item.id,
+      itemName: item.name,
+      supplier: item.supplier,
+      isFavorite: isFav
+    };
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    console.warn('Apps Script background sync notice:', err);
+  }
+}
+
+// Store Selection & Pills
+function switchActiveStore(storeName) {
+  if (!STORES.includes(storeName)) return;
+  activeStore = storeName;
+  localStorage.setItem(ACTIVE_STORE_KEY, storeName);
+  renderStorePills();
+  updateFavBadge();
+  renderCategoryTabs();
+  renderCatalog();
+  showToast(`🏪 Магазин: ${storeName}`);
+}
+
+function renderStorePills() {
+  const container = document.getElementById('storePills');
+  if (!container) return;
+  container.innerHTML = STORES.map(s => {
+    const isActive = s === activeStore;
+    const count = storeFavorites[s] ? storeFavorites[s].size : 0;
+    const badge = count > 0 ? `<span class="pill-badge">${count}</span>` : '';
+    return `<button type="button" class="store-pill ${isActive ? 'active' : ''}" onclick="switchActiveStore('${s}')" title="Выбрать магазин ${s} (${count} в избранном)">${s}${badge}</button>`;
+  }).join('');
+}
+
+// Favorites checkers
+function isItemStoreFav(id, store = activeStore) {
+  return !!(storeFavorites[store] && storeFavorites[store].has(id));
+}
+
+function isItemPrivateFav(id) {
+  return privateFavorites.has(id);
+}
+
+function isItemFavForFilter(id) {
+  if (favFilterMode === 'store') return isItemStoreFav(id);
+  if (favFilterMode === 'private') return isItemPrivateFav(id);
+  return true;
+}
+
+// Touch and click handlers for product card star
+let favTouchTimer = null;
+let favTouchTriggered = false;
+
+function handleFavTouchStart(id, event) {
+  favTouchTriggered = false;
+  favTouchTimer = setTimeout(() => {
+    favTouchTriggered = true;
+    if (navigator.vibrate) {
+      try { navigator.vibrate(50); } catch (_) {}
+    }
+    togglePrivateFavorite(id, event);
+  }, 450);
+}
+
+function handleFavTouchEnd(id, event) {
+  if (favTouchTimer) {
+    clearTimeout(favTouchTimer);
+    favTouchTimer = null;
+  }
+}
+
+function handleFavClick(id, event) {
+  if (favTouchTriggered) {
+    favTouchTriggered = false;
+    return;
+  }
+  toggleStoreFavorite(id, event);
+}
+
+function handleFavContextMenu(id, event) {
   if (event) {
+    event.preventDefault();
     event.stopPropagation();
   }
+  togglePrivateFavorite(id, event);
+}
+
+function toggleStoreFavorite(id, event) {
+  if (event) event.stopPropagation();
   const item = catalog.find(i => i.id === id);
   if (!item) return;
 
-  if (favorites.has(id)) {
-    favorites.delete(id);
-    showToast(`Удалено из избранного: ${item.name}`);
+  if (!storeFavorites[activeStore]) {
+    storeFavorites[activeStore] = new Set();
+  }
+
+  const isFav = storeFavorites[activeStore].has(id);
+  if (isFav) {
+    storeFavorites[activeStore].delete(id);
+    showToast(`Удалено из [${activeStore}]: ${item.name}`);
+    syncFavoriteToAppsScript(activeStore, item, false);
   } else {
-    favorites.add(id);
-    showToast(`⭐ Добавлено в избранное: ${item.name}`);
+    storeFavorites[activeStore].add(id);
+    showToast(`⭐ Добавлено в [${activeStore}]: ${item.name}`);
+    syncFavoriteToAppsScript(activeStore, item, true);
   }
 
   saveFavorites();
+  renderStorePills();
   updateFavBadge();
 
-  if (favFilterOnly) {
+  if (favFilterMode !== 'none') {
     renderCategoryTabs();
     renderCatalog();
   } else {
@@ -3784,23 +4017,78 @@ function toggleFavorite(id, event) {
   }
 }
 
+function togglePrivateFavorite(id, event) {
+  if (event) event.stopPropagation();
+  const item = catalog.find(i => i.id === id);
+  if (!item) return;
+
+  const isFav = privateFavorites.has(id);
+  if (isFav) {
+    privateFavorites.delete(id);
+    showToast(`🔹 Удалено из личного: ${item.name}`);
+  } else {
+    privateFavorites.add(id);
+    showToast(`🔹 Добавлено в личное: ${item.name}`);
+  }
+
+  saveFavorites();
+  updateFavBadge();
+
+  if (favFilterMode !== 'none') {
+    renderCategoryTabs();
+    renderCatalog();
+  } else {
+    updateCardFavState(id);
+  }
+}
+
+// Backward compatible alias
+function toggleFavorite(id, event) {
+  handleFavClick(id, event);
+}
+
 function updateCardFavState(id) {
   const card = document.querySelector(`.product-card[data-id="${id}"]`);
   if (!card) return;
   const btn = card.querySelector('.btn-fav');
   if (!btn) return;
-  const isFav = favorites.has(id);
-  btn.classList.toggle('is-fav', isFav);
-  btn.title = isFav ? 'В избранном (нажмите, чтобы убрать)' : 'Добавить в избранное';
-  btn.setAttribute('aria-label', isFav ? 'В избранном' : 'Добавить в избранное');
-  btn.innerHTML = isFav ? ICONS.starFilled : ICONS.starOutline;
+
+  const isStore = isItemStoreFav(id);
+  const isPrivate = isItemPrivateFav(id);
+
+  btn.classList.remove('is-fav', 'is-private-fav', 'is-both-fav');
+
+  if (isStore && isPrivate) {
+    btn.classList.add('is-fav', 'is-both-fav');
+    btn.innerHTML = ICONS.starFilled;
+    btn.title = `В избранном [${activeStore}] и в личном (клик: ${activeStore}, удержание: личное)`;
+  } else if (isStore) {
+    btn.classList.add('is-fav');
+    btn.innerHTML = ICONS.starFilled;
+    btn.title = `В избранном магазина [${activeStore}] (клик: убрать, удержание: в личное)`;
+  } else if (isPrivate) {
+    btn.classList.add('is-private-fav');
+    btn.innerHTML = ICONS.starBlue;
+    btn.title = `В личном избранном (клик: добавить в [${activeStore}], удержание: убрать)`;
+  } else {
+    btn.innerHTML = ICONS.starOutline;
+    btn.title = `Добавить в избранное [${activeStore}] (удержание: в личное)`;
+  }
 }
 
 function toggleFavoritesFilter(forceState) {
-  if (typeof forceState === 'boolean') {
-    favFilterOnly = forceState;
+  if (typeof forceState === 'string') {
+    favFilterMode = forceState;
+  } else if (typeof forceState === 'boolean') {
+    favFilterMode = forceState ? 'store' : 'none';
   } else {
-    favFilterOnly = !favFilterOnly;
+    if (favFilterMode === 'none') {
+      favFilterMode = 'store';
+    } else if (favFilterMode === 'store' && privateFavorites.size > 0) {
+      favFilterMode = 'private';
+    } else {
+      favFilterMode = 'none';
+    }
   }
   updateFavBadge();
   renderCategoryTabs();
@@ -3812,25 +4100,193 @@ function updateFavBadge() {
   const btn = document.getElementById('btnFavFilter');
   if (!btn) return;
 
-  const count = catalog.filter(i => i.supplier === activeSupplier && favorites.has(i.id)).length;
+  const currentStoreSet = storeFavorites[activeStore] || new Set();
+  const storeCount = catalog.filter(i => i.supplier === activeSupplier && currentStoreSet.has(i.id)).length;
+  const privateCount = catalog.filter(i => i.supplier === activeSupplier && privateFavorites.has(i.id)).length;
 
-  if (badge) {
-    if (count > 0) {
-      badge.textContent = count;
-      badge.style.display = 'inline-block';
-    } else {
-      badge.style.display = 'none';
+  btn.classList.remove('active', 'active-store', 'active-private');
+
+  if (favFilterMode === 'store') {
+    btn.classList.add('active', 'active-store');
+    btn.title = `Фильтр [${activeStore}] (${storeCount} поз.). Нажмите для отключения`;
+    if (badge) {
+      badge.textContent = storeCount;
+      badge.style.display = storeCount > 0 ? 'inline-block' : 'none';
+      badge.style.background = 'var(--accent-amber)';
+      badge.style.color = '#0f172a';
+    }
+  } else if (favFilterMode === 'private') {
+    btn.classList.add('active', 'active-private');
+    btn.title = `Фильтр [Личное] (${privateCount} поз.). Нажмите для отключения`;
+    if (badge) {
+      badge.textContent = privateCount;
+      badge.style.display = privateCount > 0 ? 'inline-block' : 'none';
+      badge.style.background = '#38bdf8';
+      badge.style.color = '#0f172a';
+    }
+  } else {
+    btn.title = storeCount > 0 
+      ? `Показать только избранные [${activeStore}] (${storeCount} поз.)`
+      : `Показать только избранные [${activeStore}] (пока нет в этом разделе)`;
+    if (badge) {
+      badge.textContent = storeCount;
+      badge.style.display = storeCount > 0 ? 'inline-block' : 'none';
+      badge.style.background = 'var(--accent-amber)';
+      badge.style.color = '#0f172a';
     }
   }
+}
 
-  if (favFilterOnly) {
-    btn.classList.add('active');
-    btn.title = `Фильтр избранного включен (${count} поз.). Нажмите, чтобы отключить`;
+// Export / Import / Backup Helpers
+function exportFavoritesJson() {
+  const backup = {
+    version: 2,
+    exportDate: new Date().toISOString(),
+    stores: {},
+    private: Array.from(privateFavorites)
+  };
+  STORES.forEach(s => {
+    backup.stores[s] = Array.from(storeFavorites[s] || []);
+  });
+  
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `snack_favorites_backup_${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('📥 Бэкап избранного сохранен!');
+}
+
+function copyFavoritesBackupText() {
+  const backup = {
+    version: 2,
+    stores: {},
+    private: Array.from(privateFavorites)
+  };
+  STORES.forEach(s => {
+    backup.stores[s] = Array.from(storeFavorites[s] || []);
+  });
+
+  const text = JSON.stringify(backup);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('📋 Код бэкапа скопирован в буфер!');
+    }).catch(() => {
+      prompt('Скопируйте код бэкапа вручную:', text);
+    });
   } else {
-    btn.classList.remove('active');
-    btn.title = count > 0 
-      ? `Показать только избранные (${count} поз.)` 
-      : 'Показать только избранные (пока нет в этом разделе)';
+    prompt('Скопируйте код бэкапа вручную:', text);
+  }
+}
+
+function promptImportFavoritesText() {
+  const input = prompt('Вставьте код бэкапа избранного (JSON):');
+  if (!input || !input.trim()) return;
+  try {
+    const parsed = JSON.parse(input.trim());
+    applyImportedFavorites(parsed);
+  } catch (err) {
+    alert('Ошибка формата кода бэкапа: ' + err.message);
+  }
+}
+
+function importFavoritesJsonFile(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      applyImportedFavorites(parsed);
+    } catch (err) {
+      alert('Ошибка чтения файла бэкапа: ' + err.message);
+    } finally {
+      event.target.value = '';
+    }
+  };
+  reader.readAsText(file);
+}
+
+function applyImportedFavorites(data) {
+  if (!data) return;
+  let importedCount = 0;
+
+  if (data.stores) {
+    STORES.forEach(s => {
+      if (Array.isArray(data.stores[s])) {
+        storeFavorites[s] = new Set(data.stores[s]);
+        importedCount += data.stores[s].length;
+      }
+    });
+  } else if (Array.isArray(data)) {
+    storeFavorites[activeStore] = new Set(data);
+    importedCount = data.length;
+  }
+
+  if (Array.isArray(data.private)) {
+    privateFavorites = new Set(data.private);
+  }
+
+  saveFavorites();
+  renderStorePills();
+  updateFavBadge();
+  renderCategoryTabs();
+  renderCatalog();
+  showToast(`✅ Избранное успешно восстановлено (${importedCount} позиций)!`);
+}
+
+function shareStoreSetupLink() {
+  const storeItems = Array.from(storeFavorites[activeStore] || []);
+  const payload = {
+    s: activeStore,
+    f: storeItems
+  };
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+  const shareUrl = `${window.location.origin}${window.location.pathname}#fav_setup=${b64}`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast(`🔗 Ссылка для точки [${activeStore}] скопирована! Отправьте её продавцам.`);
+    }).catch(() => {
+      prompt(`Ссылка для настройки магазина [${activeStore}]:`, shareUrl);
+    });
+  } else {
+    prompt(`Ссылка для настройки магазина [${activeStore}]:`, shareUrl);
+  }
+}
+
+function checkUrlHashConfig() {
+  try {
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    if (hash.startsWith('#store=')) {
+      const storeName = decodeURIComponent(hash.slice(7));
+      if (STORES.includes(storeName)) {
+        activeStore = storeName;
+        localStorage.setItem(ACTIVE_STORE_KEY, storeName);
+      }
+    } else if (hash.startsWith('#fav_setup=')) {
+      const raw = hash.slice(11);
+      const jsonStr = decodeURIComponent(escape(atob(raw)));
+      const obj = JSON.parse(jsonStr);
+      if (obj && obj.s && STORES.includes(obj.s)) {
+        activeStore = obj.s;
+        localStorage.setItem(ACTIVE_STORE_KEY, obj.s);
+        if (Array.isArray(obj.f)) {
+          storeFavorites[obj.s] = new Set(obj.f);
+          saveFavorites();
+        }
+        showToast(`✅ Настройки магазина [${obj.s}] успешно применены по ссылке!`);
+      }
+    }
+  } catch (err) {
+    console.warn('URL hash config parse error:', err);
   }
 }
 
@@ -4093,7 +4549,10 @@ function parseGoogleSheetWorkbook(wb) {
     }
   }
 
-  let sheetNames = wb.SheetNames.filter(s => s !== 'Весь ассортимент' && s !== supSheetName);
+  let sheetNames = wb.SheetNames.filter(s => {
+    const l = s.toLowerCase();
+    return s !== 'Весь ассортимент' && s !== supSheetName && !l.includes('избран') && !l.includes('favorite');
+  });
 
   for (const sheetName of sheetNames) {
     const ws = wb.Sheets[sheetName];
@@ -4248,6 +4707,83 @@ function parseGoogleSheetWorkbook(wb) {
     });
   });
 
+  // Discovered favorites sheet if present in Google Sheet
+  const favSheetName = wb.SheetNames.find(s => {
+    const lower = String(s).toLowerCase().trim();
+    return lower === 'избранное' || lower.includes('избран') || lower === 'favorites';
+  });
+
+  if (favSheetName) {
+    try {
+      const favWs = wb.Sheets[favSheetName];
+      const favRows = XLSX.utils.sheet_to_json(favWs, { header: 1, defval: '' });
+      if (favRows && favRows.length > 1) {
+        const header = (favRows[0] || []).map(h => String(h || '').trim().toLowerCase());
+        const storeCol = header.findIndex(h => h.includes('магазин') || h.includes('store') || h.includes('точка'));
+        const itemCol = header.findIndex(h => h.includes('товар') || h.includes('наименование') || h.includes('id') || h.includes('name'));
+
+        const storeColMap = {};
+        STORES.forEach(sName => {
+          const idx = header.findIndex(h => h === sName.toLowerCase() || h.includes(sName.toLowerCase()));
+          if (idx !== -1) storeColMap[sName] = idx;
+        });
+
+        const parsedFavs = {
+          'Битца': new Set(),
+          'Битца2': new Set(),
+          'БП': new Set(),
+          'Олимп': new Set()
+        };
+
+        if (storeCol !== -1 && itemCol !== -1) {
+          for (let r = 1; r < favRows.length; r++) {
+            const row = favRows[r];
+            const storeVal = String(row[storeCol] || '').trim();
+            const itemVal = String(row[itemCol] || '').trim();
+            if (!storeVal || !itemVal) continue;
+
+            const matchedStore = STORES.find(s => s.toLowerCase() === storeVal.toLowerCase());
+            if (matchedStore) {
+              const matchedItem = items.find(it => it.id === itemVal || it.name.toLowerCase() === itemVal.toLowerCase() || it.name.toLowerCase().includes(itemVal.toLowerCase()));
+              if (matchedItem) {
+                parsedFavs[matchedStore].add(matchedItem.id);
+              }
+            }
+          }
+        } else if (Object.keys(storeColMap).length > 0) {
+          const nameColIdx = itemCol !== -1 ? itemCol : 0;
+          for (let r = 1; r < favRows.length; r++) {
+            const row = favRows[r];
+            const itemVal = String(row[nameColIdx] || '').trim();
+            if (!itemVal) continue;
+            const matchedItem = items.find(it => it.id === itemVal || it.name.toLowerCase() === itemVal.toLowerCase());
+            if (!matchedItem) continue;
+
+            for (const [sName, colIdx] of Object.entries(storeColMap)) {
+              const cellVal = String(row[colIdx] || '').trim().toLowerCase();
+              if (cellVal && cellVal !== '0' && cellVal !== 'нет' && cellVal !== 'false' && cellVal !== '-') {
+                parsedFavs[sName].add(matchedItem.id);
+              }
+            }
+          }
+        }
+
+        let totalImported = 0;
+        STORES.forEach(sName => {
+          if (parsedFavs[sName].size > 0) {
+            storeFavorites[sName] = parsedFavs[sName];
+            totalImported += parsedFavs[sName].size;
+          }
+        });
+        if (totalImported > 0) {
+          saveFavorites();
+        }
+      }
+    } catch (favErr) {
+      console.warn('Favorites sheet parsing notice:', favErr);
+    }
+  }
+
   return {
     items,
     suppliers: dynamicSuppliers.length > 0 ? dynamicSuppliers : DEFAULT_SUPPLIERS
@@ -4319,14 +4855,14 @@ function renderCategoryTabs() {
   container.innerHTML = orderedCats.map(cat => {
     let count = 0;
     if (cat === 'all') {
-      count = favFilterOnly 
-        ? itemsInSup.filter(i => favorites.has(i.id)).length 
+      count = favFilterMode !== 'none' 
+        ? itemsInSup.filter(i => isItemFavForFilter(i.id)).length 
         : itemsInSup.length;
     } else if (cat === 'manual') {
       count = manualItems.filter(m => (m.supplier || 'snacks') === activeSupplier).length;
     } else {
-      count = favFilterOnly 
-        ? itemsInSup.filter(i => i.category === cat && favorites.has(i.id)).length 
+      count = favFilterMode !== 'none' 
+        ? itemsInSup.filter(i => i.category === cat && isItemFavForFilter(i.id)).length 
         : itemsInSup.filter(i => i.category === cat).length;
     }
 
@@ -4374,22 +4910,25 @@ function renderCatalog() {
       matchSearch = target.includes(q);
     }
 
-    const matchFav = !favFilterOnly || favorites.has(item.id);
+    const matchFav = favFilterMode === 'none' || isItemFavForFilter(item.id);
 
     return matchCat && matchSearch && matchFav;
   });
 
   if (filtered.length === 0) {
-    if (favFilterOnly) {
+    if (favFilterMode !== 'none') {
       const supName = getSupplierById(activeSupplier).shortName;
+      const filterLabel = favFilterMode === 'store' 
+        ? `в избранном точки [${escapeHtml(activeStore)}]` 
+        : 'в личном избранном';
       container.innerHTML = `
         <div class="empty-state">
           <div style="font-size: 2.2rem; margin-bottom: 8px;">⭐</div>
-          <p>В разделе «${escapeHtml(supName)}» нет избранных товаров${activeCategory !== 'all' ? ' в этой категории' : ''}</p>
+          <p>В разделе «${escapeHtml(supName)}» нет товаров ${filterLabel}${activeCategory !== 'all' ? ' в этой категории' : ''}</p>
           <p style="font-size: 0.82rem; color: var(--text-muted); margin: 6px auto 14px; max-width: 280px; line-height: 1.4;">
-            Нажмите на звёздочку возле названия любого товара, чтобы добавить его в избранное
+            Нажмите на звёздочку возле названия любого товара, чтобы закрепить его для магазина [${escapeHtml(activeStore)}]
           </p>
-          <button class="btn-action-secondary" style="margin: 0 auto; display: inline-flex;" onclick="toggleFavoritesFilter(false)">
+          <button class="btn-action-secondary" style="margin: 0 auto; display: inline-flex;" onclick="toggleFavoritesFilter('none')">
             Показать весь ассортимент
           </button>
         </div>
@@ -4607,7 +5146,26 @@ function renderProductCard(item) {
   const showThumb = isPringles || hasImage;
 
   const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
-  const isFav = favorites.has(item.id);
+  
+  const isStore = isItemStoreFav(item.id);
+  const isPrivate = isItemPrivateFav(item.id);
+  let favClass = '';
+  let favIcon = ICONS.starOutline;
+  let favTitle = `Добавить в избранное [${escapeHtml(activeStore)}] (удержание: в личное)`;
+
+  if (isStore && isPrivate) {
+    favClass = 'is-fav is-both-fav';
+    favIcon = ICONS.starFilled;
+    favTitle = `В избранном [${escapeHtml(activeStore)}] и в личном (клик: ${escapeHtml(activeStore)}, удержание: личное)`;
+  } else if (isStore) {
+    favClass = 'is-fav';
+    favIcon = ICONS.starFilled;
+    favTitle = `В избранном магазина [${escapeHtml(activeStore)}] (клик: убрать, удержание: в личное)`;
+  } else if (isPrivate) {
+    favClass = 'is-private-fav';
+    favIcon = ICONS.starBlue;
+    favTitle = `В личном избранном (клик: в [${escapeHtml(activeStore)}], удержание: убрать)`;
+  }
 
   return `
     <div class="product-card ${hasOrder}" data-id="${item.id}">
@@ -4615,8 +5173,13 @@ function renderProductCard(item) {
       <div class="product-info">
         <div class="product-title-row">
           <div class="product-title">${highlightSearch(item.name, searchQuery)}</div>
-          <button type="button" class="btn-fav ${isFav ? 'is-fav' : ''}" onclick="toggleFavorite('${item.id}', event)" title="${isFav ? 'В избранном (нажмите, чтобы убрать)' : 'Добавить в избранное'}" aria-label="Избранное">
-            ${isFav ? ICONS.starFilled : ICONS.starOutline}
+          <button type="button" class="btn-fav ${favClass}"
+            onclick="handleFavClick('${item.id}', event)"
+            ontouchstart="handleFavTouchStart('${item.id}', event)"
+            ontouchend="handleFavTouchEnd('${item.id}', event)"
+            oncontextmenu="handleFavContextMenu('${item.id}', event)"
+            title="${favTitle}" aria-label="Избранное">
+            ${favIcon}
           </button>
         </div>
         <div class="product-meta">
@@ -4990,7 +5553,8 @@ function generateOrderText(supplierId = modalActiveSupplier) {
     }));
   }
 
-  let text = `📦 ЗАКАЗ: ${sup.name.toUpperCase()}\n`;
+  let text = `🏪 МАГАЗИН: ${activeStore.toUpperCase()}\n`;
+  text += `📦 ЗАКАЗ: ${sup.name.toUpperCase()}\n`;
   text += `📅 Дата: ${dateStr}\n`;
   text += `------------------------------------\n\n`;
 
@@ -5217,7 +5781,7 @@ function downloadOrderExcel() {
   }
 
   const rows = [
-    [`ЗАКАЗ: ${sup.name.toUpperCase()}`, '', '', '', ''],
+    [`ЗАКАЗ [${activeStore}]: ${sup.name.toUpperCase()}`, '', '', '', ''],
     ['№', 'Категория', 'Наименование товара', 'Количество', 'Единица']
   ];
 
@@ -5266,7 +5830,7 @@ function downloadOrderExcel() {
   XLSX.utils.book_append_sheet(wb, ws, `Заказ_${sup.shortName}`);
 
   const today = new Date().toISOString().slice(0, 10);
-  XLSX.writeFile(wb, `Заказ_${sup.shortName}_${today}.xlsx`);
+  XLSX.writeFile(wb, `Заказ_${activeStore}_${sup.shortName}_${today}.xlsx`);
   showToast(`📥 Excel для «${sup.shortName}» скачан!`);
 }
 
@@ -5389,8 +5953,12 @@ function confirmDialogAction() {
 function openSettingsModal() {
   const modal = document.getElementById('settingsModal');
   const input = document.getElementById('settingsSheetUrl');
+  const scriptInput = document.getElementById('settingsAppsScriptUrl');
   if (input) {
     input.value = localStorage.getItem(CUSTOM_SHEET_KEY) || DEFAULT_SHEET_XLSX_URL;
+  }
+  if (scriptInput) {
+    scriptInput.value = localStorage.getItem(APPS_SCRIPT_URL_KEY) || '';
   }
   if (modal) modal.classList.add('active');
 }
@@ -5402,13 +5970,17 @@ function closeSettingsModal() {
 
 function saveSettings() {
   const input = document.getElementById('settingsSheetUrl');
+  const scriptInput = document.getElementById('settingsAppsScriptUrl');
   if (input) {
     const val = input.value.trim() || DEFAULT_SHEET_XLSX_URL;
     localStorage.setItem(CUSTOM_SHEET_KEY, val);
-    showToast('Настройки сохранены');
-    closeSettingsModal();
-    syncFromGoogleSheets(true);
   }
+  if (scriptInput) {
+    localStorage.setItem(APPS_SCRIPT_URL_KEY, scriptInput.value.trim());
+  }
+  showToast('Настройки сохранены');
+  closeSettingsModal();
+  syncFromGoogleSheets(true);
 }
 
 // Toast Notifications

@@ -159,6 +159,85 @@ button,
   }
 }
 
+/* Store Selector Bar (Битца, Битца2, БП, Олимп) */
+.store-bar {
+  margin-top: 10px;
+}
+
+.store-bar-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 3px 4px;
+}
+
+.store-bar-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  padding: 0 4px 0 6px;
+  user-select: none;
+}
+
+.store-pills {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.store-pill {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 3px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease, transform var(--dur-press) var(--ease-out);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.store-pill:active {
+  transform: scale(0.96);
+}
+
+.store-pill.active {
+  background: var(--accent-amber);
+  color: #0f172a;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.store-pill .pill-badge {
+  font-size: 0.65rem;
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-muted);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.store-pill.active .pill-badge {
+  background: rgba(15, 23, 42, 0.22);
+  color: #0f172a;
+}
+
 /* Search Bar */
 .search-container {
   margin-top: 10px;
@@ -214,6 +293,18 @@ button,
 
 .btn-fav-filter.active svg {
   fill: #f59e0b;
+}
+
+.btn-fav-filter.active-private {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+}
+
+.btn-fav-filter.active-private svg {
+  fill: #38bdf8;
+  stroke: #38bdf8;
 }
 
 .fav-filter-badge {
@@ -811,7 +902,35 @@ button,
 
 .btn-fav.is-fav svg {
   fill: #f59e0b;
+  stroke: #f59e0b;
   filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.45));
+}
+
+.btn-fav.is-private-fav {
+  color: #38bdf8;
+}
+
+.btn-fav.is-private-fav svg {
+  fill: #38bdf8;
+  stroke: #38bdf8;
+  filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.45));
+}
+
+.btn-fav.is-both-fav {
+  color: #f59e0b;
+  position: relative;
+}
+
+.btn-fav.is-both-fav::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 4px #38bdf8;
 }
 
 .btn-fav:active {
