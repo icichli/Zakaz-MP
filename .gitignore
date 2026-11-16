@@ -1,0 +1,21 @@
+# Черновики, тесты и вспомогательные скрипты разработки
+scratch/
+
+# Локальные выгрузки и тяжелые таблицы (приложение синхронизируется напрямую с Google Sheets)
+*.xlsx
+*.csv
+catalog.json
+
+# Системные файлы Windows / macOS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Настройки редакторов и логи
+*.log
+.vscode/
+.idea/
+
+# Служебные папки
+.trace-mcp/

@@ -4023,48 +4023,115 @@ function isItemFavForFilter(id) {
 
 // Pointer & Long-Press Handlers for Favorites
 let favPressTimer = null;
-let favIsLongPress = false;
+let favGestureTriggered = false;
+let favPendingCatalogRerender = false;
+let favLastTriggeredAt = 0;
+let favActiveBtnEl = null;
 let favStartX = 0;
 let favStartY = 0;
 
+function clearFavPressTimer() {
+  if (favPressTimer) {
+    clearTimeout(favPressTimer);
+    favPressTimer = null;
+  }
+  if (favActiveBtnEl) {
+    favActiveBtnEl.classList.remove('is-pressing');
+    favActiveBtnEl = null;
+  }
+}
+
 function handleFavPointerDown(id, event) {
+  // Only accept primary pointer (left mouse button or touch/pen)
   if (event.button !== undefined && event.button !== 0) return;
-  favIsLongPress = false;
+  // If a gesture has already triggered and finger is still held down, do not start another!
+  if (favGestureTriggered) return;
+
+  clearFavPressTimer();
+  favPendingCatalogRerender = false;
   favStartX = event.clientX;
   favStartY = event.clientY;
 
-  clearTimeout(favPressTimer);
+  const btn = (event && event.currentTarget) || (event && event.target && event.target.closest('.btn-fav'));
+  favActiveBtnEl = btn;
+  if (btn) {
+    btn.classList.add('is-pressing');
+  }
+
   favPressTimer = setTimeout(() => {
-    favIsLongPress = true;
-    if (navigator.vibrate) {
-      try { navigator.vibrate(60); } catch (_) {}
+    // Strictly prevent repeated execution within one continuous press
+    if (favGestureTriggered) return;
+    favGestureTriggered = true;
+    favLastTriggeredAt = Date.now();
+
+    const activeEl = favActiveBtnEl;
+    if (activeEl) {
+      activeEl.classList.remove('is-pressing');
+      activeEl.classList.remove('is-triggered');
+      void activeEl.offsetWidth; // trigger reflow for smooth animation
+      activeEl.classList.add('is-triggered');
+      setTimeout(() => {
+        if (activeEl) activeEl.classList.remove('is-triggered');
+      }, 500);
     }
-    togglePrivateFavorite(id, event);
-  }, 400);
+    favActiveBtnEl = null;
+    favPressTimer = null;
+
+    if (navigator.vibrate) {
+      try {
+        // Clear double-buzz tactile feedback
+        navigator.vibrate([45, 30, 45]);
+      } catch (_) {
+        try { navigator.vibrate(50); } catch (_) {}
+      }
+    }
+
+    // Toggle private favorite once; defer DOM wipe until pointer is released
+    togglePrivateFavorite(id, event, true);
+  }, 420);
 }
 
 function handleFavPointerMove(event) {
   if (!favPressTimer) return;
   const diffX = Math.abs(event.clientX - favStartX);
   const diffY = Math.abs(event.clientY - favStartY);
-  if (diffX > 8 || diffY > 8) {
-    clearTimeout(favPressTimer);
-    favPressTimer = null;
+  // Cancel long-press if finger moved beyond slop threshold (user scrolling)
+  if (diffX > 14 || diffY > 14) {
+    clearFavPressTimer();
   }
 }
 
 function handleFavPointerUp(id, event) {
-  if (favPressTimer) {
-    clearTimeout(favPressTimer);
-    favPressTimer = null;
+  clearFavPressTimer();
+
+  if (favGestureTriggered) {
+    // Pointer released after long-press completed
+    if (favPendingCatalogRerender) {
+      favPendingCatalogRerender = false;
+      setTimeout(() => {
+        renderCategoryTabs();
+        renderCatalog();
+      }, 60);
+    }
+    // Keep gesture flag active briefly to swallow subsequent synthetic click
+    setTimeout(() => {
+      favGestureTriggered = false;
+    }, 400);
   }
 }
 
 function handleFavPointerCancel(event) {
-  if (favPressTimer) {
-    clearTimeout(favPressTimer);
-    favPressTimer = null;
+  clearFavPressTimer();
+  if (favPendingCatalogRerender) {
+    favPendingCatalogRerender = false;
+    setTimeout(() => {
+      renderCategoryTabs();
+      renderCatalog();
+    }, 60);
   }
+  setTimeout(() => {
+    favGestureTriggered = false;
+  }, 400);
 }
 
 function handleFavClick(id, event) {
@@ -4072,8 +4139,9 @@ function handleFavClick(id, event) {
     event.stopPropagation();
     event.preventDefault();
   }
-  if (favIsLongPress) {
-    favIsLongPress = false;
+  // Swallow click if long-press gesture just fired
+  if (favGestureTriggered || (Date.now() - favLastTriggeredAt < 650)) {
+    favGestureTriggered = false;
     return;
   }
   toggleStoreFavorite(id, event);
@@ -4084,7 +4152,12 @@ function handleFavContextMenu(id, event) {
     event.preventDefault();
     event.stopPropagation();
   }
-  togglePrivateFavorite(id, event);
+  // Swallow synthetic mobile context menu after long-press hold
+  if (favGestureTriggered || (Date.now() - favLastTriggeredAt < 900)) {
+    return;
+  }
+  // Desktop mouse right click toggles private favorite
+  togglePrivateFavorite(id, event, false);
 }
 
 function toggleStoreFavorite(id, event) {
@@ -4120,7 +4193,7 @@ function toggleStoreFavorite(id, event) {
   }
 }
 
-function togglePrivateFavorite(id, event) {
+function togglePrivateFavorite(id, event, deferRerender = false) {
   if (event) event.stopPropagation();
   const item = catalog.find(i => i.id === id);
   if (!item) return;
@@ -4128,7 +4201,7 @@ function togglePrivateFavorite(id, event) {
   const isFav = privateFavorites.has(id);
   if (isFav) {
     privateFavorites.delete(id);
-    showToast(`👤 Удалено из личного избранного: ${item.name}`);
+    showToast(`👤 Удалено из личного: ${item.name}`);
   } else {
     privateFavorites.add(id);
     showToast(`👤 Добавлено в личное избранное: ${item.name}`);
@@ -4139,10 +4212,16 @@ function togglePrivateFavorite(id, event) {
   updateFavBadge();
 
   if (favFilterMode !== 'none') {
-    renderCategoryTabs();
-    renderCatalog();
+    if (deferRerender) {
+      favPendingCatalogRerender = true;
+      updateCardFavState(id);
+    } else {
+      renderCategoryTabs();
+      renderCatalog();
+    }
   } else {
     updateCardFavState(id);
+    renderCategoryTabs();
   }
 }
 
@@ -4219,36 +4298,39 @@ function toggleFavModalCheck(type) {
 }
 
 function updateCardFavState(id) {
-  const card = document.querySelector(`.product-card[data-id="${id}"]`);
-  if (!card) return;
-  const btn = card.querySelector('.btn-fav');
-  if (!btn) return;
+  const cards = document.querySelectorAll(`.product-card[data-id="${id}"]`);
+  if (!cards || !cards.length) return;
 
   const isStore = isItemStoreFav(id);
   const isPrivate = isItemPrivateFav(id);
 
-  btn.classList.remove('is-fav', 'is-private-fav', 'is-both-fav');
+  cards.forEach(card => {
+    const btn = card.querySelector('.btn-fav');
+    if (!btn) return;
 
-  if (isStore && isPrivate) {
-    btn.classList.add('is-both-fav');
-    btn.innerHTML = ICONS.starSplit;
-    btn.title = `В избранном [${activeStore}] (золото) и в личном (синий). Клик: магазин, удержание: личное`;
-    btn.setAttribute('aria-label', `В избранном ${activeStore} и в личном`);
-  } else if (isStore) {
-    btn.classList.add('is-fav');
-    btn.innerHTML = ICONS.starFilled;
-    btn.title = `В избранном магазина [${activeStore}]. Клик: убрать, удержание: в личное`;
-    btn.setAttribute('aria-label', `В избранном ${activeStore}`);
-  } else if (isPrivate) {
-    btn.classList.add('is-private-fav');
-    btn.innerHTML = ICONS.starBlue;
-    btn.title = `В личном избранном. Клик: добавить в [${activeStore}], удержание: убрать из личного`;
-    btn.setAttribute('aria-label', `В личном избранном`);
-  } else {
-    btn.innerHTML = ICONS.starOutline;
-    btn.title = `Добавить в избранное. Клик: [${activeStore}], удержание: в личное`;
-    btn.setAttribute('aria-label', `Добавить в избранное`);
-  }
+    btn.classList.remove('is-fav', 'is-private-fav', 'is-both-fav');
+
+    if (isStore && isPrivate) {
+      btn.classList.add('is-both-fav');
+      btn.innerHTML = ICONS.starSplit;
+      btn.title = `В избранном [${activeStore}] (золото) и в личном (синий). Клик: магазин, удержание: личное`;
+      btn.setAttribute('aria-label', `В избранном ${activeStore} и в личном`);
+    } else if (isStore) {
+      btn.classList.add('is-fav');
+      btn.innerHTML = ICONS.starFilled;
+      btn.title = `В избранном магазина [${activeStore}]. Клик: убрать, удержание: в личное`;
+      btn.setAttribute('aria-label', `В избранном ${activeStore}`);
+    } else if (isPrivate) {
+      btn.classList.add('is-private-fav');
+      btn.innerHTML = ICONS.starBlue;
+      btn.title = `В личном избранном. Клик: добавить в [${activeStore}], удержание: убрать из личного`;
+      btn.setAttribute('aria-label', `В личном избранном`);
+    } else {
+      btn.innerHTML = ICONS.starOutline;
+      btn.title = `Добавить в избранное. Клик: [${activeStore}], удержание: в личное`;
+      btn.setAttribute('aria-label', `Добавить в избранное`);
+    }
+  });
 }
 
 function toggleFavoritesFilter(forceState) {

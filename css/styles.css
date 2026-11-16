@@ -75,6 +75,7 @@ button,
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* App Header */
@@ -995,28 +996,36 @@ button,
 }
 
 .btn-fav {
+  position: relative;
   background: transparent;
   border: none;
   outline: none;
   padding: 4px;
-  min-width: 28px;
-  min-height: 28px;
+  min-width: 30px;
+  min-height: 30px;
   cursor: pointer;
   color: var(--text-muted);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-sm);
-  transition: transform var(--dur-press) var(--ease-out), color var(--dur-fast) ease, background-color var(--dur-fast) ease;
+  border-radius: 50%;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color var(--dur-fast) ease, background-color var(--dur-fast) ease;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
   touch-action: manipulation;
+}
+
+.btn-fav svg {
+  pointer-events: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .btn-fav:hover {
     color: #cbd5e1;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
   }
 }
 
@@ -1048,8 +1057,29 @@ button,
   filter: drop-shadow(-1px 0 3px rgba(245, 158, 11, 0.5)) drop-shadow(1px 0 3px rgba(56, 189, 248, 0.5));
 }
 
-.btn-fav:active {
+/* Quick tap active state */
+.btn-fav:active:not(.is-pressing):not(.is-triggered) {
   transform: scale(1.15);
+}
+
+/* Long-press charging state (clear visual hint that button is being held) */
+.btn-fav.is-pressing {
+  transform: scale(0.82) !important;
+  background: rgba(56, 189, 248, 0.18) !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.4) !important;
+  transition: transform 0.38s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.38s ease, background 0.38s ease !important;
+}
+
+/* Pop/burst animation when long-press activates */
+@keyframes favTriggerPop {
+  0% { transform: scale(0.82); }
+  45% { transform: scale(1.38); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.85)); }
+  75% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.btn-fav.is-triggered {
+  animation: favTriggerPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
 }
 
 .product-meta {
