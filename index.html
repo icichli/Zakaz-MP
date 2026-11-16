@@ -11,8 +11,8 @@
   <meta name="description" content="Удобная система формирования заказа снеков для пивных магазинов">
   <title>Заказ Снеков</title>
 
-  <link rel="stylesheet" href="css/styles.css?v=2.5.1">
-  <link rel="manifest" href="manifest.json?v=2.5.1">
+  <link rel="stylesheet" href="css/styles.css?v=2.6.0">
+  <link rel="manifest" href="manifest.json?v=2.6.0">
 </head>
 
 <body>
@@ -252,6 +252,54 @@
     </div>
   </div>
 
+  <!-- Favorite Selection Modal Sheet -->
+  <div id="favModal" class="modal-overlay" onclick="closeFavModal()">
+    <div class="modal-container fav-modal-container" onclick="event.stopPropagation()">
+      <div class="modal-drag-handle"></div>
+      <div class="modal-header">
+        <div class="modal-title">⭐ Настройка избранного</div>
+        <button class="modal-close" onclick="closeFavModal()" title="Закрыть">✕</button>
+      </div>
+      <div class="modal-body" style="padding-top: 4px;">
+        <div id="favModalItemName" class="fav-modal-item-name">Название товара</div>
+        <div class="fav-options-list">
+          <!-- Option 1: Store Favorites -->
+          <label class="fav-option-card" id="favCardStore">
+            <input type="checkbox" id="favCheckStore" class="fav-checkbox" onchange="toggleFavModalCheck('store')">
+            <div class="fav-option-content">
+              <div class="fav-option-title">
+                <span>⭐</span>
+                <span id="favOptionStoreTitle">Избранное магазина (Битца)</span>
+              </div>
+              <div class="fav-option-desc">
+                Видят все продавцы этой точки, синхронизируется в Google Таблицу
+              </div>
+            </div>
+          </label>
+
+          <!-- Option 2: Private Favorites -->
+          <label class="fav-option-card" id="favCardPrivate">
+            <input type="checkbox" id="favCheckPrivate" class="fav-checkbox priv" onchange="toggleFavModalCheck('private')">
+            <div class="fav-option-content">
+              <div class="fav-option-title">
+                <span>👤</span>
+                <span>Моё личное избранное</span>
+              </div>
+              <div class="fav-option-desc">
+                Сохраняется только на этом телефоне (для ваших личных заметок)
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding-top: 10px;">
+        <button type="button" class="btn-action-primary" onclick="closeFavModal()">
+          Готово
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Numeric Quantity / Confirm Dialog -->
   <div id="dialogOverlay" class="dialog-overlay">
     <div class="dialog-box">
@@ -281,7 +329,7 @@
 
   <!-- Vendor Scripts & Application -->
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=2.5.1"></script>
+  <script src="js/app.js?v=2.6.0"></script>
 </body>
 
 </html>

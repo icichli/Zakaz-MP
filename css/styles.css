@@ -238,6 +238,130 @@ button,
   color: #0f172a;
 }
 
+.store-pill.store-pill-private {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 5px;
+}
+
+.store-pill.store-pill-private.active {
+  background: #0284c7;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4);
+}
+
+.store-pill .pill-badge.priv {
+  background: rgba(56, 189, 248, 0.25);
+  color: #38bdf8;
+}
+
+.store-pill.store-pill-private.active .pill-badge.priv {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* Favorite Config Modal Sheet */
+.fav-modal-container {
+  max-width: 440px;
+}
+
+.fav-modal-item-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.fav-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fav-option-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) ease, background-color var(--dur-fast) ease;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.fav-option-card:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: var(--bg-card-hover);
+}
+
+.fav-option-card.checked {
+  border-color: var(--accent-amber);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.fav-option-card.checked-private {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.fav-checkbox {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  accent-color: var(--accent-amber);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.fav-checkbox.priv {
+  accent-color: #38bdf8;
+}
+
+.fav-option-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.fav-option-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fav-option-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-top: 3px;
+}
+
+.private-mode-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #38bdf8;
+}
+
 /* Search Bar */
 .search-container {
   margin-top: 10px;
