@@ -1,4 +1,4 @@
-const PIN_CHECK_URL = "";
+const PIN_CHECK_URL = "https://script.google.com/macros/s/AKfycbyR0Mjnf8-VhnvEYCdc-i0sqjvxj8Kdw8Kxjc3BdrNvckL0baNvkt3cBtWvhAanC_s/exec";
 
 /**
  * Заказ Снеков — PWA / Mobile Web App
@@ -4228,12 +4228,16 @@ async function verifyStorePin(storeKey, pin) {
     let ok = false;
     let errorMessage = 'Неверный PIN-код';
 
-    if (!PIN_CHECK_URL || !PIN_CHECK_URL.trim()) {
+    const activeUrl = (PIN_CHECK_URL && PIN_CHECK_URL.trim())
+      ? PIN_CHECK_URL.trim()
+      : (localStorage.getItem(APPS_SCRIPT_URL_KEY) || DEFAULT_APPS_SCRIPT_URL);
+
+    if (!activeUrl) {
       throw new Error('Укажите URL скрипта в константе PIN_CHECK_URL');
     }
 
-    const sep = PIN_CHECK_URL.includes('?') ? '&' : '?';
-    const requestUrl = `${PIN_CHECK_URL}${sep}store=${encodeURIComponent(storeKey)}&pin=${encodeURIComponent(pin)}`;
+    const sep = activeUrl.includes('?') ? '&' : '?';
+    const requestUrl = `${activeUrl}${sep}store=${encodeURIComponent(storeKey)}&pin=${encodeURIComponent(pin)}`;
 
     const res = await fetch(requestUrl, {
       method: 'GET',
