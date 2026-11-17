@@ -151,6 +151,12 @@ function doPost(e) {
       if (isFavorite) {
         if (foundRow === -1) {
           sheet.appendRow([store, itemId, itemName, supplier, nowStr]);
+        } else {
+          // Обновляем ID, наименование и дату для актуализации строки
+          if (itemId) sheet.getRange(foundRow, 2).setValue(itemId);
+          if (itemName) sheet.getRange(foundRow, 3).setValue(itemName);
+          if (supplier) sheet.getRange(foundRow, 4).setValue(supplier);
+          sheet.getRange(foundRow, 5).setValue(nowStr);
         }
       } else {
         if (foundRow !== -1) {

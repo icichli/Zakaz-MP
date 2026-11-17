@@ -672,6 +672,15 @@ button,
 /* Subcategory / Brand Chips */
 .subcat-chips {
   display: none;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 16px 10px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.subcat-chips.visible {
+  display: flex;
 }
 
 .subcat-chips::-webkit-scrollbar {
@@ -679,15 +688,19 @@ button,
 }
 
 .chip {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   color: var(--text-secondary);
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.78rem;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-fast) ease, border-color var(--dur-fast) ease, color var(--dur-fast) ease;
 }
 
 .chip:active {
@@ -696,8 +709,26 @@ button,
 
 .chip.active {
   background: #334155;
-  color: #fff;
-  border-color: #475569;
+  color: var(--accent-amber-light);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.chip-count {
+  font-size: 0.72rem;
+  opacity: 0.75;
+}
+
+.badge-brand {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 /* Main Product List Container */

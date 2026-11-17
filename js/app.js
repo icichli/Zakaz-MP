@@ -3459,8 +3459,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_384",
+    "id": "pringles_мини_горячий_и_острый_hot_spicy_40_гр",
     "name": "МИНИ Принглс Горячий и Острый (Hot & Spicy), 40 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3468,8 +3469,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_385",
+    "id": "pringles_мини_оригинальный_40_гр",
     "name": "МИНИ Принглс оригинальный, 40 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3477,8 +3479,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_386",
+    "id": "pringles_мини_паприка_40_гр",
     "name": "МИНИ Принглс ПАПРИКА, 40 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3486,8 +3489,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_387",
+    "id": "pringles_мини_техасский_соус_bbq_40_гр",
     "name": "МИНИ Принглс Техасский соус BBQ, 40 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3495,8 +3499,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_388",
+    "id": "pringles_бекон_165_гр",
     "name": "Принглс БЕКОН, в упаковке 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3504,8 +3509,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_389",
+    "id": "pringles_оригинальный_165_гр",
     "name": "Принглс Оригинальный, 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3513,8 +3519,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_390",
+    "id": "pringles_паприка_165_гр",
     "name": "Принглс Паприка, 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3522,8 +3529,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_391",
+    "id": "pringles_пицца_165_гр",
     "name": "Принглс Пицца, 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3531,8 +3539,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_392",
+    "id": "pringles_с_ароматом_чили_и_лайма_chilli_lime_острая_серия_hot_160_гр",
     "name": "Принглс с ароматом ЧИЛИ И ЛАЙМА (CHILLI & LIME), Острая серия HOT, 160 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3540,8 +3549,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_393",
+    "id": "pringles_сметана_и_лук_165_гр",
     "name": "Принглс Сметана и лук, 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3549,8 +3559,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_394",
+    "id": "pringles_со_вкусом_канадского_сладко_копченого_барбекю_canadian_sweet_smoky_bbq_160_гр",
     "name": "Принглс со вкусом Канадского Сладко - Копченого Барбекю (Canadian SWEET & SMOKY BBQ), 160 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3558,8 +3569,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_395",
+    "id": "pringles_соль_и_уксус_165_гр",
     "name": "Принглс СОЛЬ И УКСУС, в упаковке 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3567,8 +3579,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_396",
+    "id": "pringles_сыр_и_лук_165_гр",
     "name": "Принглс Сыр и лук, 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3576,8 +3589,9 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_397",
+    "id": "pringles_сыр_165_гр",
     "name": "Принглс Сыр, в упаковке 165 гр.",
+    "brand": "Pringles",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3585,8 +3599,39 @@ const DEFAULT_CATALOG = [
     "display_step": "кратность 1 шт"
   },
   {
-    "id": "item_398",
+    "id": "pringles_таинственный_вкус_mystery_flavor_165_гр",
     "name": "Принглс Таинственный вкус (Mystery Flavor), в упаковке 165 гр.",
+    "brand": "Pringles",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "pringles_чипсы_бульба_chips_сметана_и_лук_75_гр",
+    "name": "Чипсы Бульба chips Сметана и лук, 75 гр.",
+    "brand": "Bulba",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "pringles_мегачипс_с_солью_100_гр",
+    "name": "Мегачипс с солью, 100 гр.",
+    "brand": "Mega Chips",
+    "category": "Pringles",
+    "supplier": "pivnye_zakuski",
+    "step": 1.0,
+    "unit": "шт",
+    "display_step": "кратность 1 шт"
+  },
+  {
+    "id": "pringles_чипсы_джаузи_со_вкусом_утки_52_гр",
+    "name": "Чипсы Джаузи со вкусом утки, 52 гр.",
+    "brand": "Джаузи",
     "category": "Pringles",
     "supplier": "pivnye_zakuski",
     "step": 1.0,
@@ -3680,6 +3725,7 @@ let suppliers = [...DEFAULT_SUPPLIERS];
 let activeSupplier = 'snacks';
 let modalActiveSupplier = 'snacks';
 let activeCategory = 'all';
+let activeBrandFilter = 'all';
 let searchQuery = '';
 let order = {}; // { itemId: quantity }
 let manualItems = []; // [ { id, name, category, quantity, unit, step, supplier } ]
@@ -3696,8 +3742,8 @@ let storeFavorites = {
 let privateFavorites = new Set();
 let favFilterMode = 'none'; // 'none' | 'store' | 'private'
 
-const CATALOG_CACHE_KEY = 'snack_catalog_cache_v8';
-const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v8';
+const CATALOG_CACHE_KEY = 'snack_catalog_cache_v9';
+const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v9';
 const ORDER_STORAGE_KEY = 'snack_order_v8';
 const MANUAL_STORAGE_KEY = 'snack_manual_items_v8';
 const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v8';
@@ -3807,7 +3853,7 @@ function saveFavorites() {
     });
     localStorage.setItem(STORE_FAVORITES_KEY, JSON.stringify(serializable));
     localStorage.setItem(PRIVATE_FAVORITES_KEY, JSON.stringify(Array.from(privateFavorites)));
-    
+
     // Also save legacy key for backward compatibility
     localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(Array.from(storeFavorites[activeStore] || [])));
 
@@ -3928,11 +3974,26 @@ async function syncFavoritesFromAppsScript(notify = false) {
         if (Array.isArray(data.stores[s])) {
           const idSet = new Set();
           data.stores[s].forEach(itemObj => {
-            if (itemObj && itemObj.id) {
-              idSet.add(itemObj.id);
-            } else if (itemObj && itemObj.name) {
-              const found = catalog.find(c => c.name.toLowerCase() === itemObj.name.toLowerCase());
-              if (found) idSet.add(found.id);
+            if (!itemObj) return;
+            const targetId = String(itemObj.id || '').trim();
+            const targetName = String(itemObj.name || '').trim();
+
+            // 1. Primary match: permanent ID (item_XXX or pringles_...)
+            let found = null;
+            if (targetId) {
+              found = catalog.find(c => c.id && c.id.toLowerCase() === targetId.toLowerCase());
+            }
+
+            // 2. Fallback match: exact product name
+            if (!found && targetName) {
+              const cleanTargetName = targetName.toLowerCase();
+              found = catalog.find(c => c.name && c.name.trim().toLowerCase() === cleanTargetName);
+            }
+
+            if (found) {
+              idSet.add(found.id);
+            } else if (targetId) {
+              idSet.add(targetId);
             }
           });
           if (idSet.size > 0 || (storeFavorites[s] && storeFavorites[s].size > 0)) {
@@ -4082,7 +4143,7 @@ function handleFavPointerDown(id, event) {
         // Clear double-buzz tactile feedback
         navigator.vibrate([45, 30, 45]);
       } catch (_) {
-        try { navigator.vibrate(50); } catch (_) {}
+        try { navigator.vibrate(50); } catch (_) { }
       }
     }
 
@@ -4382,7 +4443,7 @@ function updateFavBadge() {
       badge.style.color = '#0f172a';
     }
   } else {
-    btn.title = storeCount > 0 
+    btn.title = storeCount > 0
       ? `Показать только избранные [${activeStore}] (${storeCount} поз.)`
       : `Показать только избранные [${activeStore}] (пока нет в этом разделе)`;
     if (badge) {
@@ -4405,7 +4466,7 @@ function exportFavoritesJson() {
   STORES.forEach(s => {
     backup.stores[s] = Array.from(storeFavorites[s] || []);
   });
-  
+
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -4473,20 +4534,48 @@ function applyImportedFavorites(data) {
   if (!data) return;
   let importedCount = 0;
 
+  const resolveFavId = (val) => {
+    if (!val) return '';
+    const clean = String(typeof val === 'object' ? (val.id || val.name || '') : val).trim();
+    if (!clean) return '';
+    // 1. Primary match: by constant ID
+    const foundById = catalog.find(c => c.id && c.id.toLowerCase() === clean.toLowerCase());
+    if (foundById) return foundById.id;
+    // 2. Fallback match: by exact Name
+    const foundByName = catalog.find(c => c.name && c.name.trim().toLowerCase() === clean.toLowerCase());
+    if (foundByName) return foundByName.id;
+    return clean;
+  };
+
   if (data.stores) {
     STORES.forEach(s => {
       if (Array.isArray(data.stores[s])) {
-        storeFavorites[s] = new Set(data.stores[s]);
-        importedCount += data.stores[s].length;
+        const idSet = new Set();
+        data.stores[s].forEach(val => {
+          const resolved = resolveFavId(val);
+          if (resolved) idSet.add(resolved);
+        });
+        storeFavorites[s] = idSet;
+        importedCount += idSet.size;
       }
     });
   } else if (Array.isArray(data)) {
-    storeFavorites[activeStore] = new Set(data);
-    importedCount = data.length;
+    const idSet = new Set();
+    data.forEach(val => {
+      const resolved = resolveFavId(val);
+      if (resolved) idSet.add(resolved);
+    });
+    storeFavorites[activeStore] = idSet;
+    importedCount = idSet.size;
   }
 
   if (Array.isArray(data.private)) {
-    privateFavorites = new Set(data.private);
+    const privSet = new Set();
+    data.private.forEach(val => {
+      const resolved = resolveFavId(val);
+      if (resolved) privSet.add(resolved);
+    });
+    privateFavorites = privSet;
   }
 
   saveFavorites();
@@ -4559,9 +4648,11 @@ function saveState() {
 
 // Load Catalog from cache or fallback to embedded DEFAULT_CATALOG
 async function loadCatalog() {
-  // Clear stale v7 cache that didn't have photo fields
+  // Clear stale caches
   localStorage.removeItem('snack_catalog_cache_v7');
   localStorage.removeItem('snack_suppliers_cache_v7');
+  localStorage.removeItem('snack_catalog_cache_v8');
+  localStorage.removeItem('snack_suppliers_cache_v8');
 
   const cachedCatalog = localStorage.getItem(CATALOG_CACHE_KEY);
   const cachedSuppliers = localStorage.getItem(SUPPLIERS_CACHE_KEY);
@@ -4657,7 +4748,7 @@ function parsePackInfo(name, packStr, cat) {
 // Transliterate Russian string to clean latin slug
 function transliterate(text) {
   const cyr = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
-  const lat = ['a','b','v','g','d','e','yo','zh','z','i','y','k','l','m','n','o','p','r','s','t','u','f','kh','ts','ch','sh','shch','','y','','e','yu','ya'];
+  const lat = ['a', 'b', 'v', 'g', 'd', 'e', 'yo', 'zh', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'kh', 'ts', 'ch', 'sh', 'shch', '', 'y', '', 'e', 'yu', 'ya'];
   let res = '';
   const s = String(text || '').trim();
   for (let i = 0; i < s.length; i++) {
@@ -4740,7 +4831,7 @@ async function syncFromGoogleSheets(notify = true) {
       renderCatalog();
       updateOrderBar();
       // Also sync live favorites from Apps Script Web App in parallel
-      syncFavoritesFromAppsScript(false).catch(() => {});
+      syncFavoritesFromAppsScript(false).catch(() => { });
       if (notify) showToast(`✅ Каталог обновлен: ${parsedData.items.length} позиций во всех вкладках!`);
     } else {
       throw new Error('Не удалось прочитать позиции из таблицы');
@@ -4765,10 +4856,67 @@ function extractUrlValue(cell) {
   return String(cell).trim();
 }
 
+// Detect chip brand from product name (Pringles, Bulba, Mega Chips, Джаузи)
+function detectBrandFromName(name) {
+  if (!name) return '';
+  const lower = String(name).toLowerCase();
+  if (lower.includes('бульба') || lower.includes('bulba')) return 'Bulba';
+  if (lower.includes('мегачипс') || lower.includes('мега чипс') || lower.includes('mega chips')) return 'Mega Chips';
+  if (lower.includes('джаузи') || lower.includes('gouyear') || lower.includes('jiaozi')) return 'Джаузи';
+  if (lower.includes('принглс') || lower.includes('pringles')) return 'Pringles';
+  return '';
+}
+
+// Generate deterministic stable ID for auto-parsed sheets (e.g. pringles_паприка_165_гр)
+function generateDeterministicId(sheetName, productName) {
+  const sheetSlug = String(sheetName || 'chips')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-zа-я0-9]+/gi, '_')
+    .replace(/^_+|_+$/g, '');
+
+  let raw = String(productName || '').trim().toLowerCase();
+
+  // Strip packaging noise like "в упаковке" or "(в упаковке)"
+  raw = raw
+    .replace(/,\s*в\s+упаковке(?![a-zа-я0-9])/gi, ',')
+    .replace(/\(\s*в\s+упаковке\s*\)/gi, '')
+    .replace(/(?:^|\s)в\s+упаковке(?![a-zа-я0-9])/gi, ' ');
+
+  // Handle mini chips prefix: "мини принглс ..." -> "мини ..."
+  raw = raw.replace(/^мини\s+(?:принглс|pringles)\s*/i, 'мини ');
+
+  // Strip leading sheet name or brand (e.g. "принглс", "pringles", sheetSlug)
+  const brandAliases = [sheetSlug, 'принглс', 'pringles'];
+  for (const alias of brandAliases) {
+    if (alias && raw.startsWith(alias)) {
+      raw = raw.slice(alias.length).trim();
+      break;
+    }
+  }
+
+  // Convert all non-alphanumeric (cyrillic, latin, digits) characters to underscores
+  const normName = raw
+    .replace(/[^a-zа-я0-9]+/gi, '_')
+    .replace(/^_+|_+$/g, '');
+
+  const finalId = `${sheetSlug}_${normName}`.replace(/_+/g, '_').toLowerCase();
+  return finalId || `${sheetSlug}_item`;
+}
+
+// Check if a column in rows contains values starting with item_
+function hasItemPrefixInRows(rows, colIdx) {
+  if (colIdx < 0 || !Array.isArray(rows)) return false;
+  for (let r = 1; r < Math.min(rows.length, 15); r++) {
+    const val = String((rows[r] && rows[r][colIdx]) || '').trim();
+    if (/^item_\d+/i.test(val)) return true;
+  }
+  return false;
+}
+
 // Dynamic parser for multi-sheet Google Sheets workbook
 function parseGoogleSheetWorkbook(wb) {
   const items = [];
-  let index = 1;
 
   // Default sheet to supplier mapping
   const sheetToSupplierMap = {
@@ -4808,21 +4956,41 @@ function parseGoogleSheetWorkbook(wb) {
     }
   }
 
-  let sheetNames = wb.SheetNames.filter(s => {
-    const l = s.toLowerCase();
-    return s !== 'Весь ассортимент' && s !== supSheetName && !l.includes('избран') && !l.includes('favorite');
+  // Determine if individual snack sheets are present
+  const hasIndividualSnackSheets = wb.SheetNames.some(s => {
+    const l = s.toLowerCase().trim();
+    return l.includes('гренки') || l.includes('сыр') || l.includes('орех') || l.includes('рыб');
   });
+
+  let sheetNames = wb.SheetNames.filter(s => {
+    const l = s.toLowerCase().trim();
+    if (s === supSheetName || l.includes('избран') || l.includes('favorite')) return false;
+    if (l === 'весь ассортимент' || l.includes('весь ассортимент')) {
+      // Exclude "Весь ассортимент" if 14 product sheets are already present (avoids duplicates)
+      return !hasIndividualSnackSheets;
+    }
+    return true;
+  });
+
+  if (sheetNames.length === 0) {
+    const allAssort = wb.SheetNames.find(s => s.toLowerCase().trim() === 'весь ассортимент' || s.toLowerCase().includes('ассортимент'));
+    if (allAssort) {
+      sheetNames = [allAssort];
+    }
+  }
 
   for (const sheetName of sheetNames) {
     const ws = wb.Sheets[sheetName];
     if (!ws) continue;
 
-    // Ensure range covers up to column G (col index 6) so column G is never cropped
+    const isAllAssortment = sheetName.toLowerCase().trim() === 'весь ассортимент' || sheetName.toLowerCase().includes('ассортимент');
+
+    // Ensure range covers up to column H (col index 7) so columns E (4), F (5), G (6) are never cropped
     if (ws['!ref']) {
       try {
         const range = XLSX.utils.decode_range(ws['!ref']);
-        if (range.e.c < 6) {
-          range.e.c = 6;
+        if (range.e.c < 7) {
+          range.e.c = 7;
           ws['!ref'] = XLSX.utils.encode_range(range);
         }
       } catch (e) {
@@ -4834,21 +5002,31 @@ function parseGoogleSheetWorkbook(wb) {
     if (!rows || rows.length < 2) continue;
 
     const header = rows[0] || [];
+    let idCol = -1;
     let nameCol = -1;
+    let brandCol = -1;
     let packCol = -1;
     let supCol = -1;
     let photoCol = -1;
+    let updatedCol = -1;
+    let catCol = -1;
 
     header.forEach((col, idx) => {
       if (col === undefined || col === null) return;
       const cStr = String(col).trim();
       const cLower = cStr.toLowerCase().replace(/\s+/g, ' ');
-      if (cLower.includes('наименование') || cLower.includes('название') || cLower.includes('товар')) {
+      if (cLower === 'id' || cLower === 'ид' || cLower === 'id товара' || cLower === 'id_товара' || cLower.startsWith('id ') || cLower === 'код' || cLower === 'артикул') {
+        idCol = idx;
+      } else if (cLower.includes('наименование') || cLower.includes('название') || cLower.includes('товар')) {
         nameCol = idx;
+      } else if (cLower === 'бренд' || cLower === 'brand' || cLower.includes('бренд') || cLower.includes('brand')) {
+        brandCol = idx;
       } else if (cLower.includes('фасовка') || cLower.includes('кратность')) {
         packCol = idx;
       } else if (cLower.includes('поставщик')) {
         supCol = idx;
+      } else if (cLower.includes('категория') || cLower.includes('раздел')) {
+        catCol = idx;
       } else if (
         cLower === 'фото' ||
         cLower === 'photo' ||
@@ -4862,13 +5040,32 @@ function parseGoogleSheetWorkbook(wb) {
         cLower.includes('pic')
       ) {
         photoCol = idx;
+      } else if (cLower.includes('обновлено') || cLower.includes('updated') || cLower.includes('дата')) {
+        updatedCol = idx;
       }
     });
 
-    if (nameCol === -1) nameCol = 0;
-    if (packCol === -1) packCol = 3;
-    if (photoCol === -1 && (sheetName === 'Pringles' || sheetName.toLowerCase().includes('pringles'))) {
-      photoCol = 6; // Column G is index 6
+    const isPringlesSheet = sheetName.toLowerCase().includes('pringles');
+    const hasPhotoOrUpdate = (photoCol !== -1 || updatedCol !== -1);
+    const hasItemPrefix = idCol !== -1 && hasItemPrefixInRows(rows, idCol);
+
+    // Auto-parsed sheets (Pringles or other auto-parsed chip tabs without item_XXX column)
+    const isAutoParsedSheet = isPringlesSheet || (hasPhotoOrUpdate && !hasItemPrefix);
+
+    if (isAutoParsedSheet) {
+      if (photoCol === -1) photoCol = 6; // Column G is index 6
+      if (brandCol === -1) brandCol = 1; // Column B is index 1
+      idCol = -1; // Never use item_XXX counter or column for auto-parsed sheets
+      if (nameCol === -1) nameCol = 0;
+      if (packCol === -1) packCol = 3;
+    } else {
+      // Regular product sheets and "Весь ассортимент"
+      if (idCol === -1) {
+        // Range up to col F (index 5) on "Весь ассортимент", up to col E (index 4) on product sheets
+        idCol = isAllAssortment ? 5 : 4;
+      }
+      if (nameCol === -1) nameCol = 0;
+      if (packCol === -1) packCol = 3;
     }
 
     for (let r = 1; r < rows.length; r++) {
@@ -4881,8 +5078,9 @@ function parseGoogleSheetWorkbook(wb) {
       const cleanName = String(rawName).trim();
       if (cleanName.toLowerCase() === 'наименование' || cleanName.toLowerCase() === 'название') continue;
 
-      const rawPack = row[packCol];
-      const packInfo = parsePackInfo(cleanName, rawPack, sheetName);
+      const rawPack = packCol !== -1 ? row[packCol] : '';
+      const itemCat = (isAllAssortment && catCol !== -1 && row[catCol]) ? String(row[catCol]).trim() : sheetName;
+      const packInfo = parsePackInfo(cleanName, rawPack, itemCat);
 
       // Extract photo URL (handling column G, objects, hyperlinks, strings, and direct scan)
       let rawPhoto = '';
@@ -4897,7 +5095,7 @@ function parseGoogleSheetWorkbook(wb) {
         }
       }
       // Scan row for image URL if still empty on Pringles
-      if (!rawPhoto && (sheetName === 'Pringles' || sheetName.toLowerCase().includes('pringles'))) {
+      if (!rawPhoto && isPringlesSheet) {
         for (let c = 0; c < row.length; c++) {
           const candidate = extractUrlValue(row[c]);
           if (typeof candidate === 'string' && (candidate.includes('i.siteapi.org') || /^https?:\/\/.*\.(?:jpg|jpeg|png|webp|gif)/i.test(candidate))) {
@@ -4908,6 +5106,13 @@ function parseGoogleSheetWorkbook(wb) {
       }
 
       const cleanPhoto = rawPhoto ? String(rawPhoto).trim() : '';
+
+      // Extract brand (Column B or detected from product name)
+      const rawBrand = (brandCol !== -1 && row[brandCol] !== undefined && row[brandCol] !== null) ? String(row[brandCol]).trim() : '';
+      let itemBrand = rawBrand || detectBrandFromName(cleanName);
+      if (!itemBrand && isPringlesSheet) {
+        itemBrand = 'Pringles';
+      }
 
       // Determine supplier
       let supplierId = 'snacks';
@@ -4933,10 +5138,30 @@ function parseGoogleSheetWorkbook(wb) {
         }
       }
 
+      // Assign ID:
+      // Auto-parsed sheets -> deterministic ID
+      // Regular sheets -> read constant ID from column E/F
+      let itemId = '';
+      if (isAutoParsedSheet) {
+        itemId = generateDeterministicId(sheetName, cleanName);
+      } else {
+        let rawId = (idCol !== -1 && row[idCol] !== undefined && row[idCol] !== null) ? String(row[idCol]).trim() : '';
+        if (rawId) {
+          if (/^item_\d+/i.test(rawId)) {
+            itemId = rawId.toLowerCase();
+          } else if (/^\d+$/.test(rawId)) {
+            itemId = `item_${String(rawId).padStart(3, '0')}`;
+          } else {
+            itemId = rawId;
+          }
+        }
+      }
+
       items.push({
-        id: `item_${String(index++).padStart(3, '0')}`,
+        id: itemId, // empty string if cell was empty; will be assigned MAX + 1 in pass 2
         name: cleanName,
-        category: sheetName,
+        brand: itemBrand,
+        category: itemCat,
         supplier: supplierId,
         step: packInfo.step,
         unit: packInfo.unit,
@@ -4944,9 +5169,49 @@ function parseGoogleSheetWorkbook(wb) {
         image: cleanPhoto,
         photo: cleanPhoto,
         imageUrl: cleanPhoto,
-        'Фото': cleanPhoto
+        'Фото': cleanPhoto,
+        _isAutoParsed: isAutoParsedSheet
       });
     }
+  }
+
+  // Pass 2: Calculate maximum existing item_XXX number across all regular sheets
+  let maxItemNum = 0;
+  for (const it of items) {
+    if (!it._isAutoParsed && it.id) {
+      const match = it.id.match(/^item_(\d+)$/i);
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (!isNaN(num) && num > maxItemNum) {
+          maxItemNum = num;
+        }
+      }
+    }
+  }
+
+  // Fallback baseline from DEFAULT_CATALOG snacks items
+  if (maxItemNum === 0) {
+    for (const it of DEFAULT_CATALOG) {
+      if (it.supplier !== 'pivnye_zakuski' && it.id) {
+        const match = it.id.match(/^item_(\d+)$/i);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (!isNaN(num) && num > maxItemNum) {
+            maxItemNum = num;
+          }
+        }
+      }
+    }
+  }
+
+  // Assign temporary local IDs (MAX + 1) for newly added rows with temporarily empty ID
+  // (Preserves exact permanent IDs for all existing rows without shifts)
+  for (const it of items) {
+    if (!it.id && !it._isAutoParsed) {
+      maxItemNum++;
+      it.id = `item_${String(maxItemNum).padStart(3, '0')}`;
+    }
+    delete it._isAutoParsed;
   }
 
   // Build dynamic suppliers array from discovered items
@@ -4979,7 +5244,17 @@ function parseGoogleSheetWorkbook(wb) {
       if (favRows && favRows.length > 1) {
         const header = (favRows[0] || []).map(h => String(h || '').trim().toLowerCase());
         const storeCol = header.findIndex(h => h.includes('магазин') || h.includes('store') || h.includes('точка'));
-        const itemCol = header.findIndex(h => h.includes('товар') || h.includes('наименование') || h.includes('id') || h.includes('name'));
+        let favIdCol = header.findIndex(h => h === 'id' || h === 'id товара' || h.includes('id товара') || h === 'ид товара' || h === 'ид' || h === 'код');
+        let favNameCol = header.findIndex(h => h.includes('наименование') || h.includes('название') || (h.includes('товар') && !h.includes('id') && !h.includes('ид')));
+
+        if (favIdCol === -1 && favNameCol === -1) {
+          favIdCol = 1;
+          favNameCol = 2;
+        } else if (favIdCol === -1) {
+          favIdCol = 1;
+        } else if (favNameCol === -1) {
+          favNameCol = 2;
+        }
 
         const storeColMap = {};
         STORES.forEach(sName => {
@@ -4994,33 +5269,51 @@ function parseGoogleSheetWorkbook(wb) {
           'Олимп': new Set()
         };
 
-        if (storeCol !== -1 && itemCol !== -1) {
+        if (storeCol !== -1 && (favIdCol !== -1 || favNameCol !== -1)) {
           for (let r = 1; r < favRows.length; r++) {
             const row = favRows[r];
             const storeVal = String(row[storeCol] || '').trim();
-            const itemVal = String(row[itemCol] || '').trim();
-            if (!storeVal || !itemVal) continue;
+            const idVal = favIdCol !== -1 ? String(row[favIdCol] || '').trim() : '';
+            const nameVal = favNameCol !== -1 ? String(row[favNameCol] || '').trim() : '';
+            if (!storeVal || (!idVal && !nameVal)) continue;
 
             const matchedStore = STORES.find(s => s.toLowerCase() === storeVal.toLowerCase());
             if (matchedStore) {
-              const matchedItem = items.find(it => it.id === itemVal || it.name.toLowerCase() === itemVal.toLowerCase() || it.name.toLowerCase().includes(itemVal.toLowerCase()));
+              // Double protection:
+              // 1. Primary: search by permanent ID (item_XXX or pringles_...)
+              let matchedItem = null;
+              if (idVal) {
+                matchedItem = items.find(it => it.id && it.id.toLowerCase() === idVal.toLowerCase());
+              }
+              // 2. Fallback: search by exact product name
+              if (!matchedItem && nameVal) {
+                const targetName = nameVal.toLowerCase();
+                matchedItem = items.find(it => it.name && it.name.trim().toLowerCase() === targetName);
+              }
               if (matchedItem) {
                 parsedFavs[matchedStore].add(matchedItem.id);
               }
             }
           }
         } else if (Object.keys(storeColMap).length > 0) {
-          const nameColIdx = itemCol !== -1 ? itemCol : 0;
+          const nameColIdx = favNameCol !== -1 ? favNameCol : (favIdCol !== -1 ? favIdCol : 0);
           for (let r = 1; r < favRows.length; r++) {
             const row = favRows[r];
-            const itemVal = String(row[nameColIdx] || '').trim();
-            if (!itemVal) continue;
-            const matchedItem = items.find(it => it.id === itemVal || it.name.toLowerCase() === itemVal.toLowerCase());
+            const cellVal = String(row[nameColIdx] || '').trim();
+            if (!cellVal) continue;
+
+            // 1. Primary match by ID
+            let matchedItem = items.find(it => it.id && it.id.toLowerCase() === cellVal.toLowerCase());
+            // 2. Fallback match by exact Name
+            if (!matchedItem) {
+              const targetName = cellVal.toLowerCase();
+              matchedItem = items.find(it => it.name && it.name.trim().toLowerCase() === targetName);
+            }
             if (!matchedItem) continue;
 
             for (const [sName, colIdx] of Object.entries(storeColMap)) {
-              const cellVal = String(row[colIdx] || '').trim().toLowerCase();
-              if (cellVal && cellVal !== '0' && cellVal !== 'нет' && cellVal !== 'false' && cellVal !== '-') {
+              const checkVal = String(row[colIdx] || '').trim().toLowerCase();
+              if (checkVal && checkVal !== '0' && checkVal !== 'нет' && checkVal !== 'false' && checkVal !== '-') {
                 parsedFavs[sName].add(matchedItem.id);
               }
             }
@@ -5080,6 +5373,7 @@ function switchSupplier(supId) {
   activeSupplier = supId;
   saveState();
   activeCategory = 'all';
+  activeBrandFilter = 'all';
   renderSupplierNav();
   updateFavBadge();
   renderCategoryTabs();
@@ -5114,14 +5408,14 @@ function renderCategoryTabs() {
   container.innerHTML = orderedCats.map(cat => {
     let count = 0;
     if (cat === 'all') {
-      count = favFilterMode !== 'none' 
-        ? itemsInSup.filter(i => isItemFavForFilter(i.id)).length 
+      count = favFilterMode !== 'none'
+        ? itemsInSup.filter(i => isItemFavForFilter(i.id)).length
         : itemsInSup.length;
     } else if (cat === 'manual') {
       count = manualItems.filter(m => (m.supplier || 'snacks') === activeSupplier).length;
     } else {
-      count = favFilterMode !== 'none' 
-        ? itemsInSup.filter(i => i.category === cat && isItemFavForFilter(i.id)).length 
+      count = favFilterMode !== 'none'
+        ? itemsInSup.filter(i => i.category === cat && isItemFavForFilter(i.id)).length
         : itemsInSup.filter(i => i.category === cat).length;
     }
 
@@ -5140,11 +5434,96 @@ function renderCategoryTabs() {
   container.querySelectorAll('.cat-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       activeCategory = btn.getAttribute('data-cat');
+      activeBrandFilter = 'all';
       renderCategoryTabs();
       renderCatalog();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+
+  renderBrandChips();
+}
+
+// Render Brand Filter Chips (e.g. for Pringles / Chips: Pringles, Bulba, Mega Chips, Джаузи)
+function renderBrandChips() {
+  const container = document.getElementById('subcatChips');
+  if (!container) return;
+
+  if (activeCategory === 'manual') {
+    container.classList.remove('visible');
+    container.innerHTML = '';
+    return;
+  }
+
+  const itemsInSup = catalog.filter(i => i.supplier === activeSupplier);
+  const categoryItems = activeCategory === 'all'
+    ? itemsInSup
+    : itemsInSup.filter(i => i.category === activeCategory);
+
+  // Collect unique brands present in this section
+  const brandCounts = {};
+  categoryItems.forEach(it => {
+    const b = it.brand || detectBrandFromName(it.name);
+    if (b) {
+      brandCounts[b] = (brandCounts[b] || 0) + 1;
+    }
+  });
+
+  const presentBrands = Object.keys(brandCounts);
+
+  // If there are less than 2 brands, hide chips
+  if (presentBrands.length <= 1) {
+    container.classList.remove('visible');
+    container.innerHTML = '';
+    return;
+  }
+
+  // Desired ordering: Pringles, Bulba, Mega Chips, Джаузи, then others
+  const brandOrder = ['Pringles', 'Bulba', 'Mega Chips', 'Джаузи'];
+  presentBrands.sort((a, b) => {
+    const idxA = brandOrder.indexOf(a);
+    const idxB = brandOrder.indexOf(b);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return a.localeCompare(b, 'ru');
+  });
+
+  let totalCount = categoryItems.length;
+  if (favFilterMode !== 'none') {
+    totalCount = categoryItems.filter(i => isItemFavForFilter(i.id)).length;
+  }
+
+  const chipsHtml = [];
+  chipsHtml.push(`
+    <button type="button" class="chip ${activeBrandFilter === 'all' ? 'active' : ''}" onclick="selectBrandFilter('all')">
+      <span>Все бренды</span>
+      <span class="chip-count">(${totalCount})</span>
+    </button>
+  `);
+
+  presentBrands.forEach(b => {
+    let count = categoryItems.filter(i => (i.brand === b || detectBrandFromName(i.name) === b)).length;
+    if (favFilterMode !== 'none') {
+      count = categoryItems.filter(i => (i.brand === b || detectBrandFromName(i.name) === b) && isItemFavForFilter(i.id)).length;
+    }
+    const isActive = activeBrandFilter === b ? 'active' : '';
+    chipsHtml.push(`
+      <button type="button" class="chip ${isActive}" onclick="selectBrandFilter('${escapeHtml(b)}')">
+        <span>${escapeHtml(b)}</span>
+        <span class="chip-count">(${count})</span>
+      </button>
+    `);
+  });
+
+  container.innerHTML = chipsHtml.join('');
+  container.classList.add('visible');
+}
+
+function selectBrandFilter(brand) {
+  activeBrandFilter = brand;
+  renderBrandChips();
+  renderCatalog();
 }
 
 // Render Products Catalog List (Scoped to Active Supplier)
@@ -5165,13 +5544,17 @@ function renderCatalog() {
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      const target = `${item.name} ${item.category}`.toLowerCase();
+      const brandStr = item.brand || detectBrandFromName(item.name) || '';
+      const target = `${item.name} ${item.category} ${brandStr}`.toLowerCase();
       matchSearch = target.includes(q);
     }
 
     const matchFav = favFilterMode === 'none' || isItemFavForFilter(item.id);
 
-    return matchCat && matchSearch && matchFav;
+    const itemBrand = item.brand || detectBrandFromName(item.name);
+    const matchBrand = (activeBrandFilter === 'all') || (itemBrand === activeBrandFilter);
+
+    return matchCat && matchSearch && matchFav && matchBrand;
   });
 
   if (filtered.length === 0) {
@@ -5283,18 +5666,21 @@ function renderCatalog() {
   attachStepperEvents(container);
 }
 
-// Product Thumbnail Stub SVG (Crisp Pringles Can & Chips Icon)
-const PRINGLES_THUMB_STUB_SVG = `
-  <div class="product-thumb-stub" title="Фото отсутствует">
-    <svg class="thumb-stub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M12 2C9.5 2 7.5 3 7.5 4.5v15C7.5 21 9.5 22 12 22s4.5-1 4.5-2.5v-15C16.5 3 14.5 2 12 2z"></path>
-      <ellipse cx="12" cy="4.5" rx="4.5" ry="2.5"></ellipse>
-      <path d="M7.5 10c1.5.8 3.5 1 4.5 1s3-.2 4.5-1"></path>
-      <circle cx="12" cy="14" r="1.5" fill="currentColor"></circle>
-    </svg>
-    <span class="thumb-stub-text">Pringles</span>
-  </div>
-`;
+// Product Thumbnail Stub SVG Generator (Brand aware: Pringles, Bulba, Mega Chips, Джаузи)
+function getProductThumbStub(brand) {
+  const brandText = escapeHtml(brand || 'Чипсы');
+  return `
+    <div class="product-thumb-stub" title="Фото отсутствует">
+      <svg class="thumb-stub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C9.5 2 7.5 3 7.5 4.5v15C7.5 21 9.5 22 12 22s4.5-1 4.5-2.5v-15C16.5 3 14.5 2 12 2z"></path>
+        <ellipse cx="12" cy="4.5" rx="4.5" ry="2.5"></ellipse>
+        <path d="M7.5 10c1.5.8 3.5 1 4.5 1s3-.2 4.5-1"></path>
+        <circle cx="12" cy="14" r="1.5" fill="currentColor"></circle>
+      </svg>
+      <span class="thumb-stub-text">${brandText}</span>
+    </div>
+  `;
+}
 
 // Helper for extracting photo URL across all possible keys
 function getProductImageUrl(item) {
@@ -5306,18 +5692,19 @@ function getProductImageUrl(item) {
 // Helper for rendering product photo thumbnail (56x56 px, contain, rounded corners, referrerPolicy)
 function renderProductThumbnail(item) {
   const imageUrl = getProductImageUrl(item);
-  const escapedName = escapeHtml(item && item.name ? item.name : 'Pringles');
+  const brand = (item && item.brand) || detectBrandFromName(item && item.name) || 'Чипсы';
+  const escapedName = escapeHtml(item && item.name ? item.name : brand);
 
   if (!imageUrl) {
     return `
-      <div class="product-thumb has-stub" title="Фото отсутствует" style="width: 56px; height: 56px; min-width: 56px; flex-shrink: 0;">
-        ${PRINGLES_THUMB_STUB_SVG}
+      <div class="product-thumb has-stub" data-brand="${escapeHtml(brand)}" title="Фото отсутствует" style="width: 56px; height: 56px; min-width: 56px; flex-shrink: 0;">
+        ${getProductThumbStub(brand)}
       </div>
     `;
   }
 
   return `
-    <div class="product-thumb" onclick="toggleThumbZoom(this, event)" title="Нажмите для увеличения (280px)" style="width: 56px; height: 56px; min-width: 56px; flex-shrink: 0;">
+    <div class="product-thumb" data-brand="${escapeHtml(brand)}" onclick="toggleThumbZoom(this, event)" title="Нажмите для увеличения (280px)" style="width: 56px; height: 56px; min-width: 56px; flex-shrink: 0;">
       <img 
         src="${escapeHtml(imageUrl)}" 
         alt="${escapedName}" 
@@ -5338,12 +5725,13 @@ function handleThumbError(img) {
   img.onerror = null;
   const parent = img.closest('.product-thumb');
   if (parent) {
+    const brand = parent.getAttribute('data-brand') || '';
     parent.classList.add('has-stub');
     parent.classList.remove('zoomed');
     parent.closest('.product-card')?.classList.remove('card-zoomed');
     parent.title = 'Фото отсутствует';
     parent.onclick = null;
-    parent.innerHTML = PRINGLES_THUMB_STUB_SVG;
+    parent.innerHTML = getProductThumbStub(brand);
   }
 }
 
@@ -5357,7 +5745,7 @@ function openImagePreviewModal(src, title) {
     modal.onclick = closeImagePreviewModal;
     modal.innerHTML = `
       <div class="image-preview-box" onclick="event.stopPropagation()">
-        <img id="imagePreviewImg" class="image-preview-img" src="" alt="Pringles" referrerpolicy="no-referrer" referrerPolicy="no-referrer" />
+        <img id="imagePreviewImg" class="image-preview-img" src="" alt="Чипсы" referrerpolicy="no-referrer" referrerPolicy="no-referrer" />
         <div id="imagePreviewTitle" class="image-preview-title"></div>
         <button class="image-preview-close" onclick="closeImagePreviewModal()" title="Закрыть">✕</button>
       </div>
@@ -5369,7 +5757,7 @@ function openImagePreviewModal(src, title) {
   const titleEl = document.getElementById('imagePreviewTitle');
   if (imgEl) {
     imgEl.src = src;
-    imgEl.alt = title || 'Pringles';
+    imgEl.alt = title || 'Чипсы';
     imgEl.setAttribute('referrerpolicy', 'no-referrer');
     imgEl.setAttribute('referrerPolicy', 'no-referrer');
   }
@@ -5397,7 +5785,7 @@ function toggleThumbZoom(el, event) {
 
   const img = el.querySelector('.product-thumb-img');
   const src = img ? (img.getAttribute('src') || img.src) : '';
-  const title = img ? (img.getAttribute('alt') || 'Pringles') : 'Pringles';
+  const title = img ? (img.getAttribute('alt') || 'Чипсы') : 'Чипсы';
 
   if (!src) return;
 
@@ -5423,12 +5811,15 @@ function renderProductCard(item) {
   const qtyFormatted = formatQty(currentQty, item.unit);
   const activeClass = currentQty > 0 ? 'active' : '';
 
-  const isPringles = item.category === 'Pringles' || item.supplier === 'pivnye_zakuski' || (item.name && /pringles|принглс/i.test(item.name));
+  const isPringlesOrChips = item.category === 'Pringles' || item.supplier === 'pivnye_zakuski' || (item.name && /pringles|принглс|бульба|bulba|мегачипс|мега чипс|mega chips|джаузи|gouyear|jiaozi/i.test(item.name));
   const hasImage = Boolean(getProductImageUrl(item));
-  const showThumb = isPringles || hasImage;
+  const showThumb = isPringlesOrChips || hasImage;
 
   const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
-  
+
+  const itemBrand = item.brand || detectBrandFromName(item.name);
+  const brandBadgeHtml = itemBrand ? `<span class="badge-brand">${escapeHtml(itemBrand)}</span>` : '';
+
   const isStore = isItemStoreFav(item.id);
   const isPrivate = isItemPrivateFav(item.id);
   let favClass = '';
@@ -5469,6 +5860,7 @@ function renderProductCard(item) {
           </button>
         </div>
         <div class="product-meta">
+          ${brandBadgeHtml}
           <span class="badge-step">${escapeHtml(item.display_step || `кратность ${item.step} ${item.unit}`)}</span>
         </div>
       </div>
@@ -5899,17 +6291,17 @@ function renderOrderModalContent() {
   const supplierTabsHtml = `
     <div class="modal-supplier-nav">
       ${suppliers.map(s => {
-        const sTotals = getOrderTotals(s.id);
-        const isActive = s.id === modalActiveSupplier ? 'active' : '';
-        const badgeClass = sTotals.count > 0 ? 'has-items' : '';
-        return `
+    const sTotals = getOrderTotals(s.id);
+    const isActive = s.id === modalActiveSupplier ? 'active' : '';
+    const badgeClass = sTotals.count > 0 ? 'has-items' : '';
+    return `
           <button class="modal-sup-tab ${isActive}" onclick="switchModalSupplier('${s.id}')">
             <span>${s.icon}</span>
             <span>${escapeHtml(s.shortName)}</span>
             <span class="badge ${badgeClass}">${sTotals.count}</span>
           </button>
         `;
-      }).join('')}
+  }).join('')}
     </div>
   `;
 
