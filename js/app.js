@@ -1,3 +1,5 @@
+const PIN_CHECK_URL = "";
+
 /**
  * Заказ Снеков — PWA / Mobile Web App
  * Multi-Supplier ordering system for beer stores and bars.
@@ -3732,7 +3734,32 @@ let manualItems = []; // [ { id, name, category, quantity, unit, step, supplier 
 
 // 4 Stores configuration & Multi-store favorites
 const STORES = ['Битца', 'Битца2', 'БП', 'Олимп'];
+
+const STORE_MAP = {
+  bitca: { key: 'bitca', name: 'Битца', color: '#10b981', border: '#10b981', badgeClass: 'store-badge-bitca' },
+  bitca2: { key: 'bitca2', name: 'Битца2', color: '#0ea5e9', border: '#0ea5e9', badgeClass: 'store-badge-bitca2' },
+  bp: { key: 'bp', name: 'БП', color: '#f59e0b', border: '#f59e0b', badgeClass: 'store-badge-bp' },
+  olimp: { key: 'olimp', name: 'Олимп', color: '#a855f7', border: '#a855f7', badgeClass: 'store-badge-olimp' }
+};
+
+const STORE_KEY_TO_NAME = {
+  bitca: 'Битца',
+  bitca2: 'Битца2',
+  bp: 'БП',
+  olimp: 'Олимп'
+};
+
+const STORE_NAME_TO_KEY = {
+  'Битца': 'bitca',
+  'Битца2': 'bitca2',
+  'БП': 'bp',
+  'Олимп': 'olimp'
+};
+
 let activeStore = 'Битца';
+let pendingStoreKey = null;
+let isCheckingPin = false;
+let isAppInitialized = false;
 let storeFavorites = {
   'Битца': new Set(),
   'Битца2': new Set(),
@@ -3808,10 +3835,16 @@ function loadSavedState() {
     const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY) || localStorage.getItem('snack_active_supplier_v7');
     if (savedSupplier) activeSupplier = savedSupplier;
 
-    // Load active store
-    const savedStore = localStorage.getItem(ACTIVE_STORE_KEY);
-    if (savedStore && STORES.includes(savedStore)) {
-      activeStore = savedStore;
+    // Load active store (sessionStorage takes priority for PIN-authenticated session)
+    const sessionStore = sessionStorage.getItem('active_store');
+    const sessionStoreName = sessionStore ? (STORE_KEY_TO_NAME[sessionStore] || (STORES.includes(sessionStore) ? sessionStore : null)) : null;
+    if (sessionStoreName && STORES.includes(sessionStoreName)) {
+      activeStore = sessionStoreName;
+    } else {
+      const savedStore = localStorage.getItem(ACTIVE_STORE_KEY);
+      if (savedStore && STORES.includes(savedStore)) {
+        activeStore = savedStore;
+      }
     }
 
     // Load store favorites
@@ -4014,16 +4047,41 @@ async function syncFavoritesFromAppsScript(notify = false) {
   }
 }
 
-// Store Selection & Pills
+// Store Selection & Header Display
 function switchActiveStore(storeName) {
   if (!STORES.includes(storeName)) return;
   activeStore = storeName;
   localStorage.setItem(ACTIVE_STORE_KEY, storeName);
-  renderStorePills();
+  renderStoreHeader();
   updateFavBadge();
   renderCategoryTabs();
   renderCatalog();
   showToast(`🏪 Магазин: ${storeName}`);
+}
+
+function renderStoreHeader() {
+  const storeKey = STORE_NAME_TO_KEY[activeStore] || 'bitca';
+  const storeInfo = STORE_MAP[storeKey] || STORE_MAP.bitca;
+
+  const badge = document.getElementById('activeStoreBadge');
+  const nameEl = document.getElementById('activeStoreName');
+  const favBadge = document.getElementById('activeStoreFavBadge');
+
+  if (badge) {
+    badge.className = `active-store-badge ${storeInfo.badgeClass}`;
+  }
+  if (nameEl) {
+    nameEl.textContent = storeInfo.name;
+  }
+  if (favBadge) {
+    const count = storeFavorites[activeStore] ? storeFavorites[activeStore].size : 0;
+    favBadge.textContent = `⭐ ${count}`;
+    favBadge.title = `Избранное магазина ${storeInfo.name} (${count} поз.)`;
+  }
+}
+
+function renderStorePills() {
+  renderStoreHeader();
 }
 
 function selectStorePill(storeName) {
@@ -4041,30 +4099,254 @@ function selectPrivatePill() {
     favFilterMode = 'private';
     showToast(`👤 Открыто личное избранное (${privateFavorites.size} поз.)`);
   }
-  renderStorePills();
+  renderStoreHeader();
   updateFavBadge();
   renderCategoryTabs();
   renderCatalog();
 }
 
-function renderStorePills() {
-  const container = document.getElementById('storePills');
-  if (!container) return;
+// ==========================================
+// STORE GATE & PIN VERIFICATION SYSTEM
+// ==========================================
 
-  const isPrivMode = favFilterMode === 'private';
+function checkActiveStoreSession() {
+  const sessionStore = sessionStorage.getItem('active_store');
+  if (sessionStore) {
+    const storeName = STORE_KEY_TO_NAME[sessionStore] || (STORES.includes(sessionStore) ? sessionStore : null);
+    if (storeName && STORES.includes(storeName)) {
+      activeStore = storeName;
+      hideStoreGateModal();
+      return true;
+    }
+  }
+  showStoreGateModal();
+  return false;
+}
 
-  const storeHtml = STORES.map(s => {
-    const isActive = s === activeStore && !isPrivMode;
-    const count = storeFavorites[s] ? storeFavorites[s].size : 0;
-    const badge = count > 0 ? `<span class="pill-badge">${count}</span>` : '';
-    return `<button type="button" class="store-pill ${isActive ? 'active' : ''}" onclick="selectStorePill('${s}')" title="Магазин ${s} (${count} в избранном)">${s}${badge}</button>`;
-  }).join('');
+function showStoreGateModal() {
+  const modal = document.getElementById('storeGateModal');
+  if (!modal) return;
+  modal.classList.add('active');
+  backToStoreSelection();
+}
 
-  const privCount = privateFavorites.size;
-  const privBadge = privCount > 0 ? `<span class="pill-badge priv">${privCount}</span>` : '';
-  const privHtml = `<button type="button" class="store-pill store-pill-private ${isPrivMode ? 'active' : ''}" onclick="selectPrivatePill()" title="Моё личное избранное (${privCount} поз.)">👤 Моё${privBadge}</button>`;
+function hideStoreGateModal() {
+  const modal = document.getElementById('storeGateModal');
+  if (!modal) return;
+  modal.classList.remove('active');
+}
 
-  container.innerHTML = storeHtml + privHtml;
+function selectGateStore(storeKey) {
+  pendingStoreKey = storeKey;
+  const storeInfo = STORE_MAP[storeKey] || STORE_MAP.bitca;
+
+  const stepStores = document.getElementById('gateStepStores');
+  const stepPin = document.getElementById('gateStepPin');
+  if (stepStores) stepStores.style.display = 'none';
+  if (stepPin) stepPin.style.display = 'block';
+
+  const badge = document.getElementById('gateActiveBadge');
+  const nameEl = document.getElementById('gateActiveStoreName');
+  if (badge) {
+    badge.className = `gate-active-badge ${storeInfo.badgeClass}`;
+  }
+  if (nameEl) {
+    nameEl.textContent = storeInfo.name;
+  }
+
+  const pinInput = document.getElementById('gatePinInput');
+  const errEl = document.getElementById('gatePinError');
+  const loaderEl = document.getElementById('gatePinLoader');
+  if (errEl) errEl.style.display = 'none';
+  if (loaderEl) loaderEl.style.display = 'none';
+  if (pinInput) {
+    pinInput.disabled = false;
+    pinInput.value = '';
+    setTimeout(() => pinInput.focus(), 80);
+  }
+  const submitBtn = document.getElementById('btnGatePinSubmit');
+  if (submitBtn) submitBtn.disabled = false;
+  const backBtn = document.getElementById('btnGateBack');
+  if (backBtn) backBtn.disabled = false;
+}
+
+function backToStoreSelection() {
+  pendingStoreKey = null;
+  const stepStores = document.getElementById('gateStepStores');
+  const stepPin = document.getElementById('gateStepPin');
+  if (stepStores) stepStores.style.display = 'block';
+  if (stepPin) stepPin.style.display = 'none';
+
+  const pinInput = document.getElementById('gatePinInput');
+  const errEl = document.getElementById('gatePinError');
+  const loaderEl = document.getElementById('gatePinLoader');
+  if (errEl) errEl.style.display = 'none';
+  if (loaderEl) loaderEl.style.display = 'none';
+  if (pinInput) {
+    pinInput.disabled = false;
+    pinInput.value = '';
+  }
+  const submitBtn = document.getElementById('btnGatePinSubmit');
+  if (submitBtn) submitBtn.disabled = false;
+  const backBtn = document.getElementById('btnGateBack');
+  if (backBtn) backBtn.disabled = false;
+}
+
+async function handleGatePinSubmit(e) {
+  if (e) e.preventDefault();
+  if (isCheckingPin || !pendingStoreKey) return;
+
+  const pinInput = document.getElementById('gatePinInput');
+  if (!pinInput) return;
+  const pin = pinInput.value.replace(/\D/g, '').slice(0, 4);
+
+  if (pin.length !== 4) {
+    showGatePinError('Введите 4 цифры PIN-кода');
+    return;
+  }
+
+  await verifyStorePin(pendingStoreKey, pin);
+}
+
+async function verifyStorePin(storeKey, pin) {
+  if (isCheckingPin) return;
+  isCheckingPin = true;
+
+  const pinInput = document.getElementById('gatePinInput');
+  const submitBtn = document.getElementById('btnGatePinSubmit');
+  const backBtn = document.getElementById('btnGateBack');
+  const loaderEl = document.getElementById('gatePinLoader');
+  const errEl = document.getElementById('gatePinError');
+
+  if (errEl) errEl.style.display = 'none';
+  if (loaderEl) loaderEl.style.display = 'flex';
+  if (pinInput) pinInput.disabled = true;
+  if (submitBtn) submitBtn.disabled = true;
+  if (backBtn) backBtn.disabled = true;
+
+  try {
+    let ok = false;
+    let errorMessage = 'Неверный PIN-код';
+
+    if (!PIN_CHECK_URL || !PIN_CHECK_URL.trim()) {
+      throw new Error('Укажите URL скрипта в константе PIN_CHECK_URL');
+    }
+
+    const sep = PIN_CHECK_URL.includes('?') ? '&' : '?';
+    const requestUrl = `${PIN_CHECK_URL}${sep}store=${encodeURIComponent(storeKey)}&pin=${encodeURIComponent(pin)}`;
+
+    const res = await fetch(requestUrl, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`Ошибка сети: статус ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    if (data && data.ok === true) {
+      ok = true;
+    } else {
+      ok = false;
+      if (data && data.error) errorMessage = data.error;
+    }
+
+    if (ok) {
+      // 1. Save store key to sessionStorage
+      sessionStorage.setItem('active_store', storeKey);
+
+      // 2. Set activeStore name
+      const storeName = STORE_KEY_TO_NAME[storeKey] || storeKey;
+      activeStore = storeName;
+      localStorage.setItem(ACTIVE_STORE_KEY, storeName);
+
+      // 3. Close modal gate
+      hideStoreGateModal();
+      showToast(`🏪 Магазин: ${storeName}`);
+
+      // 4. Launch initialization or update UI
+      if (!isAppInitialized) {
+        isAppInitialized = true;
+        await initApp();
+      } else {
+        renderStoreHeader();
+        updateFavBadge();
+        renderCategoryTabs();
+        renderCatalog();
+        syncFavoritesFromAppsScript(false).catch(() => {});
+      }
+    } else {
+      showGatePinError(errorMessage);
+      resetGatePinInput();
+    }
+  } catch (err) {
+    showGatePinError(err.message || 'Ошибка сети при проверке PIN-кода');
+    resetGatePinInput();
+  } finally {
+    isCheckingPin = false;
+    if (loaderEl) loaderEl.style.display = 'none';
+    if (pinInput) pinInput.disabled = false;
+    if (submitBtn) submitBtn.disabled = false;
+    if (backBtn) backBtn.disabled = false;
+  }
+}
+
+function showGatePinError(msg) {
+  const errEl = document.getElementById('gatePinError');
+  const pinInput = document.getElementById('gatePinInput');
+  if (errEl) {
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+  }
+  if (pinInput) {
+    pinInput.classList.remove('shake');
+    void pinInput.offsetWidth; // Trigger reflow for CSS animation
+    pinInput.classList.add('shake');
+  }
+}
+
+function resetGatePinInput() {
+  const pinInput = document.getElementById('gatePinInput');
+  if (pinInput) {
+    pinInput.value = '';
+    pinInput.disabled = false;
+    setTimeout(() => {
+      pinInput.focus();
+    }, 60);
+  }
+}
+
+function handleChangeStore() {
+  sessionStorage.removeItem('active_store');
+  showStoreGateModal();
+}
+
+function setupGateEventListeners() {
+  const pinInput = document.getElementById('gatePinInput');
+  if (pinInput) {
+    pinInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+      if (e.target.value.length === 4 && !isCheckingPin && pendingStoreKey) {
+        verifyStorePin(pendingStoreKey, e.target.value);
+      }
+    });
+  }
+
+  // Prevent closing gate via Escape key
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const gate = document.getElementById('storeGateModal');
+      if (gate && gate.classList.contains('active')) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+    }
+  }, true);
 }
 
 // Favorites checkers
@@ -6837,5 +7119,14 @@ function setupSheetGestures() {
   window.addEventListener('pointercancel', handlePointerUp);
 }
 
-// Start application when DOM is ready
-document.addEventListener('DOMContentLoaded', initApp);
+// Bootstrap application when DOM is ready
+async function bootstrapApp() {
+  setupGateEventListeners();
+  const hasSession = checkActiveStoreSession();
+  if (hasSession) {
+    isAppInitialized = true;
+    await initApp();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', bootstrapApp);

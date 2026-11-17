@@ -22,6 +22,50 @@
 const SHEET_NAME_FAVORITES = 'Избранное';
 const ALLOWED_STORES = ['Битца', 'Битца2', 'БП', 'Олимп'];
 
+// 4-значные PIN-коды доступа к магазинам (задайте свои коды для торговых точек)
+const STORE_PINS = {
+  'bitca': '1111',
+  'bitca2': '2222',
+  'bp': '3333',
+  'olimp': '4444',
+  'Битца': '1111',
+  'Битца2': '2222',
+  'БП': '3333',
+  'Олимп': '4444'
+};
+
+/**
+ * Обработка проверки PIN-кода магазина
+ * Возвращает { "ok": true } или { "ok": false, "error": "Неверный PIN-код" }
+ */
+function handlePinCheck(store, pin) {
+  if (!store) {
+    return ContentService.createTextOutput(JSON.stringify({
+      ok: false,
+      error: 'Не указан магазин'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  const expectedPin = STORE_PINS[store];
+  if (!expectedPin) {
+    return ContentService.createTextOutput(JSON.stringify({
+      ok: false,
+      error: 'Магазин не найден'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (String(pin).trim() === expectedPin) {
+    return ContentService.createTextOutput(JSON.stringify({
+      ok: true
+    })).setMimeType(ContentService.MimeType.JSON);
+  } else {
+    return ContentService.createTextOutput(JSON.stringify({
+      ok: false,
+      error: 'Неверный PIN-код'
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
 /**
  * Получить или создать лист «Избранное» со стандартным форматированием
  */
@@ -52,10 +96,20 @@ function getOrCreateFavoritesSheet() {
 }
 
 /**
- * GET запрос: возвращает список избранного по всем магазинам в формате JSON
+ * GET запрос:
+ * 1. Проверка PIN-кода магазина: ?store=bitca&pin=1111 -> { "ok": true }
+ * 2. Получение списка избранного: без параметров -> { status: "ok", stores: { ... } }
  */
 function doGet(e) {
   try {
+    // Режим 1: Проверка PIN-кода магазина
+    if (e && e.parameter && (e.parameter.pin !== undefined || e.parameter.store !== undefined)) {
+      const storeParam = String(e.parameter.store || '').trim();
+      const pinParam = String(e.parameter.pin || '').trim();
+      return handlePinCheck(storeParam, pinParam);
+    }
+
+    // Режим 2: Получение избранного
     const sheet = getOrCreateFavoritesSheet();
     const data = sheet.getDataRange().getValues();
     

@@ -10,8 +10,8 @@
   <meta name="description" content="Удобная система формирования заказа снеков для пивных магазинов">
   <title>Заказ Снеков</title>
 
-  <link rel="stylesheet" href="css/styles.css?v=2.9.1">
-  <link rel="manifest" href="manifest.json?v=2.9.1">
+  <link rel="stylesheet" href="css/styles.css?v=3.0.0">
+  <link rel="manifest" href="manifest.json?v=3.0.0">
 </head>
 
 <body>
@@ -60,16 +60,23 @@
       </div>
     </div>
 
-    <!-- Store Selector Bar (Битца, Битца2, БП, Олимп) -->
+    <!-- Active Store Header Bar & Switch Store Button -->
     <div class="store-bar">
       <div class="store-bar-inner">
-        <span class="store-bar-badge" title="Выбор магазина для заказа и избранного">🏪</span>
-        <div class="store-pills" id="storePills">
-          <button type="button" class="store-pill active" onclick="switchActiveStore('Битца')">Битца</button>
-          <button type="button" class="store-pill" onclick="switchActiveStore('Битца2')">Битца2</button>
-          <button type="button" class="store-pill" onclick="switchActiveStore('БП')">БП</button>
-          <button type="button" class="store-pill" onclick="switchActiveStore('Олимп')">Олимп</button>
+        <div id="activeStoreBadge" class="active-store-badge store-badge-bitca" title="Текущий активный магазин">
+          <span class="active-store-dot"></span>
+          <span class="active-store-label">Точка:</span>
+          <span id="activeStoreName" class="active-store-name">Битца</span>
+          <span id="activeStoreFavBadge" class="active-store-fav-badge" title="Товаров в избранном магазина">⭐ 0</span>
         </div>
+        <button type="button" id="btnChangeStore" class="btn-change-store" onclick="handleChangeStore()" title="Сменить магазин (требуется PIN)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <polyline points="23 20 23 14 17 14"></polyline>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+          </svg>
+          <span>Сменить магазин</span>
+        </button>
       </div>
     </div>
 
@@ -345,12 +352,110 @@
     </div>
   </div>
 
+  <!-- Modal Gate: Mandatory Store Selection & 4-Digit PIN Verification -->
+  <div id="storeGateModal" class="store-gate-overlay active" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+    <div class="store-gate-card">
+      
+      <!-- Step 1: 4 Large Store Selection Buttons -->
+      <div id="gateStepStores" class="gate-step">
+        <div class="gate-brand">
+          <span class="gate-brand-icon">🏪</span>
+          <h1 id="gateTitle" class="gate-title">Выбор магазина</h1>
+          <p class="gate-desc">Выберите торговую точку для работы с ассортиментом и заказами</p>
+        </div>
+
+        <div class="gate-stores-grid">
+          <button type="button" class="gate-store-btn store-bitca" onclick="selectGateStore('bitca')">
+            <span class="gate-store-dot"></span>
+            <div class="gate-store-info">
+              <span class="gate-store-title">Битца</span>
+              <span class="gate-store-key">bitca</span>
+            </div>
+            <span class="gate-store-arrow">→</span>
+          </button>
+
+          <button type="button" class="gate-store-btn store-bitca2" onclick="selectGateStore('bitca2')">
+            <span class="gate-store-dot"></span>
+            <div class="gate-store-info">
+              <span class="gate-store-title">Битца2</span>
+              <span class="gate-store-key">bitca2</span>
+            </div>
+            <span class="gate-store-arrow">→</span>
+          </button>
+
+          <button type="button" class="gate-store-btn store-bp" onclick="selectGateStore('bp')">
+            <span class="gate-store-dot"></span>
+            <div class="gate-store-info">
+              <span class="gate-store-title">БП</span>
+              <span class="gate-store-key">bp</span>
+            </div>
+            <span class="gate-store-arrow">→</span>
+          </button>
+
+          <button type="button" class="gate-store-btn store-olimp" onclick="selectGateStore('olimp')">
+            <span class="gate-store-dot"></span>
+            <div class="gate-store-info">
+              <span class="gate-store-title">Олимп</span>
+              <span class="gate-store-key">olimp</span>
+            </div>
+            <span class="gate-store-arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: 4-Digit PIN Form -->
+      <div id="gateStepPin" class="gate-step" style="display: none;">
+        <div class="gate-brand">
+          <div id="gateActiveBadge" class="gate-active-badge store-badge-bitca">
+            <span class="gate-active-dot"></span>
+            <span id="gateActiveStoreName" class="gate-active-name">Битца</span>
+          </div>
+          <h2 class="gate-title" style="font-size: 1.35rem; margin-top: 10px;">Введите PIN-код</h2>
+          <p class="gate-desc">Введите 4-значный код для доступа к магазину</p>
+        </div>
+
+        <form id="gatePinForm" onsubmit="handleGatePinSubmit(event)" autocomplete="off">
+          <div class="gate-pin-wrapper">
+            <input
+              type="password"
+              id="gatePinInput"
+              class="gate-pin-input"
+              inputmode="numeric"
+              maxlength="4"
+              pattern="[0-9]*"
+              autocomplete="one-time-code"
+              placeholder="••••"
+              autofocus
+            />
+          </div>
+
+          <div id="gatePinError" class="gate-pin-error" style="display: none;"></div>
+
+          <div id="gatePinLoader" class="gate-pin-loader" style="display: none;">
+            <div class="gate-spinner"></div>
+            <span>Проверка PIN-кода...</span>
+          </div>
+
+          <div class="gate-pin-actions">
+            <button type="submit" id="btnGatePinSubmit" class="gate-btn-submit">
+              Войти
+            </button>
+            <button type="button" id="btnGateBack" class="gate-btn-back" onclick="backToStoreSelection()">
+              ← Назад к выбору магазина
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toastNotification" class="toast">Готово</div>
 
   <!-- Vendor Scripts & Application -->
   <script src="vendor/xlsx.full.min.js"></script>
-  <script src="js/app.js?v=2.9.1"></script>
+  <script src="js/app.js?v=3.0.0"></script>
 </body>
 
 </html>

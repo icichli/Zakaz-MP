@@ -160,7 +160,7 @@ button,
   }
 }
 
-/* Store Selector Bar (Битца, Битца2, БП, Олимп) */
+/* Store Selector Header Bar (Single Badge + Change Store Button) */
 .store-bar {
   margin-top: 10px;
 }
@@ -168,97 +168,140 @@ button,
 .store-bar-inner {
   display: flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(15, 23, 42, 0.7);
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.75);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 3px 4px;
+  padding: 5px 8px;
 }
 
-.store-bar-badge {
-  display: flex;
+.active-store-badge {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
   font-size: 0.95rem;
-  padding: 0 4px 0 6px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  transition: all var(--dur-normal) ease;
   user-select: none;
+  min-height: 36px;
+  border-width: 1.5px;
+  border-style: solid;
 }
 
-.store-pills {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  flex: 1;
-  min-width: 0;
+.active-store-badge .active-store-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  animation: pulseDot 2s infinite ease-in-out;
+  flex-shrink: 0;
 }
 
-.store-pill {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 6px 3px;
-  font-size: 0.78rem;
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.active-store-badge .active-store-label {
+  font-size: 0.75rem;
   font-weight: 600;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  opacity: 0.8;
+}
+
+.active-store-badge .active-store-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.active-store-badge .active-store-fav-badge {
+  font-size: 0.75rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.35);
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+/* 4 Distinctive Store Color Accents */
+/* 1. Битца — Изумрудно-зеленый (Emerald) */
+.store-badge-bitca {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12));
+  border-color: #10b981;
+  color: #34d399;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
+}
+.store-badge-bitca .active-store-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+/* 2. Битца2 — Небесно-голубой (Sky Blue) */
+.store-badge-bitca2 {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.22), rgba(2, 132, 199, 0.12));
+  border-color: #0ea5e9;
+  color: #38bdf8;
+  box-shadow: 0 0 14px rgba(14, 165, 233, 0.25);
+}
+.store-badge-bitca2 .active-store-dot {
+  background: #0ea5e9;
+  box-shadow: 0 0 8px #0ea5e9;
+}
+
+/* 3. БП — Янтарно-золотой (Amber Gold) */
+.store-badge-bp {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.12));
+  border-color: #f59e0b;
+  color: #fbbf24;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
+}
+.store-badge-bp .active-store-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+/* 4. Олимп — Королевский пурпурный (Purple) */
+.store-badge-olimp {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.22), rgba(147, 51, 234, 0.12));
+  border-color: #a855f7;
+  color: #c084fc;
+  box-shadow: 0 0 14px rgba(168, 85, 247, 0.25);
+}
+.store-badge-olimp .active-store-dot {
+  background: #a855f7;
+  box-shadow: 0 0 8px #a855f7;
+}
+
+/* Button: Change Store */
+.btn-change-store {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
   color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease, transform var(--dur-press) var(--ease-out);
-  user-select: none;
-  -webkit-user-select: none;
+  transition: all var(--dur-fast) ease;
   touch-action: manipulation;
 }
 
-.store-pill:active {
+.btn-change-store:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-change-store:active {
   transform: scale(0.96);
-}
-
-.store-pill.active {
-  background: var(--accent-amber);
-  color: #0f172a;
-  font-weight: 700;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.store-pill .pill-badge {
-  font-size: 0.65rem;
-  padding: 1px 5px;
-  border-radius: var(--radius-full);
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--text-muted);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.store-pill.active .pill-badge {
-  background: rgba(15, 23, 42, 0.22);
-  color: #0f172a;
-}
-
-.store-pill.store-pill-private {
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  padding-left: 5px;
-}
-
-.store-pill.store-pill-private.active {
-  background: #0284c7;
-  color: #fff;
-  font-weight: 700;
-  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4);
-}
-
-.store-pill .pill-badge.priv {
-  background: rgba(56, 189, 248, 0.25);
-  color: #38bdf8;
-}
-
-.store-pill.store-pill-private.active .pill-badge.priv {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
 }
 
 /* Favorite Config Modal Sheet */
@@ -1782,4 +1825,368 @@ button,
 .empty-state svg {
   margin-bottom: 12px;
   opacity: 0.4;
+}
+
+/* =======================================================================
+   MODAL GATE: MANDATORY STORE SELECTION & PIN-CODE VERIFICATION
+   ======================================================================= */
+.store-gate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(8, 13, 26, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  overflow-y: auto;
+}
+
+.store-gate-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.store-gate-card {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 0, 0, 0.6);
+  padding: 24px 20px;
+  text-align: center;
+  animation: gateCardSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes gateCardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.gate-brand {
+  margin-bottom: 20px;
+}
+
+.gate-brand-icon {
+  display: inline-block;
+  font-size: 2.4rem;
+  margin-bottom: 6px;
+}
+
+.gate-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+}
+
+.gate-desc {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+  padding: 0 8px;
+}
+
+/* 4 Large Store Selection Buttons */
+.gate-stores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.gate-store-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 14px;
+  min-height: 72px;
+  border-radius: 14px;
+  cursor: pointer;
+  border-width: 2px;
+  border-style: solid;
+  transition: transform var(--dur-fast) ease, box-shadow var(--dur-fast) ease, border-color var(--dur-fast) ease;
+  touch-action: manipulation;
+  text-align: left;
+}
+
+.gate-store-btn:active {
+  transform: scale(0.96);
+}
+
+.gate-store-btn .gate-store-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gate-store-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.gate-store-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.gate-store-key {
+  font-size: 0.72rem;
+  font-family: monospace;
+  opacity: 0.65;
+  text-transform: lowercase;
+  margin-top: 2px;
+}
+
+.gate-store-arrow {
+  font-size: 1.1rem;
+  opacity: 0.5;
+  transition: transform 0.2s;
+}
+
+.gate-store-btn:hover .gate-store-arrow {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+/* Gate Store Colors */
+.gate-store-btn.store-bitca {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.06));
+  border-color: rgba(16, 185, 129, 0.55);
+  color: #34d399;
+}
+.gate-store-btn.store-bitca .gate-store-dot {
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+.gate-store-btn.store-bitca:hover {
+  border-color: #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+}
+
+.gate-store-btn.store-bitca2 {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.18), rgba(2, 132, 199, 0.06));
+  border-color: rgba(14, 165, 233, 0.55);
+  color: #38bdf8;
+}
+.gate-store-btn.store-bitca2 .gate-store-dot {
+  background: #0ea5e9;
+  box-shadow: 0 0 10px #0ea5e9;
+}
+.gate-store-btn.store-bitca2:hover {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.35);
+}
+
+.gate-store-btn.store-bp {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.06));
+  border-color: rgba(245, 158, 11, 0.55);
+  color: #fbbf24;
+}
+.gate-store-btn.store-bp .gate-store-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 10px #f59e0b;
+}
+.gate-store-btn.store-bp:hover {
+  border-color: #f59e0b;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+}
+
+.gate-store-btn.store-olimp {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.18), rgba(147, 51, 234, 0.06));
+  border-color: rgba(168, 85, 247, 0.55);
+  color: #c084fc;
+}
+.gate-store-btn.store-olimp .gate-store-dot {
+  background: #a855f7;
+  box-shadow: 0 0 10px #a855f7;
+}
+.gate-store-btn.store-olimp:hover {
+  border-color: #a855f7;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+}
+
+/* PIN Verification Form Elements */
+.gate-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-width: 1.5px;
+  border-style: solid;
+  margin-bottom: 6px;
+}
+
+.gate-active-badge .gate-active-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.gate-pin-wrapper {
+  margin: 20px 0 14px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.gate-pin-input {
+  width: 200px;
+  height: 56px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 12px;
+  text-align: center;
+  padding-left: 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast);
+}
+
+.gate-pin-input:focus {
+  border-color: var(--accent-amber);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.gate-pin-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Shake animation on wrong PIN */
+.gate-pin-input.shake {
+  animation: pinShake 0.45s ease-in-out;
+  border-color: #ef4444;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes pinShake {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-8px); }
+  30%, 60%, 90% { transform: translateX(8px); }
+}
+
+.gate-pin-error {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fca5a5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  animation: fadeIn 0.2s ease;
+}
+
+.gate-pin-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.gate-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(245, 158, 11, 0.25);
+  border-top-color: var(--accent-amber);
+  border-radius: 50%;
+  animation: gateSpin 0.75s linear infinite;
+}
+
+@keyframes gateSpin {
+  to { transform: rotate(360deg); }
+}
+
+.gate-pin-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gate-btn-submit {
+  width: 100%;
+  height: 48px;
+  background: var(--accent-amber);
+  color: #0f172a;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform var(--dur-fast), filter var(--dur-fast);
+  touch-action: manipulation;
+}
+
+.gate-btn-submit:hover {
+  filter: brightness(1.08);
+}
+
+.gate-btn-submit:active {
+  transform: scale(0.97);
+}
+
+.gate-btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gate-btn-back {
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--dur-fast);
+  touch-action: manipulation;
+}
+
+.gate-btn-back:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.gate-btn-back:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 360px) {
+  .gate-stores-grid {
+    grid-template-columns: 1fr;
+  }
 }
