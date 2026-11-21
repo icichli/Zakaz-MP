@@ -4281,7 +4281,7 @@ async function verifyStorePin(storeKey, pin) {
         updateFavBadge();
         renderCategoryTabs();
         renderCatalog();
-        syncFavoritesFromAppsScript(false).catch(() => {});
+        syncFavoritesFromAppsScript(false).catch(() => { });
       }
     } else {
       showGatePinError(errorMessage);
@@ -4776,15 +4776,13 @@ function copyFavoritesBackupText() {
   });
 
   const text = JSON.stringify(backup);
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => {
+  copyTextToClipboard(text).then((copied) => {
+    if (copied) {
       showToast('📋 Код бэкапа скопирован в буфер!');
-    }).catch(() => {
+    } else {
       prompt('Скопируйте код бэкапа вручную:', text);
-    });
-  } else {
-    prompt('Скопируйте код бэкапа вручную:', text);
-  }
+    }
+  });
 }
 
 function promptImportFavoritesText() {
@@ -4881,15 +4879,13 @@ function shareStoreSetupLink() {
   const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
   const shareUrl = `${window.location.origin}${window.location.pathname}#fav_setup=${b64}`;
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(shareUrl).then(() => {
+  copyTextToClipboard(shareUrl).then((copied) => {
+    if (copied) {
       showToast(`🔗 Ссылка для точки [${activeStore}] скопирована! Отправьте её продавцам.`);
-    }).catch(() => {
+    } else {
       prompt(`Ссылка для настройки магазина [${activeStore}]:`, shareUrl);
-    });
-  } else {
-    prompt(`Ссылка для настройки магазина [${activeStore}]:`, shareUrl);
-  }
+    }
+  });
 }
 
 function checkUrlHashConfig() {
@@ -6688,25 +6684,100 @@ function removeManualItem(id) {
   renderCatalog();
 }
 
+// Universal iOS Safari / Android / Desktop Clipboard Copy Helper
+async function copyTextToClipboard(text) {
+  // 1. Try modern Clipboard API (works on HTTPS / localhost)
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (err) {
+      console.warn('navigator.clipboard.writeText rejected, attempting fallback:', err);
+    }
+  }
+
+  // 2. Fallback using execCommand with iOS Safari range selection
+  try {
+    // If orderTextPreview exists in the active modal, use it directly (most reliable on iOS)
+    const preview = document.getElementById('orderTextPreview');
+    if (preview && preview.value === text) {
+      preview.focus();
+      preview.select();
+      preview.setSelectionRange(0, text.length);
+      const ok = document.execCommand('copy');
+      if (ok) return true;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    // Essential attributes for iOS WebKit:
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.top = '0';
+    textarea.style.left = '-9999px';
+    textarea.style.fontSize = '16px'; // Prevents iOS Safari auto-zoom
+    textarea.style.opacity = '0';
+    textarea.style.pointerEvents = 'none';
+
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+
+    const range = document.createRange();
+    range.selectNodeContents(textarea);
+    const selection = window.getSelection();
+    if (selection) {
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    const successful = document.execCommand('copy');
+    if (selection) selection.removeAllRanges();
+    document.body.removeChild(textarea);
+
+    return !!successful;
+  } catch (e) {
+    console.error('execCommand fallback copy failed:', e);
+    return false;
+  }
+}
+
 // Copy order text for WhatsApp / Telegram
 async function copyOrderToClipboard() {
   const text = generateOrderText(modalActiveSupplier);
   const sup = getSupplierById(modalActiveSupplier);
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(text);
-    } else {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
+  const btn = document.getElementById('btnCopyOrder') || document.querySelector('.btn-action-primary');
+  const label = btn ? btn.querySelector('.btn-copy-label') : null;
+
+  const copied = await copyTextToClipboard(text);
+
+  if (copied) {
+    showToast(`📋 Заказ [${sup.shortName}] скопирован в буфер!`);
+
+    // Tactile/visual feedback on button for mobile/iOS users
+    if (btn) {
+      btn.classList.add('copied');
+      const originalText = label ? label.textContent : (btn.textContent || '');
+      if (label) {
+        label.textContent = '✓ Заказ скопирован в буфер!';
+      }
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        if (label) label.textContent = originalText;
+      }, 2500);
     }
-    showToast(`📋 Заказ [${sup.shortName}] скопирован!`);
-  } catch (err) {
-    console.error('Copy failed', err);
-    showToast('Не удалось скопировать, выделите текст в окне', true);
+  } else {
+    // If all programmatic clipboard methods fail, focus and select textarea in drawer
+    const preview = document.getElementById('orderTextPreview');
+    if (preview) {
+      preview.focus();
+      preview.select();
+      preview.setSelectionRange(0, preview.value.length);
+      showToast('Текст заказа выделен — нажмите «Скопировать»', true);
+    } else {
+      showToast('Не удалось скопировать, выделите текст в окне', true);
+    }
   }
 }
 
@@ -7072,12 +7143,15 @@ function setupSheetGestures() {
   let isDragging = false;
 
   container.addEventListener('pointerdown', (e) => {
+    // Never intercept drag gestures on the footer where action buttons reside
+    if (e.target.closest('.modal-footer')) return;
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('textarea')) return;
+
     const body = modal.querySelector('.modal-body');
     const isHeaderOrHandle = e.target.closest('.modal-drag-handle') || e.target.closest('.modal-header');
     const isBodyAtTop = body && body.scrollTop <= 0;
 
     if (!isHeaderOrHandle && !isBodyAtTop) return;
-    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('textarea')) return;
 
     startY = e.clientY;
     currentY = 0;
@@ -7125,6 +7199,8 @@ function setupSheetGestures() {
 
 // Bootstrap application when DOM is ready
 async function bootstrapApp() {
+  // Enable :active pseudo-class state on iOS Safari
+  document.addEventListener('touchstart', () => { }, { passive: true });
   setupGateEventListeners();
   const hasSession = checkActiveStoreSession();
   if (hasSession) {

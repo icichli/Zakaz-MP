@@ -16,7 +16,7 @@
   --accent-green-dark: #059669;
   --accent-red: #ef4444;
   --accent-blue: #3b82f6;
-  --safe-bottom: env(safe-area-inset-bottom, 16px);
+  --safe-bottom: max(16px, env(safe-area-inset-bottom, 16px));
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -201,8 +201,17 @@ button,
 }
 
 @keyframes pulseDot {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.7; }
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
 }
 
 .active-store-badge .active-store-label {
@@ -235,6 +244,7 @@ button,
   color: #34d399;
   box-shadow: 0 0 14px rgba(16, 185, 129, 0.25);
 }
+
 .store-badge-bitca .active-store-dot {
   background: #10b981;
   box-shadow: 0 0 8px #10b981;
@@ -247,6 +257,7 @@ button,
   color: #38bdf8;
   box-shadow: 0 0 14px rgba(14, 165, 233, 0.25);
 }
+
 .store-badge-bitca2 .active-store-dot {
   background: #0ea5e9;
   box-shadow: 0 0 8px #0ea5e9;
@@ -259,6 +270,7 @@ button,
   color: #fbbf24;
   box-shadow: 0 0 14px rgba(245, 158, 11, 0.25);
 }
+
 .store-badge-bp .active-store-dot {
   background: #f59e0b;
   box-shadow: 0 0 8px #f59e0b;
@@ -271,6 +283,7 @@ button,
   color: #c084fc;
   box-shadow: 0 0 14px rgba(168, 85, 247, 0.25);
 }
+
 .store-badge-olimp .active-store-dot {
   background: #a855f7;
   box-shadow: 0 0 8px #a855f7;
@@ -503,7 +516,8 @@ button,
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 16px; /* 16px min prevents auto-zoom on iOS */
+  font-size: 16px;
+  /* 16px min prevents auto-zoom on iOS */
   padding: 10px 38px 10px 38px;
   outline: none;
   transition: border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
@@ -1146,10 +1160,22 @@ button,
 
 /* Pop/burst animation when long-press activates */
 @keyframes favTriggerPop {
-  0% { transform: scale(0.82); }
-  45% { transform: scale(1.38); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.85)); }
-  75% { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.82);
+  }
+
+  45% {
+    transform: scale(1.38);
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.85));
+  }
+
+  75% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .btn-fav.is-triggered {
@@ -1269,7 +1295,8 @@ button,
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 2px;
-  flex-shrink: 0; /* Break-UI protection against long product titles */
+  flex-shrink: 0;
+  /* Break-UI protection against long product titles */
 }
 
 .stepper-btn {
@@ -1358,7 +1385,8 @@ button,
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 16px; /* 16px min prevents iOS auto-zoom */
+  font-size: 16px;
+  /* 16px min prevents iOS auto-zoom */
   padding: 9px 12px;
   outline: none;
   user-select: text;
@@ -1473,7 +1501,7 @@ button,
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -1503,6 +1531,7 @@ button,
   padding-bottom: var(--safe-bottom);
   box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.6);
   touch-action: pan-y;
+  overflow: hidden;
 }
 
 .modal-drag-handle {
@@ -1558,6 +1587,7 @@ button,
   padding: 16px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
@@ -1568,6 +1598,11 @@ button,
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  touch-action: manipulation;
+  background: #1e293b;
 }
 
 /* Order List in Modal */
@@ -1612,12 +1647,26 @@ button,
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: transform var(--dur-press) var(--ease-out), opacity var(--dur-fast) ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-fast) ease, opacity var(--dur-fast) ease;
+}
+
+.btn-action-primary svg,
+.btn-action-secondary svg {
+  pointer-events: none;
+  flex-shrink: 0;
 }
 
 .btn-action-primary:active {
   transform: scale(0.97);
   opacity: 0.92;
+}
+
+.btn-action-primary.copied {
+  background: #059669 !important;
 }
 
 .action-row {
@@ -1639,6 +1688,10 @@ button,
   align-items: center;
   justify-content: center;
   gap: 6px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
   transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-fast) ease;
 }
 
@@ -1664,7 +1717,7 @@ button,
   border-radius: var(--radius-full);
   font-size: 0.9rem;
   font-weight: 600;
-  z-index: 500;
+  z-index: 2500;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1689,7 +1742,7 @@ button,
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 150;
+  z-index: 1200;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1871,6 +1924,7 @@ button,
     opacity: 0;
     transform: translateY(24px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1975,10 +2029,12 @@ button,
   border-color: rgba(16, 185, 129, 0.55);
   color: #34d399;
 }
+
 .gate-store-btn.store-bitca .gate-store-dot {
   background: #10b981;
   box-shadow: 0 0 10px #10b981;
 }
+
 .gate-store-btn.store-bitca:hover {
   border-color: #10b981;
   box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
@@ -1989,10 +2045,12 @@ button,
   border-color: rgba(14, 165, 233, 0.55);
   color: #38bdf8;
 }
+
 .gate-store-btn.store-bitca2 .gate-store-dot {
   background: #0ea5e9;
   box-shadow: 0 0 10px #0ea5e9;
 }
+
 .gate-store-btn.store-bitca2:hover {
   border-color: #0ea5e9;
   box-shadow: 0 0 20px rgba(14, 165, 233, 0.35);
@@ -2003,10 +2061,12 @@ button,
   border-color: rgba(245, 158, 11, 0.55);
   color: #fbbf24;
 }
+
 .gate-store-btn.store-bp .gate-store-dot {
   background: #f59e0b;
   box-shadow: 0 0 10px #f59e0b;
 }
+
 .gate-store-btn.store-bp:hover {
   border-color: #f59e0b;
   box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
@@ -2017,10 +2077,12 @@ button,
   border-color: rgba(168, 85, 247, 0.55);
   color: #c084fc;
 }
+
 .gate-store-btn.store-olimp .gate-store-dot {
   background: #a855f7;
   box-shadow: 0 0 10px #a855f7;
 }
+
 .gate-store-btn.store-olimp:hover {
   border-color: #a855f7;
   box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
@@ -2087,9 +2149,23 @@ button,
 }
 
 @keyframes pinShake {
-  0%, 100% { transform: translateX(0); }
-  15%, 45%, 75% { transform: translateX(-8px); }
-  30%, 60%, 90% { transform: translateX(8px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  15%,
+  45%,
+  75% {
+    transform: translateX(-8px);
+  }
+
+  30%,
+  60%,
+  90% {
+    transform: translateX(8px);
+  }
 }
 
 .gate-pin-error {
@@ -2124,7 +2200,9 @@ button,
 }
 
 @keyframes gateSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .gate-pin-actions {
