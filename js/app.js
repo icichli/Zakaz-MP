@@ -3769,7 +3769,7 @@ let storeFavorites = {
 let privateFavorites = new Set();
 let favFilterMode = 'none'; // 'none' | 'store' | 'private'
 
-const CATALOG_CACHE_KEY = 'snack_catalog_cache_v9';
+const CATALOG_CACHE_KEY = 'snack_catalog_cache_v11';
 const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v9';
 const ORDER_STORAGE_KEY = 'snack_order_v8';
 const MANUAL_STORAGE_KEY = 'snack_manual_items_v8';
@@ -4930,14 +4930,18 @@ function saveState() {
 
 // Load Catalog from cache or fallback to embedded DEFAULT_CATALOG
 async function loadCatalog() {
-  // Clear stale caches
-  localStorage.removeItem('snack_catalog_cache_v7');
-  localStorage.removeItem('snack_suppliers_cache_v7');
-  localStorage.removeItem('snack_catalog_cache_v8');
-  localStorage.removeItem('snack_suppliers_cache_v8');
+  // Never wipe or clear local caches - retain all offline and synced data
+  const cachedCatalog = localStorage.getItem(CATALOG_CACHE_KEY) ||
+    localStorage.getItem('snack_catalog_cache_v11') ||
+    localStorage.getItem('snack_catalog_cache_v10') ||
+    localStorage.getItem('snack_catalog_cache_v9') ||
+    localStorage.getItem('snack_catalog_cache_v8') ||
+    localStorage.getItem('snack_catalog_cache');
 
-  const cachedCatalog = localStorage.getItem(CATALOG_CACHE_KEY);
-  const cachedSuppliers = localStorage.getItem(SUPPLIERS_CACHE_KEY);
+  const cachedSuppliers = localStorage.getItem(SUPPLIERS_CACHE_KEY) ||
+    localStorage.getItem('snack_suppliers_cache_v9') ||
+    localStorage.getItem('snack_suppliers_cache_v8') ||
+    localStorage.getItem('snack_suppliers_cache');
 
   let validCache = false;
   if (cachedCatalog) {
@@ -4955,9 +4959,25 @@ async function loadCatalog() {
     }
   }
 
-  if (!validCache) {
-    catalog = [...DEFAULT_CATALOG];
+  if (validCache) {
+    catalog = processCatalogWithPeanutOptimization(catalog);
+  } else {
+    catalog = processCatalogWithPeanutOptimization([...DEFAULT_CATALOG]);
     suppliers = [...DEFAULT_SUPPLIERS];
+  }
+
+  // Merge any order items that point to merged alias IDs
+  if (Array.isArray(catalog) && typeof order === 'object' && order !== null) {
+    for (const it of catalog) {
+      if (it.aliases && Array.isArray(it.aliases)) {
+        for (const aId of it.aliases) {
+          if (order[aId]) {
+            order[it.id] = (order[it.id] || 0) + order[aId];
+            delete order[aId];
+          }
+        }
+      }
+    }
   }
 }
 
@@ -5095,7 +5115,7 @@ async function syncFromGoogleSheets(notify = true) {
     const parsedData = parseGoogleSheetWorkbook(wb);
 
     if (parsedData && parsedData.items && parsedData.items.length > 0) {
-      catalog = parsedData.items;
+      catalog = processCatalogWithPeanutOptimization(parsedData.items);
       if (parsedData.suppliers && parsedData.suppliers.length > 0) {
         suppliers = parsedData.suppliers;
       }
@@ -6533,12 +6553,111 @@ function formatOrderCleanText(s) {
 
 function cleanOrderFlavor(s) {
   if (!s) return '';
-  s = s.replace(/[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?\s*,?\s*шт\.?$/i, '');
-  s = s.replace(/[\s,\-–—]+шт\.?$/i, '');
+  s = s.replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '');
+  s = s.replace(/^со\s+вкусом\s+/i, '');
   s = s.replace(/["«»]/g, '').trim().replace(/\s+/g, ' ');
   const words = s.split(' ');
   const out = words.map((w, i) => cleanOrderCasingWord(w, i === 0));
   return out.join(' ').replace(/\s+([,.:])/g, '$1');
+}
+
+
+// Universal Peanut Glaze Normalizer & Flavor Extractor
+function parsePeanutGlazed(name) {
+  let s = String(name || '').trim();
+  s = s.replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '');
+  s = s.replace(/["«»]/g, '').trim().replace(/\s+/g, ' ');
+
+  const lower = s.toLowerCase();
+  if (!lower.includes('арахис')) {
+    return null;
+  }
+
+  // Explicitly exclude fried salted (ж/с, жс)
+  if (lower.includes('ж/с') || lower.includes('жс')) {
+    return null;
+  }
+
+  let isGlazed = false;
+  let flavorPart = s;
+
+  if (lower.includes('в глазури')) {
+    isGlazed = true;
+    flavorPart = s.replace(/^.*?в\s+глазури\s*/i, '');
+  } else if (lower.includes('в хруст.корочке') || lower.includes('в хрустящей корочке') || lower.includes('в хруст. корочке')) {
+    isGlazed = true;
+    flavorPart = s.replace(/^.*?в\s+хруст(?:ящей|\.)\s*корочке\s*/i, '');
+  }
+
+  if (!isGlazed) {
+    return null;
+  }
+
+  // Strip brand prefixes or suffixes (e.g. Averton, ФомаЛукич, Сильвер)
+  flavorPart = flavorPart.replace(/(?:^|\s+)(?:Averton|ФомаЛукич|Сильвер)(?:\s+|$)/gi, ' ').trim();
+  flavorPart = flavorPart.replace(/^со\s+вкусом\s+/i, '').trim();
+  flavorPart = flavorPart.replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '').trim();
+
+  // Clean casing of flavor words
+  const words = flavorPart.split(' ').filter(Boolean);
+  const cleanWords = words.map((w, i) => {
+    const l = w.toLowerCase();
+    if (i === 0) {
+      return l.charAt(0).toUpperCase() + l.slice(1);
+    }
+    if (l.includes('-')) {
+      const parts = l.split('-');
+      return parts.map((p, idx) => idx === 0 ? (p.charAt(0).toUpperCase() + p.slice(1)) : p).join('-');
+    }
+    if (['с', 'и', 'в', 'на', 'со'].includes(l)) {
+      return l;
+    }
+    return l;
+  });
+
+  const cleanFlavor = cleanWords.join(' ');
+  if (!cleanFlavor) return null;
+
+  return {
+    brand: 'Арахис в глазури',
+    flavor: cleanFlavor,
+    normalizedName: `Арахис в глазури ${cleanFlavor}`
+  };
+}
+
+// Dynamic catalog processor: normalizes peanut names and deduplicates identical flavors
+function processCatalogWithPeanutOptimization(catalogItems) {
+  if (!Array.isArray(catalogItems)) return catalogItems;
+  const seenPeanutFlavors = new Map();
+  const result = [];
+
+  for (const it of catalogItems) {
+    if (it && it.name && (it.category === 'Орехи' || (!it.category && it.name.toLowerCase().includes('арахис')))) {
+      const peanutInfo = parsePeanutGlazed(it.name);
+      if (peanutInfo) {
+        const flavorKey = peanutInfo.flavor.toLowerCase();
+        if (!seenPeanutFlavors.has(flavorKey)) {
+          const updated = {
+            ...it,
+            name: peanutInfo.normalizedName,
+            peanutFlavor: peanutInfo.flavor,
+            isPeanutGlazed: true
+          };
+          seenPeanutFlavors.set(flavorKey, updated);
+          result.push(updated);
+        } else {
+          // Merge duplicate flavor into existing item aliases
+          const primary = seenPeanutFlavors.get(flavorKey);
+          if (!primary.aliases) primary.aliases = [];
+          primary.aliases.push(it.id);
+        }
+        continue;
+      }
+    }
+    result.push(it);
+  }
+
+  return result;
 }
 
 function parseOrderPosition(rawName, category = '') {
@@ -6554,8 +6673,18 @@ function parseOrderPosition(rawName, category = '') {
     return { brand: null, flavor: s, fullName: s };
   }
 
+  // 1b. Dynamic Peanut in Glaze detection (without brands, unified under "Арахис в глазури")
+  const peanutGlazed = parsePeanutGlazed(s);
+  if (peanutGlazed) {
+    return {
+      brand: peanutGlazed.brand,
+      flavor: peanutGlazed.flavor,
+      fullName: `${peanutGlazed.brand}: ${peanutGlazed.flavor}`
+    };
+  }
+
   // 2. Snack cleanup: strip weight + шт and legal boilerplates
-  s = s.replace(/[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?\s*,?\s*шт\.?$/i, '');
+  s = s.replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '');
   s = s.replace(/[\s,\-–—]+шт\.?$/i, '');
   s = s.replace(/\(продукт белково-жировой\)/gi, '');
   s = s.replace(/\(уп\)/gi, '');
