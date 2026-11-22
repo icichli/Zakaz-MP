@@ -5828,6 +5828,124 @@ function selectBrandFilter(brand) {
   renderCatalog();
 }
 
+// Two-Level Alphabetical Catalog Sorting (Option 3: Family/Series -> Flavors within)
+const CATALOG_COLLATOR = new Intl.Collator('ru', { numeric: true, sensitivity: 'base' });
+
+function getCatalogItemSortInfo(item) {
+  if (!item) return { family: '', flavor: '' };
+  const cat = item.category || '';
+
+  // 1. Coated peanuts: family is always "Арахис в глазури"
+  if (item.isPeanutGlazed || (item.peanutFlavor && cat === 'Орехи')) {
+    return {
+      family: 'Арахис в глазури',
+      flavor: item.peanutFlavor || String(item.name || '').replace(/^Арахис в глазури\s*/i, '').trim()
+    };
+  }
+  const peanut = parsePeanutGlazed(item.name);
+  if (peanut) {
+    return {
+      family: 'Арахис в глазури',
+      flavor: peanut.flavor
+    };
+  }
+
+  // 2. Containers / Consumables - sort by clean text directly
+  if (cat === 'Контейнеры' || cat === 'Расходники') {
+    return {
+      family: item.name || '',
+      flavor: ''
+    };
+  }
+
+  // 3. Category: Орехи specific series
+  if (cat === 'Орехи') {
+    const s = String(item.name || '').trim();
+    if (/^Арахис\s+ж\/?с\s+ХРУСТЯЩИЙ/i.test(s)) {
+      const fl = s.replace(/^Арахис\s+ж\/?с\s+ХРУСТЯЩИЙ(?:\s+со\s+вкусом)?\s*/i, '')
+        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
+        .trim();
+      return {
+        family: 'Арахис ж/с Хрустящий',
+        flavor: cleanOrderFlavor(fl)
+      };
+    }
+    if (/^Арахис\s+ж\/?с/i.test(s)) {
+      const fl = s.replace(/^Арахис\s+ж\/?с\s*/i, '')
+        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
+        .trim();
+      return {
+        family: 'Арахис ж/с',
+        flavor: cleanOrderFlavor(fl) || 'Классический'
+      };
+    }
+    if (/^Фисташк/i.test(s)) {
+      const fl = s.replace(/^Фисташк(?:и|а)\s*(?:со\s+вкусом\s*)?/i, '')
+        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
+        .replace(/["«»]/g, '')
+        .trim();
+      return {
+        family: 'Фисташки',
+        flavor: cleanOrderFlavor(fl)
+      };
+    }
+    if (/^Кешью/i.test(s)) {
+      const fl = s.replace(/^Кешью\s*/i, '')
+        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
+        .trim();
+      return {
+        family: 'Кешью',
+        flavor: cleanOrderFlavor(fl)
+      };
+    }
+    if (/^Миндаль/i.test(s)) {
+      const fl = s.replace(/^Миндаль\s*/i, '')
+        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
+        .trim();
+      return {
+        family: 'Миндаль',
+        flavor: cleanOrderFlavor(fl)
+      };
+    }
+    if (/^КУКУРУЗА/i.test(s)) {
+      const fl = s.replace(/^КУКУРУЗА\s*(?:жареная\s*)?(?:со\s+вкусом\s*)?/i, '')
+        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
+        .trim();
+      return {
+        family: 'Кукуруза жареная',
+        flavor: cleanOrderFlavor(fl)
+      };
+    }
+  }
+
+  // 4. Other items: parseOrderPosition extracts series / brand and flavor
+  const parsed = parseOrderPosition(item.name, cat);
+  if (parsed.brand) {
+    return {
+      family: parsed.brand,
+      flavor: parsed.flavor
+    };
+  }
+
+  return {
+    family: parsed.flavor || item.name || '',
+    flavor: ''
+  };
+}
+
+function compareCatalogItems(a, b) {
+  const infoA = getCatalogItemSortInfo(a);
+  const infoB = getCatalogItemSortInfo(b);
+
+  const familyCmp = CATALOG_COLLATOR.compare(infoA.family, infoB.family);
+  if (familyCmp !== 0) return familyCmp;
+
+  const flavorCmp = CATALOG_COLLATOR.compare(infoA.flavor, infoB.flavor);
+  if (flavorCmp !== 0) return flavorCmp;
+
+  return CATALOG_COLLATOR.compare(a.name || '', b.name || '');
+}
+
 // Render Products Catalog List (Scoped to Active Supplier)
 function renderCatalog() {
   const container = document.getElementById('catalogContent');
@@ -5934,6 +6052,11 @@ function renderCatalog() {
     if (!groups[cat]) groups[cat] = [];
     groups[cat].push(it);
   });
+
+  // Two-level alphabetical sorting (Option 3: Family/Series -> Flavors within)
+  for (const cat of Object.keys(groups)) {
+    groups[cat].sort(compareCatalogItems);
+  }
 
   let html = '';
   if (favFilterMode === 'private') {
