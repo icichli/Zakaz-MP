@@ -6475,6 +6475,17 @@ function updateOrderBar() {
   }
 }
 
+// Clean redundant price-list suffixes for order text messages and Excel export (e.g. " 0,9кг, шт", " 1 кг, шт", ", шт")
+function cleanOrderPositionName(name) {
+  if (!name) return '';
+  let s = String(name).trim();
+  // 1. Strip trailing weight + unit + optional comma + "шт" (e.g. " 0,9кг, шт", " 1 кг, шт", " 500гр, шт", " 90 гр., шт")
+  s = s.replace(/[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?\s*,?\s*шт\.?$/i, '');
+  // 2. Strip standalone trailing ", шт", ", шт.", " - шт"
+  s = s.replace(/[\s,\-–—]+шт\.?$/i, '');
+  return s.trim();
+}
+
 // Generate WhatsApp / Telegram Order Text for a Specific Supplier
 function generateOrderText(supplierId = modalActiveSupplier) {
   const sup = getSupplierById(supplierId);
@@ -6524,7 +6535,7 @@ function generateOrderText(supplierId = modalActiveSupplier) {
     const title = meta ? meta.label : catName;
     text += `${icon} ${title.toUpperCase()}:\n`;
     items.forEach(it => {
-      text += `• ${it.name} — ${it.qty} ${it.unit}\n`;
+      text += `• ${cleanOrderPositionName(it.name)} — ${it.qty} ${it.unit}\n`;
     });
     text += `\n`;
   }
@@ -6828,7 +6839,7 @@ function downloadOrderExcel() {
       rows.push([
         num++,
         it.category || '',
-        it.name,
+        cleanOrderPositionName(it.name),
         qty,
         it.unit
       ]);
@@ -6839,7 +6850,7 @@ function downloadOrderExcel() {
     rows.push([
       num++,
       it.category || 'Вручную',
-      it.name,
+      cleanOrderPositionName(it.name),
       it.quantity,
       it.unit
     ]);
