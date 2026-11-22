@@ -5828,122 +5828,41 @@ function selectBrandFilter(brand) {
   renderCatalog();
 }
 
-// Two-Level Alphabetical Catalog Sorting (Option 3: Family/Series -> Flavors within)
+// Unified Alphabetical Sorting Key for All Catalog Positions Across All Sheets (Option 1)
 const CATALOG_COLLATOR = new Intl.Collator('ru', { numeric: true, sensitivity: 'base' });
 
-function getCatalogItemSortInfo(item) {
-  if (!item) return { family: '', flavor: '' };
-  const cat = item.category || '';
+function getItemSortKey(item) {
+  if (!item) return '';
+  const rawName = typeof item === 'string' ? item : (item.name || '');
+  const cat = (item && item.category) || '';
 
-  // 1. Coated peanuts: family is always "Арахис в глазури"
-  if (item.isPeanutGlazed || (item.peanutFlavor && cat === 'Орехи')) {
-    return {
-      family: 'Арахис в глазури',
-      flavor: item.peanutFlavor || String(item.name || '').replace(/^Арахис в глазури\s*/i, '').trim()
-    };
+  // 1. Coated peanuts: guaranteed to group as "Арахис в глазури [Вкус]" regardless of supplier/brand
+  if (item && (item.isPeanutGlazed || (item.peanutFlavor && cat === 'Орехи'))) {
+    return `Арахис в глазури ${item.peanutFlavor || ''}`.trim();
   }
-  const peanut = parsePeanutGlazed(item.name);
+  const peanut = parsePeanutGlazed(rawName);
   if (peanut) {
-    return {
-      family: 'Арахис в глазури',
-      flavor: peanut.flavor
-    };
+    return `Арахис в глазури ${peanut.flavor}`.trim();
   }
 
-  // 2. Containers / Consumables - sort by clean text directly
+  // 2. Technical specs for tare and consumables
   if (cat === 'Контейнеры' || cat === 'Расходники') {
-    return {
-      family: item.name || '',
-      flavor: ''
-    };
+    return cleanOrderPositionName(rawName, cat);
   }
 
-  // 3. Category: Орехи specific series
-  if (cat === 'Орехи') {
-    const s = String(item.name || '').trim();
-    if (/^Арахис\s+ж\/?с\s+ХРУСТЯЩИЙ/i.test(s)) {
-      const fl = s.replace(/^Арахис\s+ж\/?с\s+ХРУСТЯЩИЙ(?:\s+со\s+вкусом)?\s*/i, '')
-        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
-        .trim();
-      return {
-        family: 'Арахис ж/с Хрустящий',
-        flavor: cleanOrderFlavor(fl)
-      };
-    }
-    if (/^Арахис\s+ж\/?с/i.test(s)) {
-      const fl = s.replace(/^Арахис\s+ж\/?с\s*/i, '')
-        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
-        .trim();
-      return {
-        family: 'Арахис ж/с',
-        flavor: cleanOrderFlavor(fl) || 'Классический'
-      };
-    }
-    if (/^Фисташк/i.test(s)) {
-      const fl = s.replace(/^Фисташк(?:и|а)\s*(?:со\s+вкусом\s*)?/i, '')
-        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
-        .replace(/["«»]/g, '')
-        .trim();
-      return {
-        family: 'Фисташки',
-        flavor: cleanOrderFlavor(fl)
-      };
-    }
-    if (/^Кешью/i.test(s)) {
-      const fl = s.replace(/^Кешью\s*/i, '')
-        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
-        .trim();
-      return {
-        family: 'Кешью',
-        flavor: cleanOrderFlavor(fl)
-      };
-    }
-    if (/^Миндаль/i.test(s)) {
-      const fl = s.replace(/^Миндаль\s*/i, '')
-        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
-        .trim();
-      return {
-        family: 'Миндаль',
-        flavor: cleanOrderFlavor(fl)
-      };
-    }
-    if (/^КУКУРУЗА/i.test(s)) {
-      const fl = s.replace(/^КУКУРУЗА\s*(?:жареная\s*)?(?:со\s+вкусом\s*)?/i, '')
-        .replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '')
-        .trim();
-      return {
-        family: 'Кукуруза жареная',
-        flavor: cleanOrderFlavor(fl)
-      };
-    }
+  // 3. For any other positions: parse brand/series + flavor to keep families strictly adjacent
+  const parsed = parseOrderPosition(rawName, cat);
+  if (parsed.brand && parsed.flavor) {
+    return `${parsed.brand} ${parsed.flavor}`.trim();
   }
 
-  // 4. Other items: parseOrderPosition extracts series / brand and flavor
-  const parsed = parseOrderPosition(item.name, cat);
-  if (parsed.brand) {
-    return {
-      family: parsed.brand,
-      flavor: parsed.flavor
-    };
-  }
-
-  return {
-    family: parsed.flavor || item.name || '',
-    flavor: ''
-  };
+  return (parsed.fullName || cleanOrderPositionName(rawName, cat) || rawName).trim();
 }
 
 function compareCatalogItems(a, b) {
-  const infoA = getCatalogItemSortInfo(a);
-  const infoB = getCatalogItemSortInfo(b);
-
-  const familyCmp = CATALOG_COLLATOR.compare(infoA.family, infoB.family);
-  if (familyCmp !== 0) return familyCmp;
-
-  const flavorCmp = CATALOG_COLLATOR.compare(infoA.flavor, infoB.flavor);
-  if (flavorCmp !== 0) return flavorCmp;
-
-  return CATALOG_COLLATOR.compare(a.name || '', b.name || '');
+  const keyA = getItemSortKey(a);
+  const keyB = getItemSortKey(b);
+  return CATALOG_COLLATOR.compare(keyA, keyB);
 }
 
 // Render Products Catalog List (Scoped to Active Supplier)
@@ -6915,7 +6834,12 @@ function generateOrderText(supplierId = modalActiveSupplier) {
       brandGroups.get(brandKey).push(it);
     });
 
+    // Sort items within category using unified key
+    items.sort(compareCatalogItems);
+
     for (const [brandKey, bItems] of brandGroups.entries()) {
+      // Sort flavors alphabetically within brand group
+      bItems.sort((a, b) => CATALOG_COLLATOR.compare(a.parsed.flavor || '', b.parsed.flavor || ''));
       const isBrandGroup = !brandKey.startsWith('__standalone_') && bItems.length > 1;
       if (isBrandGroup) {
         text += `• ${brandKey}:\n`;
@@ -7003,12 +6927,19 @@ function renderOrderModalContent() {
   }
 
   let itemsHtml = '';
+  const modalCartItems = [];
   for (const [id, qty] of Object.entries(order)) {
     if (qty > 0) {
       const it = catalog.find(i => i.id === id);
       if (!it || it.supplier !== modalActiveSupplier) continue;
-      const meta = CATEGORY_META[it.category] || { label: it.category };
-      itemsHtml += `
+      modalCartItems.push({ it, qty });
+    }
+  }
+  modalCartItems.sort((a, b) => compareCatalogItems(a.it, b.it));
+
+  modalCartItems.forEach(({ it, qty }) => {
+    const meta = CATEGORY_META[it.category] || { label: it.category };
+    itemsHtml += `
         <div class="order-item-row" data-id="${it.id}">
           <div style="flex: 1; min-width: 0;">
             <div class="order-item-title">${escapeHtml(it.name)}</div>
@@ -7022,8 +6953,7 @@ function renderOrderModalContent() {
           </div>
         </div>
       `;
-    }
-  }
+  });
 
   manualItems.filter(m => (m.supplier || 'snacks') === modalActiveSupplier).forEach(it => {
     itemsHtml += `
@@ -7222,27 +7152,44 @@ function downloadOrderExcel() {
     ['№', 'Категория', 'Наименование товара', 'Количество', 'Единица']
   ];
 
-  let num = 1;
+  const excelItems = [];
   for (const [id, qty] of Object.entries(order)) {
     if (qty > 0) {
       const it = catalog.find(i => i.id === id);
       if (!it || it.supplier !== modalActiveSupplier) continue;
-      rows.push([
-        num++,
-        it.category || '',
-        cleanOrderPositionName(it.name, it.category),
+      excelItems.push({
+        category: it.category || '',
+        name: cleanOrderPositionName(it.name, it.category),
         qty,
-        it.unit
-      ]);
+        unit: it.unit,
+        rawItem: it
+      });
     }
   }
 
   manualItems.filter(m => (m.supplier || 'snacks') === modalActiveSupplier).forEach(it => {
+    excelItems.push({
+      category: it.category || 'Вручную',
+      name: cleanOrderPositionName(it.name, 'Вручную'),
+      qty: it.quantity,
+      unit: it.unit,
+      rawItem: it
+    });
+  });
+
+  excelItems.sort((a, b) => {
+    const catComp = CATALOG_COLLATOR.compare(a.category, b.category);
+    if (catComp !== 0) return catComp;
+    return compareCatalogItems(a.rawItem, b.rawItem);
+  });
+
+  let num = 1;
+  excelItems.forEach(it => {
     rows.push([
       num++,
-      it.category || 'Вручную',
-      cleanOrderPositionName(it.name, 'Вручную'),
-      it.quantity,
+      it.category,
+      it.name,
+      it.qty,
       it.unit
     ]);
   });
