@@ -2268,3 +2268,112 @@ button,
     grid-template-columns: 1fr;
   }
 }
+
+/* Subgroup Accordion & Flavors Layout */
+.subgroup-accordion {
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md, 8px);
+  overflow: hidden;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.subgroup-accordion.has-subgroup-order {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.02);
+}
+
+.subgroup-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-primary, #fff);
+  cursor: pointer;
+  text-align: left;
+  user-select: none;
+  gap: 10px;
+  transition: background-color 0.15s ease;
+}
+
+.subgroup-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.subgroup-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.subgroup-chevron {
+  display: inline-block;
+  font-size: 0.9rem;
+  color: var(--accent-amber, #f59e0b);
+  transition: transform 0.2s ease;
+  line-height: 1;
+  width: 14px;
+  text-align: center;
+}
+
+.subgroup-accordion.is-collapsed .subgroup-chevron {
+  transform: rotate(-90deg);
+}
+
+.subgroup-accordion.is-collapsed .subgroup-toggle {
+  border-bottom: none;
+}
+
+.subgroup-accordion.is-collapsed .subgroup-content {
+  display: none !important;
+}
+
+.subgroup-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subgroup-count {
+  font-size: 0.74rem;
+  color: var(--text-muted, #94a3b8);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.subgroup-order-badge {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 2px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.subgroup-content {
+  padding: 8px 10px 4px;
+}
+
+.subgroup-content .product-card:last-child {
+  margin-bottom: 4px;
+}
+
+.standalone-list {
+  margin-top: 6px;
+}

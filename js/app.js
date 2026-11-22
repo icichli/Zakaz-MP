@@ -1203,7 +1203,7 @@ const DEFAULT_CATALOG = [
   },
   {
     "id": "item_133",
-    "name": "Арахис Ж/С 1кг, шт",
+    "name": "Арахис ж/с СОЛЬ 1кг, шт",
     "category": "Орехи",
     "supplier": "snacks",
     "step": 1.0,
@@ -5865,6 +5865,62 @@ function compareCatalogItems(a, b) {
   return CATALOG_COLLATOR.compare(keyA, keyB);
 }
 
+
+// Track collapsed/expanded state of category subgroups
+const collapsedSubgroups = new Set();
+
+function toggleSubgroup(subgroupId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  if (collapsedSubgroups.has(subgroupId)) {
+    collapsedSubgroups.delete(subgroupId);
+  } else {
+    collapsedSubgroups.add(subgroupId);
+  }
+  const el = document.querySelector(`.subgroup-accordion[data-subgroup-id="${subgroupId}"]`);
+  if (el) {
+    el.classList.toggle('is-collapsed', collapsedSubgroups.has(subgroupId));
+  }
+}
+
+function updateSubgroupOrderBadge(accordion) {
+  if (!accordion) return;
+  const cards = accordion.querySelectorAll('.product-card[data-id]');
+  let total = 0;
+  let unit = 'кг';
+  cards.forEach(card => {
+    const id = card.getAttribute('data-id');
+    const it = catalog.find(x => x.id === id);
+    if (it && order[id]) {
+      total = Math.round((total + order[id]) * 1000) / 1000;
+      unit = it.unit || unit;
+    }
+  });
+
+  const toggle = accordion.querySelector('.subgroup-toggle');
+  let badgeEl = accordion.querySelector('.subgroup-order-badge');
+
+  if (total > 0) {
+    accordion.classList.add('has-subgroup-order');
+    if (badgeEl) {
+      badgeEl.textContent = `В заказе: ${formatQty(total, unit)}`;
+      badgeEl.style.display = '';
+    } else if (toggle) {
+      const span = document.createElement('span');
+      span.className = 'subgroup-order-badge';
+      span.textContent = `В заказе: ${formatQty(total, unit)}`;
+      toggle.appendChild(span);
+    }
+  } else {
+    accordion.classList.remove('has-subgroup-order');
+    if (badgeEl) {
+      badgeEl.remove();
+    }
+  }
+}
+
 // Render Products Catalog List (Scoped to Active Supplier)
 function renderCatalog() {
   const container = document.getElementById('catalogContent');
@@ -5988,8 +6044,109 @@ function renderCatalog() {
       </div>
     `;
   }
+  const hasSearch = searchQuery.trim().length > 0;
+
   for (const [catName, items] of Object.entries(groups)) {
     const meta = CATEGORY_META[catName] || { label: catName, icon: '🏷️' };
+
+    // Group items inside category by series / brand
+    const subgroupsMap = new Map();
+    items.forEach(it => {
+      const parsed = parseOrderPosition(it.name, catName);
+      const grp = parsed.brand || '__standalone__';
+      if (!subgroupsMap.has(grp)) {
+        subgroupsMap.set(grp, []);
+      }
+      subgroupsMap.get(grp).push({
+        item: it,
+        parsed: parsed,
+        flavor: parsed.flavor || parsed.fullName || it.name
+      });
+    });
+
+    // Sort items inside each subgroup alphabetically by flavor
+    for (const [, list] of subgroupsMap) {
+      list.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
+    }
+
+    // Separate named subgroups from standalone items
+    const namedSubgroups = [];
+    let standaloneItems = [];
+
+    for (const [brand, list] of subgroupsMap) {
+      // Treat as subgroup if >= 2 items OR if it is a recognized series (глазурь, ж/с, Лутовские etc.)
+      const isRecognizedSeries = brand === 'Арахис в глазури' || brand.startsWith('Арахис ж/с') || brand.includes('Лутовские') || brand.includes('Санккино') || brand.includes('Фермерский');
+      if (brand !== '__standalone__' && (list.length >= 2 || isRecognizedSeries)) {
+        namedSubgroups.push({ brand, list });
+      } else {
+        standaloneItems.push(...list);
+      }
+    }
+
+    // Sort named subgroups alphabetically by brand name
+    namedSubgroups.sort((a, b) => CATALOG_COLLATOR.compare(a.brand, b.brand));
+
+    // Sort standalone items alphabetically
+    standaloneItems.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
+
+    let catBodyHtml = '';
+
+    // If category has only standalone items and no named subgroups, render clean flat list
+    if (namedSubgroups.length === 0) {
+      catBodyHtml = `
+        <div class="product-cards-list">
+          ${standaloneItems.map(e => renderProductCard(e.item, null)).join('')}
+        </div>
+      `;
+    } else {
+      // Render each named subgroup as an Accordion
+      namedSubgroups.forEach(({ brand, list }) => {
+        const subgroupId = 'sub_' + catName.replace(/[^\w\u0400-\u04FF]/g, '_') + '_' + brand.replace(/[^\w\u0400-\u04FF]/g, '_');
+        
+        // Calculate total order in this subgroup
+        let subOrderQty = 0;
+        let subUnit = list[0]?.item?.unit || 'кг';
+        list.forEach(e => {
+          const q = order[e.item.id] || 0;
+          if (q > 0) {
+            subOrderQty = Math.round((subOrderQty + q) * 1000) / 1000;
+            subUnit = e.item.unit || subUnit;
+          }
+        });
+
+        const isCollapsed = !hasSearch && collapsedSubgroups.has(subgroupId);
+        const hasOrderClass = subOrderQty > 0 ? 'has-subgroup-order' : '';
+        const orderBadgeHtml = subOrderQty > 0
+          ? `<span class="subgroup-order-badge">В заказе: ${formatQty(subOrderQty, subUnit)}</span>`
+          : '';
+
+        catBodyHtml += `
+          <div class="subgroup-accordion ${isCollapsed ? 'is-collapsed' : ''} ${hasOrderClass}" data-subgroup-id="${escapeHtml(subgroupId)}">
+            <button type="button" class="subgroup-toggle" onclick="toggleSubgroup('${escapeHtml(subgroupId)}', event)">
+              <div class="subgroup-title-wrap">
+                <span class="subgroup-chevron">▾</span>
+                <span class="subgroup-name">${escapeHtml(brand)}</span>
+                <span class="subgroup-count">${list.length} поз.</span>
+              </div>
+              ${orderBadgeHtml}
+            </button>
+            <div class="subgroup-content product-cards-list">
+              ${list.map(e => renderProductCard(e.item, brand)).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      // Render standalone items directly in product-cards-list (if any)
+      if (standaloneItems.length > 0) {
+        catBodyHtml += `
+          <div class="product-cards-list standalone-list">
+            ${standaloneItems.map(e => renderProductCard(e.item, null)).join('')}
+          </div>
+        `;
+      }
+    }
+
     html += `
       <div class="section-group">
         <div class="section-header">
@@ -5999,13 +6156,10 @@ function renderCatalog() {
           </div>
           <span class="section-count">${items.length} поз.</span>
         </div>
-        <div class="product-cards-list">
-          ${items.map(renderProductCard).join('')}
-        </div>
+        ${catBodyHtml}
       </div>
     `;
   }
-
   container.innerHTML = html;
   attachStepperEvents(container);
 }
@@ -6149,7 +6303,7 @@ function toggleThumbZoom(el, event) {
 }
 
 // Single Product Card HTML
-function renderProductCard(item) {
+function renderProductCard(item, subgroupBrand = null) {
   const currentQty = order[item.id] || 0;
   const hasOrder = currentQty > 0 ? 'has-order' : '';
   const qtyFormatted = formatQty(currentQty, item.unit);
@@ -6162,7 +6316,7 @@ function renderProductCard(item) {
   const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
 
   const itemBrand = item.brand || detectBrandFromName(item.name);
-  const brandBadgeHtml = itemBrand ? `<span class="badge-brand">${escapeHtml(itemBrand)}</span>` : '';
+  const brandBadgeHtml = (!subgroupBrand && itemBrand) ? `<span class="badge-brand">${escapeHtml(itemBrand)}</span>` : '';
 
   const isStore = isItemStoreFav(item.id);
   const isPrivate = isItemPrivateFav(item.id);
@@ -6191,7 +6345,16 @@ function renderProductCard(item) {
       ${thumbHtml}
       <div class="product-info">
         <div class="product-title-row">
-          <div class="product-title">${highlightSearch(item.name, searchQuery)}</div>
+          ${(() => {
+            let titleText = item.name;
+            if (subgroupBrand) {
+              const parsed = parseOrderPosition(item.name, item.category);
+              titleText = parsed.flavor || parsed.fullName || item.name;
+            } else {
+              titleText = cleanOrderPositionName(item.name, item.category);
+            }
+            return `<div class="product-title">${highlightSearch(titleText, searchQuery)}</div>`;
+          })()}
           <button type="button" class="btn-fav ${favClass}"
             onclick="handleFavClick('${item.id}', event)"
             onpointerdown="handleFavPointerDown('${item.id}', event)"
@@ -6296,6 +6459,11 @@ function updateProductCard(id) {
     } else {
       valEl.classList.remove('active');
     }
+  }
+
+  const accordion = card.closest('.subgroup-accordion');
+  if (accordion) {
+    updateSubgroupOrderBadge(accordion);
   }
 }
 
@@ -6550,8 +6718,21 @@ const KNOWN_ORDER_SERIES_PREFIXES = [
   [/^ФЕРМЕРСКИЙ БОЧОНОК(?:\s+|$)/i, 'Фермерский Бочонок'],
   [/^ФЕРМЕРСКИЙ Балыковый(?:\s+|$)/i, 'Фермерский Балыковый'],
   [/^ФЕРМЕРСКИЙ Коса(?:\s+|$)/i, 'Фермерский Коса'],
+  [/^Гренки\s+пшеничные\s+Лутовские(?:\s+|$)/i, 'Гренки пшеничные Лутовские'],
+  [/^Гренки\s+ржаные\s+Лутовские(?:\s+|$)/i, 'Гренки ржаные Лутовские'],
+  [/^Гренки\s+Бро(?:\s+|$)/i, 'Гренки Бро'],
+  [/^Гренки\s+Снапсы(?:\s+пшенич\.?)?(?:\s+|$)/i, 'Гренки Снапсы'],
+  [/^Сухари\s+Демидовские(?:\s+|$)/i, 'Сухари Демидовские'],
+  [/^Сухари\s+Житницкие(?:\s+багет)?(?:\s+|$)/i, 'Сухари Житницкие'],
+  [/^Гренки\s+Сурские(?:\s+|$)/i, 'Гренки Сурские'],
+  [/^Чипсы\s+Bruto(?:\s+\(рифлёные\))?(?:\s+|$)/i, 'Чипсы Bruto'],
   [/^Арахис в хруст\.корочке ФомаЛукич(?:\s+|$)/i, 'Арахис ФомаЛукич'],
   [/^Арахис ж\/?с\s+ХРУСТЯЩИЙ(?:\s+|$)/i, 'Арахис ж/с Хрустящий'],
+  [/^Арахис\s+ж\/?с(?:\s+|$)/i, 'Арахис ж/с'],
+  [/^КУКУРУЗА\s+жареная(?:\s+со\s+вкусом)?(?:\s+|$)/i, 'Кукуруза жареная'],
+  [/^Фисташк[аи](?:\s+со\s+вкусом)?(?:\s+|$)/i, 'Фисташки'],
+  [/^Кешью(?:\s+ж\/?с)?(?:\s+|$)/i, 'Кешью'],
+  [/^Миндаль(?:\s+ж\/?с)?(?:\s+|$)/i, 'Миндаль'],
   [/^Чипсы кукурузные\s+["«]?Начос["»]?(?:\s+|$)/i, 'Чипсы Начос'],
   [/^МИНИ\s+(?:Принглс|Pringles)(?:\s+|$)/i, 'МИНИ Принглс'],
   [/^(?:Принглс|Pringles)(?:\s+|$)/i, 'Принглс'],
@@ -6715,6 +6896,11 @@ function parseOrderPosition(rawName, category = '') {
     return { brand: null, flavor: s, fullName: s };
   }
 
+  // 1c. Direct match on "Арахис Ж/С" without flavor -> flavor is "Соль"
+  if (/^Арахис\s+ж\/?с(?:\s+соль)?$/i.test(s.replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)?$/i, '').trim())) {
+    return { brand: 'Арахис ж/с', flavor: 'Соль', fullName: 'Арахис ж/с: Соль' };
+  }
+
   // 1b. Dynamic Peanut in Glaze detection (without brands, unified under "Арахис в глазури")
   const peanutGlazed = parsePeanutGlazed(s);
   if (peanutGlazed) {
@@ -6754,8 +6940,14 @@ function parseOrderPosition(rawName, category = '') {
     const match = s.match(pattern);
     if (match) {
       const flavorRaw = s.slice(match[0].length).trim();
-      if (flavorRaw) {
-        const flavor = cleanOrderFlavor(flavorRaw);
+      let finalFlavorRaw = flavorRaw;
+      if (!finalFlavorRaw) {
+        if (cleanBase === 'Арахис ж/с') finalFlavorRaw = 'Соль';
+        else if (cleanBase === 'Кешью') finalFlavorRaw = 'Ж/с';
+        else if (cleanBase === 'Миндаль') finalFlavorRaw = 'Ж/с';
+      }
+      if (finalFlavorRaw) {
+        const flavor = cleanOrderFlavor(finalFlavorRaw);
         return { brand: cleanBase, flavor: flavor, fullName: `${cleanBase}: ${flavor}` };
       }
     }
