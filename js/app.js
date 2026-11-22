@@ -6475,15 +6475,129 @@ function updateOrderBar() {
   }
 }
 
-// Clean redundant price-list suffixes for order text messages and Excel export (e.g. " 0,9кг, шт", " 1 кг, шт", ", шт")
-function cleanOrderPositionName(name) {
-  if (!name) return '';
-  let s = String(name).trim();
-  // 1. Strip trailing weight + unit + optional comma + "шт" (e.g. " 0,9кг, шт", " 1 кг, шт", " 500гр, шт", " 90 гр., шт")
+// Acronyms and special words to preserve in uppercase
+const ORDER_ACRONYMS = new Set(['БГ', 'СГ', 'ИП-30', 'КР-7', 'РК-19', 'РК-20', 'РКС-350', 'Ж/С', 'ЖС', 'BBQ', 'CHEE', 'CORN', 'ИПР']);
+const ORDER_PREPOSITIONS = new Set(['и', 'в', 'во', 'с', 'со', 'на', 'по', 'под', 'из', 'от', 'к', 'ко', 'о', 'об', 'для', 'без']);
+
+const KNOWN_ORDER_SERIES_PREFIXES = [
+  [/^ВЕДРО ЮБИЛЕЙНЫЕ(?:\s+|$)/i, 'Ведро Юбилейные'],
+  [/^САНККИНО БОЧОНОК(?:\s+|$)/i, 'Санккино Бочонок'],
+  [/^САНККИНО Спагетти(?:\s+|$)/i, 'Санккино Спагетти'],
+  [/^САНККИНО Балыковый(?:\s+|$)/i, 'Санккино Балыковый'],
+  [/^ФЕРМЕРСКИЙ Спагетти(?:\s+|$)/i, 'Фермерский Спагетти'],
+  [/^ФЕРМЕРСКИЙ БОЧОНОК(?:\s+|$)/i, 'Фермерский Бочонок'],
+  [/^ФЕРМЕРСКИЙ Балыковый(?:\s+|$)/i, 'Фермерский Балыковый'],
+  [/^ФЕРМЕРСКИЙ Коса(?:\s+|$)/i, 'Фермерский Коса'],
+  [/^Арахис в хруст\.корочке ФомаЛукич(?:\s+|$)/i, 'Арахис ФомаЛукич'],
+  [/^Арахис ж\/?с\s+ХРУСТЯЩИЙ(?:\s+|$)/i, 'Арахис ж/с Хрустящий'],
+  [/^Чипсы кукурузные\s+["«]?Начос["»]?(?:\s+|$)/i, 'Чипсы Начос'],
+  [/^МИНИ\s+(?:Принглс|Pringles)(?:\s+|$)/i, 'МИНИ Принглс'],
+  [/^(?:Принглс|Pringles)(?:\s+|$)/i, 'Принглс'],
+  [/^Кнуты(?:\s+|$)/i, 'Кнуты'],
+  [/^Колбаски\s+с\/к(?:\s+|$)/i, 'Колбаски с/к'],
+  [/^МЯСНЫЕ\s+чипсы(?:\s+|$)/i, 'Мясные чипсы'],
+  [/^Чипсы\s+мясные(?:\s+|$)/i, 'Чипсы мясные'],
+  [/^Вкусовые\s+пяточки(?:\s+|$)/i, 'Вкусовые пяточки'],
+  [/^Сыр\s+жареный(?:\s+|$)/i, 'Сыр жареный']
+];
+
+function cleanOrderCasingWord(w, isFirst = false, isSubpart = false) {
+  if (!w) return '';
+  if (ORDER_ACRONYMS.has(w) || ORDER_ACRONYMS.has(w.toUpperCase())) {
+    return w.toUpperCase();
+  }
+  if (w.includes('-')) {
+    const parts = w.split('-');
+    return parts.map((p, i) => cleanOrderCasingWord(p, isFirst && i === 0, i > 0)).join('-');
+  }
+  const lower = w.toLowerCase();
+  if (isSubpart) {
+    return lower;
+  }
+  if (ORDER_PREPOSITIONS.has(lower) && !isFirst) {
+    return lower;
+  }
+  if (isFirst || w === w.toUpperCase()) {
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  }
+  return w;
+}
+
+function formatOrderCleanText(s) {
+  if (!s) return '';
+  s = s.replace(/["«»]/g, '').trim().replace(/\s+/g, ' ');
+  const words = s.split(' ');
+  const out = words.map((w, i) => cleanOrderCasingWord(w, i === 0));
+  return out.join(' ').replace(/\s+([,.:])/g, '$1');
+}
+
+function cleanOrderFlavor(s) {
+  if (!s) return '';
   s = s.replace(/[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?\s*,?\s*шт\.?$/i, '');
-  // 2. Strip standalone trailing ", шт", ", шт.", " - шт"
   s = s.replace(/[\s,\-–—]+шт\.?$/i, '');
-  return s.trim();
+  s = s.replace(/["«»]/g, '').trim().replace(/\s+/g, ' ');
+  const words = s.split(' ');
+  const out = words.map((w, i) => cleanOrderCasingWord(w, i === 0));
+  return out.join(' ').replace(/\s+([,.:])/g, '$1');
+}
+
+function parseOrderPosition(rawName, category = '') {
+  if (!rawName) {
+    return { brand: null, flavor: '', fullName: '' };
+  }
+  let s = String(rawName).trim();
+
+  // 1. Preserve technical tare specs in Consumables & Containers (e.g. ИПР, 350гр, мокрые)
+  if (category === 'Контейнеры' || category === 'Расходники') {
+    s = s.replace(/[\s,\-–—]+шт\.?$/i, '').trim();
+    s = s.charAt(0).toUpperCase() + s.slice(1);
+    return { brand: null, flavor: s, fullName: s };
+  }
+
+  // 2. Snack cleanup: strip weight + шт and legal boilerplates
+  s = s.replace(/[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?\s*,?\s*шт\.?$/i, '');
+  s = s.replace(/[\s,\-–—]+шт\.?$/i, '');
+  s = s.replace(/\(продукт белково-жировой\)/gi, '');
+  s = s.replace(/\(уп\)/gi, '');
+  s = s.replace(/от"([^"]+)"/g, 'от $1');
+  s = s.trim().replace(/\s+/g, ' ');
+
+  // 3. Flavor in parentheses at the end: "Гренки пшеничные Лутовские (БАВАРСКИЕ КОЛБАСКИ)"
+  const mParen = s.match(/^(.*?)\s*\(([^)]+)\)$/);
+  if (mParen) {
+    const base = formatOrderCleanText(mParen[1].trim());
+    const flavor = cleanOrderFlavor(mParen[2].trim());
+    return { brand: base, flavor: flavor, fullName: `${base}: ${flavor}` };
+  }
+
+  // 4. Flavor in quotes at the end: 'Гренки СНАПСЫ "ТОМАТ-БАЗИЛИК"' or 'Сухари "АДЖИКА"'
+  const mQuote = s.match(/^(.*?)\s*["«]([^"»]+)["»]$/);
+  if (mQuote) {
+    const base = formatOrderCleanText(mQuote[1].trim());
+    const flavor = cleanOrderFlavor(mQuote[2].trim());
+    return { brand: base, flavor: flavor, fullName: `${base}: ${flavor}` };
+  }
+
+  // 5. Known series prefixes (Ведро Юбилейные, Санккино, Принглс, etc.)
+  for (const [pattern, cleanBase] of KNOWN_ORDER_SERIES_PREFIXES) {
+    const match = s.match(pattern);
+    if (match) {
+      const flavorRaw = s.slice(match[0].length).trim();
+      if (flavorRaw) {
+        const flavor = cleanOrderFlavor(flavorRaw);
+        return { brand: cleanBase, flavor: flavor, fullName: `${cleanBase}: ${flavor}` };
+      }
+    }
+  }
+
+  // 6. Standalone clean name
+  const cleanStandalone = formatOrderCleanText(s);
+  return { brand: null, flavor: cleanStandalone, fullName: cleanStandalone };
+}
+
+// Clean redundant price-list suffixes for order text messages and Excel export
+function cleanOrderPositionName(name, category = '') {
+  return parseOrderPosition(name, category).fullName;
 }
 
 // Generate WhatsApp / Telegram Order Text for a Specific Supplier
@@ -6509,7 +6623,9 @@ function generateOrderText(supplierId = modalActiveSupplier) {
       grouped[cat].push({
         name: it.name,
         qty: qty,
-        unit: it.unit
+        unit: it.unit,
+        category: cat,
+        parsed: parseOrderPosition(it.name, cat)
       });
     }
   }
@@ -6520,7 +6636,9 @@ function generateOrderText(supplierId = modalActiveSupplier) {
     grouped[key] = supManual.map(it => ({
       name: it.name,
       qty: it.quantity,
-      unit: it.unit
+      unit: it.unit,
+      category: key,
+      parsed: parseOrderPosition(it.name, key)
     }));
   }
 
@@ -6534,9 +6652,30 @@ function generateOrderText(supplierId = modalActiveSupplier) {
     const icon = meta ? meta.icon : '🔹';
     const title = meta ? meta.label : catName;
     text += `${icon} ${title.toUpperCase()}:\n`;
-    items.forEach(it => {
-      text += `• ${cleanOrderPositionName(it.name)} — ${it.qty} ${it.unit}\n`;
+
+    // Group items by brand within category
+    const brandGroups = new Map();
+    items.forEach((it, idx) => {
+      const brandKey = it.parsed.brand || `__standalone_${idx}`;
+      if (!brandGroups.has(brandKey)) {
+        brandGroups.set(brandKey, []);
+      }
+      brandGroups.get(brandKey).push(it);
     });
+
+    for (const [brandKey, bItems] of brandGroups.entries()) {
+      const isBrandGroup = !brandKey.startsWith('__standalone_') && bItems.length > 1;
+      if (isBrandGroup) {
+        text += `• ${brandKey}:\n`;
+        bItems.forEach(it => {
+          text += `   – ${it.parsed.flavor} — ${it.qty} ${it.unit}\n`;
+        });
+      } else {
+        const it = bItems[0];
+        text += `• ${it.parsed.fullName} — ${it.qty} ${it.unit}\n`;
+      }
+    }
+
     text += `\n`;
   }
 
@@ -6839,7 +6978,7 @@ function downloadOrderExcel() {
       rows.push([
         num++,
         it.category || '',
-        cleanOrderPositionName(it.name),
+        cleanOrderPositionName(it.name, it.category),
         qty,
         it.unit
       ]);
@@ -6850,7 +6989,7 @@ function downloadOrderExcel() {
     rows.push([
       num++,
       it.category || 'Вручную',
-      cleanOrderPositionName(it.name),
+      cleanOrderPositionName(it.name, 'Вручную'),
       it.quantity,
       it.unit
     ]);
