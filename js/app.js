@@ -874,21 +874,21 @@ const DEFAULT_CATALOG = [
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_097",
-    "name": "Картошка \"Bruto\" С СОЛЬЮ 60 гр*12шт. , кор",
+    "name": "Картошка \"Bruto\" С СОЛЬЮ 60 гр*12шт., кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_098",
-    "name": "КОРНЕЛЛИ кукурузные сухари ВАССАБИ 80гр*12, шт",
+    "name": "КОРНЕЛЛИ кукурузные сухари ВАССАБИ 80гр*12, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
@@ -897,7 +897,7 @@ const DEFAULT_CATALOG = [
   },
   {
     "id": "item_099",
-    "name": "КОРНЕЛЛИ кукурузные сухари КОПЧЕНАЯ КОЛБАСКА 80гр*12, шт",
+    "name": "КОРНЕЛЛИ кукурузные сухари КОПЧЕНАЯ КОЛБАСКА 80гр*12, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
@@ -906,39 +906,39 @@ const DEFAULT_CATALOG = [
   },
   {
     "id": "item_100",
-    "name": "КОРНЕЛЛИ кукурузные сухари РАК УКРОП 80гр*12, шт",
+    "name": "КОРНЕЛЛИ кукурузные сухари РАК УКРОП 80гр*12, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_101",
-    "name": "КОРНЕЛЛИ кукурузные сухари СЫР ПРОВАНСКИЕ 80гр*12, шт",
+    "name": "КОРНЕЛЛИ кукурузные сухари СЫР ПРОВАНСКИЕ 80гр*12, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_102",
-    "name": "КОРНЕЛЛИ кукурузные сухари ТАЙСКИЙ ПЕРЕЦ 80гр*12, шт",
+    "name": "КОРНЕЛЛИ кукурузные сухари ТАЙСКИЙ ПЕРЕЦ 80гр*12, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_103",
-    "name": "КОРНЕЛЛИ кукурузные сухари УТКА БРУСНИКА 80гр*12, шт",
+    "name": "КОРНЕЛЛИ кукурузные сухари УТКА БРУСНИКА 80гр*12, кор",
     "category": "Гренки Чипсы и снеки ЗАВОДСКИЕ",
     "supplier": "snacks",
     "step": 1.0,
-    "unit": "шт",
-    "display_step": "кратность 1 шт"
+    "unit": "кор",
+    "display_step": "кратность 1 кор"
   },
   {
     "id": "item_104",
@@ -1779,7 +1779,7 @@ const DEFAULT_CATALOG = [
   },
   {
     "id": "item_197",
-    "name": "Соус  \"Сливочно-чесночный\" 80гр.\n Базилио",
+    "name": "Соус \"Сливочно-чесночный\" 80гр. Базилио",
     "category": "Соусы",
     "supplier": "snacks",
     "step": 1.0,
@@ -1797,7 +1797,7 @@ const DEFAULT_CATALOG = [
   },
   {
     "id": "item_199",
-    "name": "Соус \"Гаукомоле\" 90 гр., шт",
+    "name": "Соус \"Гуакамоле\" 90 гр., шт",
     "category": "Соусы",
     "supplier": "snacks",
     "step": 1.0,
@@ -2418,7 +2418,7 @@ const DEFAULT_CATALOG = [
   },
   {
     "id": "item_268",
-    "name": "САНККИНО Коса копченый , кг",
+    "name": "САНККИНО Коса копченый, кг",
     "category": "Сыры",
     "supplier": "snacks",
     "step": 1.0,
@@ -4960,9 +4960,9 @@ async function loadCatalog() {
   }
 
   if (validCache) {
-    catalog = processCatalogWithPeanutOptimization(catalog);
+    catalog = processCatalogWithPeanutOptimization(catalog.map(normalizeCatalogItem));
   } else {
-    catalog = processCatalogWithPeanutOptimization([...DEFAULT_CATALOG]);
+    catalog = processCatalogWithPeanutOptimization(DEFAULT_CATALOG.map(normalizeCatalogItem));
     suppliers = [...DEFAULT_SUPPLIERS];
   }
 
@@ -4979,6 +4979,117 @@ async function loadCatalog() {
       }
     }
   }
+}
+
+// Strip placeholder brand values ("Без бренда", "-", etc.)
+function cleanBrandValue(val) {
+  const s = String(val || '').trim();
+  if (!s) return '';
+  const l = s.toLowerCase();
+  if (l === 'без бренда' || l === 'без_бренда' || l === 'нет' || l === '-' || l === '—' || l === 'none' || l === 'n/a') {
+    return '';
+  }
+  return s;
+}
+
+// Infer product type ("Вид продукта") when sheet column is absent or empty
+function detectProductType(name, category = '') {
+  const n = String(name || '').toLowerCase();
+  const c = String(category || '').toLowerCase();
+  if (c === 'соусы' || n.startsWith('соус')) return 'Соус';
+  if (c === 'расходники') return 'Расходники';
+  if (c === 'контейнеры') return 'Контейнеры';
+  if (c === 'сырные сухие') {
+    if (n.includes('бочон')) return 'Сырные бочонки';
+    if (n.includes('шарик')) return 'Сырные шарики';
+  }
+  if (c === 'сыры' || n.includes('санккино') || n.includes('фермерский') || n.includes('дондуковский')) {
+    if (n.includes('жарен')) return 'Сыр жареный';
+    return 'Сыр';
+  }
+  if (c === 'орехи') {
+    if (n.includes('арахис')) return 'Арахис';
+    if (n.includes('фисташ')) return 'Фисташки';
+    if (n.includes('кешью')) return 'Кешью';
+    if (n.includes('миндал')) return 'Миндаль';
+    if (n.includes('кукуруз')) return 'Кукуруза жареная';
+    if (n.includes('ореховая смесь')) return 'Ореховая смесь';
+  }
+  if (c === 'начос и лавашики') {
+    if (n.includes('лаваш')) return 'Чипсы из лаваша';
+    if (n.includes('начос')) return 'Начос';
+  }
+  if (c === 'мясные' || c === 'мясные завод') {
+    if (n.includes('чипсы')) return 'Мясные чипсы';
+    if (n.includes('кнут')) return 'Кнуты';
+    if (n.includes('колбаск')) return 'Колбаски';
+    if (n.includes('ушк') || n.includes('ухо')) return 'Свиные ушки';
+    if (n.includes('мясо')) return 'Мясо сушеное';
+  }
+  if (c === 'рыбные') {
+    if (n.includes('кальмар')) return 'Кальмар';
+    if (n.includes('икрян')) return 'Икряные чипсы';
+    if (n.includes('икра')) return 'Икра';
+    if (n.includes('палочк')) return 'Рыбные палочки';
+    if (n.includes('паутинк')) return 'Паутинка';
+    if (n.includes('слайс')) return 'Слайсы';
+    if (n.includes('камбал')) return 'Камбала';
+    if (n.includes('кревет')) return 'Креветка';
+    if (n.includes('краб')) return 'Краб';
+    if (n.includes('минта')) return 'Минтай';
+    if (n.includes('треск')) return 'Треска/Минтай';
+    if (n.includes('тунец') || n.includes('тунца')) return 'Тунец';
+    if (n.includes('полосатик')) return 'Полосатик';
+    if (n.includes('пяточки')) return 'Вкусовые пяточки';
+    if (n.includes('анчоус')) return 'Анчоус';
+    if (n.includes('лакедр')) return 'Лакедра';
+    if (n.includes('угор')) return 'Угорь';
+    if (n.includes('таранк')) return 'Таранка';
+    if (n.includes('сёмг') || n.includes('семг')) return 'Семга';
+    if (n.includes('судак')) return 'Судак';
+  }
+  if (n.includes('корнелли') || n.includes('сухари')) {
+    return n.includes('кукуруз') ? 'Сухари кукурузные' : 'Сухари';
+  }
+  if (n.includes('гренки') || n.includes('ведро юбилейные')) return 'Гренки';
+  if (n.includes('морская капуста')) return 'Морская капуста';
+  if (n.includes('семечки')) return 'Семечки';
+  if (n.includes('чипсы') || n.includes('картошка') || n.includes('pringles') || n.includes('принглс')) return 'Чипсы';
+  return category || '';
+}
+
+// Normalize catalog item names, brands, productType, and boxed snack units
+function normalizeCatalogItem(it) {
+  if (!it || typeof it !== 'object') return it;
+  let cleanName = String(it.name || '').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+  cleanName = cleanName.replace(/Гаукомоле/gi, 'Гуакамоле');
+  const cleanBrand = cleanBrandValue(it.brand) || detectBrandFromName(cleanName);
+  const productType = String(it.productType || '').trim() || detectProductType(cleanName, it.category);
+
+  let step = it.step;
+  let unit = it.unit;
+  let displayStep = it.display_step;
+  const nameLower = cleanName.toLowerCase();
+  if (
+    it.supplier === 'snacks' &&
+    unit === 'шт' &&
+    (Number(step) === 1 || !step) &&
+    (/,\s*кор(?:\s|$)/i.test(nameLower) || /\*\s*\d+\s*(?:шт\.?)?(?:\s|,|$)/i.test(nameLower))
+  ) {
+    step = 1.0;
+    unit = 'кор';
+    displayStep = 'кратность 1 кор';
+  }
+
+  return {
+    ...it,
+    name: cleanName,
+    brand: cleanBrand,
+    productType,
+    step,
+    unit,
+    display_step: displayStep
+  };
 }
 
 // Helper to get supplier metadata by ID
@@ -5032,6 +5143,11 @@ function parsePackInfo(name, packStr, cat) {
     }
     const valStr = Number.isInteger(num) ? num.toString() : num.toFixed(1);
     return { step: num, unit: 'шт', display: `кратность ${valStr} шт` };
+  }
+
+  // 5b. Boxed snacks indicated in name (e.g. "*12шт", "*17шт", "*24, кор", ", кор")
+  if (/,\s*кор(?:\s|$)/i.test(nameLower) || /\*\s*\d+\s*(?:шт\.?)?(?:\s|,|$)/i.test(nameLower)) {
+    return { step: 1.0, unit: 'кор', display: 'кратность 1 кор' };
   }
 
   // 6. Grams in factory packs (e.g. 40 г, 60 г, 80 г, 160 г, 165 г) -> step 1 шт
@@ -5307,6 +5423,7 @@ function parseGoogleSheetWorkbook(wb) {
     let idCol = -1;
     let nameCol = -1;
     let brandCol = -1;
+    let productTypeCol = -1;
     let packCol = -1;
     let supCol = -1;
     let photoCol = -1;
@@ -5323,6 +5440,8 @@ function parseGoogleSheetWorkbook(wb) {
         nameCol = idx;
       } else if (cLower === 'бренд' || cLower === 'brand' || cLower.includes('бренд') || cLower.includes('brand')) {
         brandCol = idx;
+      } else if (cLower === 'вид продукта' || cLower === 'вид' || cLower.includes('вид продукта') || cLower === 'подкатегория' || cLower === 'product_type') {
+        productTypeCol = idx;
       } else if (cLower.includes('фасовка') || cLower.includes('кратность')) {
         packCol = idx;
       } else if (cLower.includes('поставщик')) {
@@ -5377,7 +5496,7 @@ function parseGoogleSheetWorkbook(wb) {
       const rawName = row[nameCol];
       if (!rawName || !String(rawName).trim()) continue;
 
-      const cleanName = String(rawName).trim();
+      const cleanName = String(rawName).replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
       if (cleanName.toLowerCase() === 'наименование' || cleanName.toLowerCase() === 'название') continue;
 
       const rawPack = packCol !== -1 ? row[packCol] : '';
@@ -5409,12 +5528,20 @@ function parseGoogleSheetWorkbook(wb) {
 
       const cleanPhoto = rawPhoto ? String(rawPhoto).trim() : '';
 
-      // Extract brand (Column B or detected from product name)
-      const rawBrand = (brandCol !== -1 && row[brandCol] !== undefined && row[brandCol] !== null) ? String(row[brandCol]).trim() : '';
+      // Extract brand (Column B or detected from product name), ignoring placeholder values like "Без бренда"
+      const rawBrand = (brandCol !== -1 && row[brandCol] !== undefined && row[brandCol] !== null)
+        ? cleanBrandValue(row[brandCol])
+        : '';
       let itemBrand = rawBrand || detectBrandFromName(cleanName);
       if (!itemBrand && isPringlesSheet) {
         itemBrand = 'Pringles';
       }
+
+      // Extract product type ("Вид продукта") with automatic fallback
+      const rawProductType = (productTypeCol !== -1 && row[productTypeCol] !== undefined && row[productTypeCol] !== null)
+        ? String(row[productTypeCol]).trim()
+        : '';
+      const itemProductType = rawProductType || detectProductType(cleanName, itemCat);
 
       // Determine supplier
       let supplierId = 'snacks';
@@ -5459,10 +5586,11 @@ function parseGoogleSheetWorkbook(wb) {
         }
       }
 
-      items.push({
+      items.push(normalizeCatalogItem({
         id: itemId, // empty string if cell was empty; will be assigned MAX + 1 in pass 2
         name: cleanName,
         brand: itemBrand,
+        productType: itemProductType,
         category: itemCat,
         supplier: supplierId,
         step: packInfo.step,
@@ -5473,7 +5601,7 @@ function parseGoogleSheetWorkbook(wb) {
         imageUrl: cleanPhoto,
         'Фото': cleanPhoto,
         _isAutoParsed: isAutoParsedSheet
-      });
+      }));
     }
   }
 
@@ -5765,7 +5893,7 @@ function renderBrandChips() {
   // Collect unique brands present in this section
   const brandCounts = {};
   categoryItems.forEach(it => {
-    const b = it.brand || detectBrandFromName(it.name);
+    const b = cleanBrandValue(it.brand) || detectBrandFromName(it.name);
     if (b) {
       brandCounts[b] = (brandCounts[b] || 0) + 1;
     }
@@ -5805,9 +5933,9 @@ function renderBrandChips() {
   `);
 
   presentBrands.forEach(b => {
-    let count = categoryItems.filter(i => (i.brand === b || detectBrandFromName(i.name) === b)).length;
+    let count = categoryItems.filter(i => ((cleanBrandValue(i.brand) || detectBrandFromName(i.name)) === b)).length;
     if (favFilterMode !== 'none') {
-      count = categoryItems.filter(i => (i.brand === b || detectBrandFromName(i.name) === b) && isItemFavForFilter(i.id)).length;
+      count = categoryItems.filter(i => ((cleanBrandValue(i.brand) || detectBrandFromName(i.name)) === b) && isItemFavForFilter(i.id)).length;
     }
     const isActive = activeBrandFilter === b ? 'active' : '';
     chipsHtml.push(`
@@ -5939,14 +6067,15 @@ function renderCatalog() {
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
-      const brandStr = item.brand || detectBrandFromName(item.name) || '';
-      const target = `${item.name} ${item.category} ${brandStr}`.toLowerCase();
+      const brandStr = cleanBrandValue(item.brand) || detectBrandFromName(item.name) || '';
+      const typeStr = item.productType || '';
+      const target = `${item.name} ${item.category} ${brandStr} ${typeStr}`.toLowerCase();
       matchSearch = target.includes(q);
     }
 
     const matchFav = favFilterMode === 'none' || isItemFavForFilter(item.id);
 
-    const itemBrand = item.brand || detectBrandFromName(item.name);
+    const itemBrand = cleanBrandValue(item.brand) || detectBrandFromName(item.name);
     const matchBrand = (activeBrandFilter === 'all') || (itemBrand === activeBrandFilter);
 
     return matchCat && matchSearch && matchFav && matchBrand;
@@ -6315,7 +6444,7 @@ function renderProductCard(item, subgroupBrand = null) {
 
   const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
 
-  const itemBrand = item.brand || detectBrandFromName(item.name);
+  const itemBrand = cleanBrandValue(item.brand) || detectBrandFromName(item.name);
   const brandBadgeHtml = (!subgroupBrand && itemBrand) ? `<span class="badge-brand">${escapeHtml(itemBrand)}</span>` : '';
 
   const isStore = isItemStoreFav(item.id);
@@ -6710,22 +6839,36 @@ const ORDER_ACRONYMS = new Set(['БГ', 'СГ', 'ИП-30', 'КР-7', 'РК-19', 
 const ORDER_PREPOSITIONS = new Set(['и', 'в', 'во', 'с', 'со', 'на', 'по', 'под', 'из', 'от', 'к', 'ко', 'о', 'об', 'для', 'без']);
 
 const KNOWN_ORDER_SERIES_PREFIXES = [
+  // Гренки Весовые и Сухари
   [/^ВЕДРО ЮБИЛЕЙНЫЕ(?:\s+|$)/i, 'Ведро Юбилейные'],
-  [/^САНККИНО БОЧОНОК(?:\s+|$)/i, 'Санккино Бочонок'],
-  [/^САНККИНО Спагетти(?:\s+|$)/i, 'Санккино Спагетти'],
-  [/^САНККИНО Балыковый(?:\s+|$)/i, 'Санккино Балыковый'],
-  [/^ФЕРМЕРСКИЙ Спагетти(?:\s+|$)/i, 'Фермерский Спагетти'],
-  [/^ФЕРМЕРСКИЙ БОЧОНОК(?:\s+|$)/i, 'Фермерский Бочонок'],
-  [/^ФЕРМЕРСКИЙ Балыковый(?:\s+|$)/i, 'Фермерский Балыковый'],
-  [/^ФЕРМЕРСКИЙ Коса(?:\s+|$)/i, 'Фермерский Коса'],
   [/^Гренки\s+пшеничные\s+Лутовские(?:\s+|$)/i, 'Гренки пшеничные Лутовские'],
   [/^Гренки\s+ржаные\s+Лутовские(?:\s+|$)/i, 'Гренки ржаные Лутовские'],
   [/^Гренки\s+Бро(?:\s+|$)/i, 'Гренки Бро'],
-  [/^Гренки\s+Снапсы(?:\s+пшенич\.?)?(?:\s+|$)/i, 'Гренки Снапсы'],
+  [/^Гренки\s+Снапсы(?:\s+пшенич\.?)?(?:\s+|(?=["«])|$)/i, 'Гренки Снапсы'],
   [/^Сухари\s+Демидовские(?:\s+|$)/i, 'Сухари Демидовские'],
   [/^Сухари\s+Житницкие(?:\s+багет)?(?:\s+|$)/i, 'Сухари Житницкие'],
+  [/^Сухари(?=\s+["«])(?:\s+|$)/i, 'Сухари'],
+  // Сырные Сухие и Сыры
+  [/^Шарики(?=\s+(?:БЕКОН|МИКС|ОРИГИНАЛЬНЫЕ|ПАРМЕЗАН|ТАЙСКИЙ))(?:\s+|$)/i, 'Сырные шарики'],
+  [/^САНККИНО\s+БОЧОНОК(?:\s+|$)/i, 'Санккино Бочонок'],
+  [/^САНККИНО\s+Спагетти(?:\s+|$)/i, 'Санккино Спагетти'],
+  [/^САНККИНО\s+Балыковый(?:\s+|$)/i, 'Санккино Балыковый'],
+  [/^САНККИНО\s+Коса(?:\s+|$)/i, 'Санккино Коса'],
+  [/^ФЕРМЕРСКИЙ\s+Спагетти(?:\s+|$)/i, 'Фермерский Спагетти'],
+  [/^ФЕРМЕРСКИЙ\s+БОЧОНОК(?:\s+|$)/i, 'Фермерский Бочонок'],
+  [/^ФЕРМЕРСКИЙ\s+Балыковый(?:\s+|$)/i, 'Фермерский Балыковый'],
+  [/^ФЕРМЕРСКИЙ\s+Коса(?:\s+|$)/i, 'Фермерский Коса'],
+  [/^ДОНДУКОВСКИЙ(?:\s+|$)/i, 'Дондуковский'],
+  [/^Сыр\s+жареный(?:\s+|$)/i, 'Сыр жареный'],
+  // Гренки, Чипсы и снеки ЗАВОДСКИЕ
   [/^Гренки\s+Сурские(?:\s+|$)/i, 'Гренки Сурские'],
+  [/^Чипсы\s+Бингре(?:\s+|$)/i, 'Чипсы Бингре'],
   [/^Чипсы\s+Bruto(?:\s+\(рифлёные\))?(?:\s+|$)/i, 'Чипсы Bruto'],
+  [/^Картошка\s+["«]?Bruto["»]?(?:\s+|$)/i, 'Картошка Bruto'],
+  [/^КОРНЕЛЛИ\s+кукурузные\s+сухари(?:\s+|$)/i, 'Корнелли сухари'],
+  [/^Морская\s+капуста(?:\s+|$)/i, 'Морская капуста'],
+  [/^Семечки\s+от\s*["«]?МАРТИНА["»]?(?:\s*\d+\s*г(?:р)?\*\d+(?:\s*шт\.?)?)?(?:\s+|$)/i, 'Семечки От Мартина'],
+  // Орехи, Начос, Соусы
   [/^Арахис в хруст\.корочке ФомаЛукич(?:\s+|$)/i, 'Арахис ФомаЛукич'],
   [/^Арахис ж\/?с\s+ХРУСТЯЩИЙ(?:\s+|$)/i, 'Арахис ж/с Хрустящий'],
   [/^Арахис\s+ж\/?с(?:\s+|$)/i, 'Арахис ж/с'],
@@ -6733,19 +6876,45 @@ const KNOWN_ORDER_SERIES_PREFIXES = [
   [/^Фисташк[аи](?:\s+со\s+вкусом)?(?:\s+|$)/i, 'Фисташки'],
   [/^Кешью(?:\s+ж\/?с)?(?:\s+|$)/i, 'Кешью'],
   [/^Миндаль(?:\s+ж\/?с)?(?:\s+|$)/i, 'Миндаль'],
+  [/^Чипсы\s+из\s+лаваша(?:\s+|$)/i, 'Чипсы из лаваша'],
   [/^Чипсы кукурузные\s+["«]?Начос["»]?(?:\s+|$)/i, 'Чипсы Начос'],
+  [/^Соус(?:\s+|$)/i, 'Соус'],
+  // Pringles
   [/^МИНИ\s+(?:Принглс|Pringles)(?:\s+|$)/i, 'МИНИ Принглс'],
   [/^(?:Принглс|Pringles)(?:\s+|$)/i, 'Принглс'],
+  // Мясные и Мясные ЗАВОД
   [/^Кнуты(?:\s+|$)/i, 'Кнуты'],
   [/^Колбаски\s+с\/к(?:\s+|$)/i, 'Колбаски с/к'],
-  [/^МЯСНЫЕ\s+чипсы(?:\s+|$)/i, 'Мясные чипсы'],
+  [/^МЯСНЫЕ\s+чипсы(?:\s+|$)/i, 'Мясные чипсы Орёл'],
   [/^Чипсы\s+мясные(?:\s+|$)/i, 'Чипсы мясные'],
+  [/^Мясо\s+Рыцарское(?:\s+|$)/i, 'Мясо Рыцарское'],
+  [/^Свиные\s+ушки(?:\s+|$)/i, 'Свиные ушки'],
+  [/^УХО\s+целое(?:\s+|$)/i, 'Ухо целое'],
+  // Рыбные серии
   [/^Вкусовые\s+пяточки(?:\s+|$)/i, 'Вкусовые пяточки'],
-  [/^Сыр\s+жареный(?:\s+|$)/i, 'Сыр жареный']
+  [/^Икра(?:\s+|$)/i, 'Икра'],
+  [/^Кальмар(?:\s+|$)/i, 'Кальмар'],
+  [/^Палочки(?:\s+|$)/i, 'Рыбные палочки'],
+  [/^Паутинка(?:\s+|$)/i, 'Паутинка'],
+  [/^Слайсы(?:\s+|$)/i, 'Слайсы'],
+  [/^Камбал[аик]+(?:\s+|$)/i, 'Камбала'],
+  [/^Креветк[аи](?:\s+|$)/i, 'Креветки'],
+  [/^Мясо\s+КРАБА(?:\s+|$)/i, 'Мясо краба']
 ];
 
 function cleanOrderCasingWord(w, isFirst = false, isSubpart = false) {
   if (!w) return '';
+  const leadMatch = w.match(/^([("«]+)(.*)$/);
+  if (leadMatch) {
+    const prefix = leadMatch[1];
+    const rest = leadMatch[2];
+    if (!rest) return prefix;
+    return prefix + cleanOrderCasingWord(rest, isFirst || prefix.includes('('), isSubpart);
+  }
+  const trailMatch = w.match(/^(.*?)([)"».,:;!?]+)$/);
+  if (trailMatch && trailMatch[1]) {
+    return cleanOrderCasingWord(trailMatch[1], isFirst, isSubpart) + trailMatch[2];
+  }
   if (ORDER_ACRONYMS.has(w) || ORDER_ACRONYMS.has(w.toUpperCase())) {
     return w.toUpperCase();
   }
@@ -6774,12 +6943,47 @@ function formatOrderCleanText(s) {
   return out.join(' ').replace(/\s+([,.:])/g, '$1');
 }
 
-function cleanOrderFlavor(s) {
+function stripTrailingPackUnits(str, keepGrams = false) {
+  let res = String(str || '').replace(/\s+/g, ' ').trim();
+  for (let i = 0; i < 4; i++) {
+    const prev = res;
+    res = res.replace(/(?:\d+\s*)?\*\s*\d+\s*(?:шт\.?)?(?:[\s,]+(?:шт|кор))?$/i, '').trim();
+    if (!keepGrams) {
+      res = res.replace(/(?:^|[\s,\-–—]+|\.)(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*(?:шт|кор)\.?)?$/i, (m) => m.startsWith('.') ? '.' : '').trim();
+    } else {
+      res = res.replace(/(\d+)\s*гр\.?(?:\s*,?\s*(?:шт|кор)\.?)?$/i, '$1 г').trim();
+    }
+    res = res.replace(/[\s,]+(?:шт|кор|набор|уп|кг)\.?$/i, '').trim();
+    if (res === prev) break;
+  }
+  return res;
+}
+
+function cleanOrderFlavor(s, cleanBase = '') {
   if (!s) return '';
-  s = s.replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '');
+  const keepGrams = cleanBase === 'Картошка Bruto' || cleanBase === 'Семечки От Мартина';
+  s = stripTrailingPackUnits(s, keepGrams);
   s = s.replace(/^со\s+вкусом\s+/i, '');
   s = s.replace(/["«»]/g, '').trim().replace(/\s+/g, ' ');
-  const words = s.split(' ');
+  if (/^\([^()]+\)$/.test(s)) {
+    s = s.slice(1, -1).trim();
+  }
+  if (cleanBase === 'Мясные чипсы Орёл') {
+    s = s.replace(/(?:^|\s)Орёл(?=$|\s)/gi, ' ').trim();
+  } else if (cleanBase === 'Чипсы мясные') {
+    s = s.replace(/(?:^|\s)\d+\s*гр\.?(?=$|\s)/gi, ' ').trim();
+  } else if (cleanBase === 'Соус') {
+    s = s.replace(/(?:^|\s)\d+\s*гр\.?(?=$|\s)/gi, ' ').trim();
+    s = s.replace(/гаукомоле/gi, 'гуакамоле');
+  } else if (cleanBase === 'Сырные шарики' || cleanBase === 'Сыр жареный') {
+    s = s.replace(/(?:^|\s)0[.,]5\s*кг(?=$|\s)/gi, ' ').trim();
+  }
+  s = stripTrailingPackUnits(s, keepGrams);
+  if (/^\([^()]+\)$/.test(s)) {
+    s = s.slice(1, -1).trim();
+  }
+  s = s.replace(/\s+/g, ' ').trim();
+  const words = s.split(' ').filter(Boolean);
   const out = words.map((w, i) => cleanOrderCasingWord(w, i === 0));
   return out.join(' ').replace(/\s+([,.:])/g, '$1');
 }
@@ -6911,46 +7115,47 @@ function parseOrderPosition(rawName, category = '') {
     };
   }
 
-  // 2. Snack cleanup: strip weight + шт and legal boilerplates
-  s = s.replace(/(?:[\s,\-–—]+(?:\d+[.,]\d+|\d+)\s*(?:кг|г|гр|мл|л)\.?(?:\s*,?\s*шт\.?)?|[\s,\-–—]+шт\.?)$/i, '');
-  s = s.replace(/[\s,\-–—]+шт\.?$/i, '');
+  // 2. Snack cleanup: normalize whitespace, strip legal boilerplates, then match series before parens/quotes
+  s = s.replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
   s = s.replace(/\(продукт белково-жировой\)/gi, '');
   s = s.replace(/\(уп\)/gi, '');
   s = s.replace(/от"([^"]+)"/g, 'от $1');
   s = s.trim().replace(/\s+/g, ' ');
 
-  // 3. Flavor in parentheses at the end: "Гренки пшеничные Лутовские (БАВАРСКИЕ КОЛБАСКИ)"
-  const mParen = s.match(/^(.*?)\s*\(([^)]+)\)$/);
-  if (mParen) {
-    const base = formatOrderCleanText(mParen[1].trim());
-    const flavor = cleanOrderFlavor(mParen[2].trim());
-    return { brand: base, flavor: flavor, fullName: `${base}: ${flavor}` };
-  }
-
-  // 4. Flavor in quotes at the end: 'Гренки СНАПСЫ "ТОМАТ-БАЗИЛИК"' or 'Сухари "АДЖИКА"'
-  const mQuote = s.match(/^(.*?)\s*["«]([^"»]+)["»]$/);
-  if (mQuote) {
-    const base = formatOrderCleanText(mQuote[1].trim());
-    const flavor = cleanOrderFlavor(mQuote[2].trim());
-    return { brand: base, flavor: flavor, fullName: `${base}: ${flavor}` };
-  }
-
-  // 5. Known series prefixes (Ведро Юбилейные, Санккино, Принглс, etc.)
+  // 3. Known series prefixes FIRST so quotes/parentheses inside series don't fracture them
   for (const [pattern, cleanBase] of KNOWN_ORDER_SERIES_PREFIXES) {
     const match = s.match(pattern);
     if (match) {
       const flavorRaw = s.slice(match[0].length).trim();
-      let finalFlavorRaw = flavorRaw;
+      let finalFlavorRaw = stripTrailingPackUnits(flavorRaw, cleanBase === 'Картошка Bruto' || cleanBase === 'Семечки От Мартина');
       if (!finalFlavorRaw) {
         if (cleanBase === 'Арахис ж/с') finalFlavorRaw = 'Соль';
         else if (cleanBase === 'Кешью') finalFlavorRaw = 'Ж/с';
         else if (cleanBase === 'Миндаль') finalFlavorRaw = 'Ж/с';
       }
       if (finalFlavorRaw) {
-        const flavor = cleanOrderFlavor(finalFlavorRaw);
+        const flavor = cleanOrderFlavor(finalFlavorRaw, cleanBase);
         return { brand: cleanBase, flavor: flavor, fullName: `${cleanBase}: ${flavor}` };
       }
     }
+  }
+
+  s = stripTrailingPackUnits(s, false);
+
+  // 4. Flavor in parentheses at the end (skip Рыбные and descriptive lists like "(кешью, миндаль, арахис)")
+  const mParen = s.match(/^(.*?)\s*\(([^)]+)\)$/);
+  if (mParen && category !== 'Рыбные' && !mParen[2].includes(',')) {
+    const base = formatOrderCleanText(mParen[1].trim());
+    const flavor = cleanOrderFlavor(mParen[2].trim());
+    return { brand: base, flavor: flavor, fullName: `${base}: ${flavor}` };
+  }
+
+  // 5. Flavor in quotes at the end: 'Гренки СНАПСЫ "ТОМАТ-БАЗИЛИК"' or 'Сухари "АДЖИКА"'
+  const mQuote = s.match(/^(.*?)\s*["«]([^"»]+)["»]$/);
+  if (mQuote) {
+    const base = formatOrderCleanText(mQuote[1].trim());
+    const flavor = cleanOrderFlavor(mQuote[2].trim());
+    return { brand: base, flavor: flavor, fullName: `${base}: ${flavor}` };
   }
 
   // 6. Standalone clean name
