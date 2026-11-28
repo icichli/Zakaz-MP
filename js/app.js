@@ -5027,7 +5027,7 @@ function detectProductType(name, category = '') {
     if (n.includes('мясо')) return 'Мясо сушеное';
   }
   if (c === 'рыбные') {
-    if (n.includes('кальмар')) return 'Кальмар';
+    if (n.includes('кальмар') || n.includes('мясо краба') || n.includes('вкусовые пяточки')) return 'Кальмар';
     if (n.includes('икрян')) return 'Икряные чипсы';
     if (n.includes('икра')) return 'Икра';
     if (n.includes('палочк')) return 'Рыбные палочки';
@@ -5036,11 +5036,11 @@ function detectProductType(name, category = '') {
     if (n.includes('камбал')) return 'Камбала';
     if (n.includes('кревет')) return 'Креветка';
     if (n.includes('краб')) return 'Краб';
-    if (n.includes('минта')) return 'Минтай';
+    if (n.includes('треск') && n.includes('минта')) return 'Треска/Минтай';
+    if (n.includes('минта') || n.includes('лизун')) return 'Минтай';
     if (n.includes('треск')) return 'Треска/Минтай';
     if (n.includes('тунец') || n.includes('тунца')) return 'Тунец';
     if (n.includes('полосатик')) return 'Полосатик';
-    if (n.includes('пяточки')) return 'Вкусовые пяточки';
     if (n.includes('анчоус')) return 'Анчоус';
     if (n.includes('лакедр')) return 'Лакедра';
     if (n.includes('угор')) return 'Угорь';
@@ -5064,7 +5064,15 @@ function normalizeCatalogItem(it) {
   let cleanName = String(it.name || '').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
   cleanName = cleanName.replace(/Гаукомоле/gi, 'Гуакамоле');
   const cleanBrand = cleanBrandValue(it.brand) || detectBrandFromName(cleanName);
-  const productType = String(it.productType || '').trim() || detectProductType(cleanName, it.category);
+  const lowerClean = cleanName.toLowerCase();
+  let productType = String(it.productType || '').trim() || detectProductType(cleanName, it.category);
+  if (String(it.category || '').toLowerCase() === 'рыбные') {
+    if (lowerClean.includes('мясо краба') || lowerClean.includes('вкусовые пяточки') || lowerClean.includes('пяточки кальмара')) {
+      productType = 'Кальмар';
+    } else if (lowerClean.includes('лизун') && !lowerClean.includes('треск')) {
+      productType = 'Минтай';
+    }
+  }
 
   let step = it.step;
   let unit = it.unit;
@@ -6890,16 +6898,13 @@ const KNOWN_ORDER_SERIES_PREFIXES = [
   [/^Мясо\s+Рыцарское(?:\s+|$)/i, 'Мясо Рыцарское'],
   [/^Свиные\s+ушки(?:\s+|$)/i, 'Свиные ушки'],
   [/^УХО\s+целое(?:\s+|$)/i, 'Ухо целое'],
-  // Рыбные серии
-  [/^Вкусовые\s+пяточки(?:\s+|$)/i, 'Вкусовые пяточки'],
+  // Рыбные серии (остальные, включая Кальмар/Мясо краба/Пяточки и Минтай/Лизун, группируются через parseSimilarProductGroup)
   [/^Икра(?:\s+|$)/i, 'Икра'],
-  [/^Кальмар(?:\s+|$)/i, 'Кальмар'],
   [/^Палочки(?:\s+|$)/i, 'Рыбные палочки'],
   [/^Паутинка(?:\s+|$)/i, 'Паутинка'],
   [/^Слайсы(?:\s+|$)/i, 'Слайсы'],
   [/^Камбал[аик]+(?:\s+|$)/i, 'Камбала'],
-  [/^Креветк[аи](?:\s+|$)/i, 'Креветки'],
-  [/^Мясо\s+КРАБА(?:\s+|$)/i, 'Мясо краба']
+  [/^Креветк[аи](?:\s+|$)/i, 'Креветки']
 ];
 
 function cleanOrderCasingWord(w, isFirst = false, isSubpart = false) {
@@ -6982,6 +6987,7 @@ function cleanOrderFlavor(s, cleanBase = '') {
   if (/^\([^()]+\)$/.test(s)) {
     s = s.slice(1, -1).trim();
   }
+  s = s.replace(/([а-яА-ЯёЁ]{3,})\/([а-яА-ЯёЁ]{3,})/g, '$1 / $2');
   s = s.replace(/\s+/g, ' ').trim();
   const words = s.split(' ').filter(Boolean);
   const out = words.map((w, i) => cleanOrderCasingWord(w, i === 0));
@@ -7087,6 +7093,58 @@ function processCatalogWithPeanutOptimization(catalogItems) {
   return result;
 }
 
+// Unify similar products into shared groups regardless of word order or manufacturer
+function parseSimilarProductGroup(s, category = '') {
+  const lower = s.toLowerCase();
+  const isFish = category === 'Рыбные' || !category;
+
+  // 1. Squid & squid-based snacks in Рыбные ("Кальмар", "Мясо краба", "Пяточки кальмара", "Вкусовые пяточки")
+  if (
+    isFish && (
+      lower.includes('кальмар') ||
+      lower.includes('мясо краба') ||
+      lower.includes('вкусовые пяточки')
+    )
+  ) {
+    let rest = stripTrailingPackUnits(s, false);
+    if (/^Кальмар\s+/i.test(rest)) {
+      rest = rest.replace(/^Кальмар\s+/i, '').trim();
+    } else if (/^ПЯТОЧКИ\s+КАЛЬМАРА\s+/i.test(rest)) {
+      rest = 'Пяточки ' + rest.replace(/^ПЯТОЧКИ\s+КАЛЬМАРА\s+/i, '').trim();
+    }
+    const flavor = cleanOrderFlavor(rest, 'Кальмар');
+    if (flavor) {
+      return { brand: 'Кальмар', flavor: flavor, fullName: `Кальмар: ${flavor}` };
+    }
+  }
+
+  // 2. Pollock & Cod ("Минтай", "Морской лизун", "Соломка Минтая (Лизун)", "Филе трески/Рваный минтай"), excluding "Икра минтая"
+  if (isFish && !/^икра\s+/i.test(lower) && (lower.includes('минта') || lower.includes('лизун') || lower.includes('треск'))) {
+    const flavor = cleanOrderFlavor(s, 'Минтай');
+    if (flavor) {
+      return { brand: 'Минтай', flavor: flavor, fullName: `Минтай: ${flavor}` };
+    }
+  }
+
+  // 3. Polosatik ("Желтый полосатик", "Императорский полосатик", etc.)
+  if (isFish && lower.includes('полосатик')) {
+    const flavor = cleanOrderFlavor(s, 'Полосатик');
+    if (flavor) {
+      return { brand: 'Полосатик', flavor: flavor, fullName: `Полосатик: ${flavor}` };
+    }
+  }
+
+  // 4. Fish chips ("Чипсы Икряные ...", "Чипсы Сёмги")
+  if (category === 'Рыбные' && /^Чипсы(?:\s+|$)/i.test(lower)) {
+    const flavor = cleanOrderFlavor(s, 'Рыбные чипсы');
+    if (flavor) {
+      return { brand: 'Рыбные чипсы', flavor: flavor, fullName: `Рыбные чипсы: ${flavor}` };
+    }
+  }
+
+  return null;
+}
+
 function parseOrderPosition(rawName, category = '') {
   if (!rawName) {
     return { brand: null, flavor: '', fullName: '' };
@@ -7121,6 +7179,12 @@ function parseOrderPosition(rawName, category = '') {
   s = s.replace(/\(уп\)/gi, '');
   s = s.replace(/от"([^"]+)"/g, 'от $1');
   s = s.trim().replace(/\s+/g, ' ');
+
+  // 2b. Unify similar items (e.g. crab meat / пяточки -> Кальмар, Лизун -> Минтай, Полосатик)
+  const similarGroup = parseSimilarProductGroup(s, category);
+  if (similarGroup) {
+    return similarGroup;
+  }
 
   // 3. Known series prefixes FIRST so quotes/parentheses inside series don't fracture them
   for (const [pattern, cleanBase] of KNOWN_ORDER_SERIES_PREFIXES) {
