@@ -3728,6 +3728,7 @@ let activeSupplier = 'snacks';
 let modalActiveSupplier = 'snacks';
 let activeCategory = 'all';
 let activeBrandFilter = 'all';
+let activeSortMode = 'series'; // 'series' | 'type' | 'fav_order' | 'alpha' | 'pack'
 let searchQuery = '';
 let order = {}; // { itemId: quantity }
 let manualItems = []; // [ { id, name, category, quantity, unit, step, supplier } ]
@@ -3774,6 +3775,15 @@ const SUPPLIERS_CACHE_KEY = 'snack_suppliers_cache_v9';
 const ORDER_STORAGE_KEY = 'snack_order_v8';
 const MANUAL_STORAGE_KEY = 'snack_manual_items_v8';
 const ACTIVE_SUPPLIER_KEY = 'snack_active_supplier_v8';
+const SORT_MODE_STORAGE_KEY = 'snack_sort_mode_v1';
+
+const SORT_MODES = [
+  { id: 'series', label: 'По сериям', icon: '📚' },
+  { id: 'type', label: 'По виду', icon: '🏷️' },
+  { id: 'fav_order', label: 'Сначала ⭐ и 🛒', icon: '⭐' },
+  { id: 'alpha', label: 'А → Я', icon: '🔤' },
+  { id: 'pack', label: 'По фасовке', icon: '⚖️' }
+];
 const ACTIVE_STORE_KEY = 'snack_active_store_v1';
 const STORE_FAVORITES_KEY = 'snack_store_favorites_v2';
 const PRIVATE_FAVORITES_KEY = 'snack_private_favorites_v2';
@@ -3811,6 +3821,7 @@ async function initApp() {
   renderSupplierNav();
   updateFavBadge();
   renderCategoryTabs();
+  renderSortBar();
   renderCatalog();
   updateOrderBar();
 
@@ -3834,6 +3845,11 @@ function loadSavedState() {
 
     const savedSupplier = localStorage.getItem(ACTIVE_SUPPLIER_KEY) || localStorage.getItem('snack_active_supplier_v7');
     if (savedSupplier) activeSupplier = savedSupplier;
+
+    const savedSort = localStorage.getItem(SORT_MODE_STORAGE_KEY);
+    if (savedSort && SORT_MODES.some(m => m.id === savedSort)) {
+      activeSortMode = savedSort;
+    }
 
     // Load active store (sessionStorage takes priority for PIN-authenticated session)
     const sessionStore = sessionStorage.getItem('active_store');
@@ -4923,6 +4939,7 @@ function saveState() {
     localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(order));
     localStorage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(manualItems));
     localStorage.setItem(ACTIVE_SUPPLIER_KEY, activeSupplier);
+    localStorage.setItem(SORT_MODE_STORAGE_KEY, activeSortMode);
   } catch (e) {
     console.error('Failed to save localStorage', e);
   }
@@ -5815,6 +5832,7 @@ function switchSupplier(supId) {
   renderSupplierNav();
   updateFavBadge();
   renderCategoryTabs();
+  renderSortBar();
   renderCatalog();
   updateOrderBar();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -5874,6 +5892,7 @@ function renderCategoryTabs() {
       activeCategory = btn.getAttribute('data-cat');
       activeBrandFilter = 'all';
       renderCategoryTabs();
+      renderSortBar();
       renderCatalog();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
@@ -5962,6 +5981,111 @@ function selectBrandFilter(brand) {
   activeBrandFilter = brand;
   renderBrandChips();
   renderCatalog();
+}
+
+// Render Sort Mode Switcher Bar
+function renderSortBar() {
+  const container = document.getElementById('sortBar');
+  if (!container) return;
+
+  if (activeCategory === 'manual') {
+    container.classList.remove('visible');
+    container.innerHTML = '';
+    return;
+  }
+
+  const chipsHtml = SORT_MODES.map(mode => {
+    const isActive = activeSortMode === mode.id ? 'active' : '';
+    return `
+      <button type="button" class="sort-chip ${isActive}" onclick="setSortMode('${mode.id}')" aria-pressed="${activeSortMode === mode.id}">
+        <span>${mode.icon}</span>
+        <span>${escapeHtml(mode.label)}</span>
+      </button>
+    `;
+  }).join('');
+
+  container.innerHTML = `<span class="sort-bar-label">Вид:</span>${chipsHtml}`;
+  container.classList.add('visible');
+}
+
+function setSortMode(modeId) {
+  if (!SORT_MODES.some(m => m.id === modeId)) return;
+  activeSortMode = modeId;
+  saveState();
+  renderSortBar();
+  renderCatalog();
+}
+
+// Group label for "По виду продукта" mode (refines cheese forms and fish types)
+function getProductGroupType(item) {
+  if (!item) return 'Прочее';
+  const cat = item.category || '';
+  const nameLower = String(item.name || '').toLowerCase();
+  if (cat === 'Сыры') {
+    if (nameLower.includes('жарен')) return 'Сыр жареный';
+    if (nameLower.includes('спагетти')) return 'Сыр: Спагетти';
+    if (nameLower.includes('бочонок')) return 'Сыр: Бочонок';
+    if (nameLower.includes('балыков')) return 'Сыр: Балыковый';
+    if (nameLower.includes('коса')) return 'Сыр: Коса';
+    if (nameLower.includes('пряди') || nameLower.includes('охотнич')) return 'Сыр: Пряди';
+  }
+  if (cat === 'Рыбные' && nameLower.includes('минта') && nameLower.includes('треск')) {
+    return 'Минтай / Треска';
+  }
+  return item.productType || detectProductType(item.name, cat) || cat || 'Прочее';
+}
+
+// Group label and ordering for "По фасовке" mode
+function getPackBucket(item) {
+  const unit = (item && item.unit) || 'шт';
+  const step = Number(item && item.step) || 1;
+  const nameLower = String((item && item.name) || '').toLowerCase();
+  if (unit === 'кг') {
+    if (Math.abs(step - 0.5) < 0.01) return { key: 'kg_05', label: 'Вес: кратность 0.5 кг', order: 1 };
+    if (Math.abs(step - 1) < 0.01) return { key: 'kg_1', label: 'Вес: кратность 1 кг', order: 2 };
+    return { key: `kg_${step}`, label: `Вес: кратность ${step} кг`, order: 3 };
+  }
+  if (unit === 'кор') return { key: 'kor', label: 'Коробки (1 кор)', order: 4 };
+  if (unit === 'набор') return { key: 'set', label: 'Наборы (1 набор)', order: 5 };
+  if (unit === 'уп') return { key: 'pack', label: 'Упаковки (1 уп)', order: 6 };
+  if (unit === 'рулон') return { key: 'roll', label: 'Рулоны (1 рулон)', order: 7 };
+  if (nameLower.includes('ведро')) return { key: 'bucket', label: 'Вёдра (1 шт)', order: 8 };
+  if (step > 1) return { key: `sht_${step}`, label: `Штучный: кратность ${step} шт`, order: 10 };
+  return { key: 'sht_1', label: 'Штучный (1 шт)', order: 9 };
+}
+
+function buildSubgroupAccordionHtml(subgroupId, title, list, hasSearch, renderCardFn) {
+  let subOrderQty = 0;
+  let subUnit = list[0]?.unit || 'кг';
+  list.forEach(it => {
+    const q = order[it.id] || 0;
+    if (q > 0) {
+      subOrderQty = Math.round((subOrderQty + q) * 1000) / 1000;
+      subUnit = it.unit || subUnit;
+    }
+  });
+
+  const isCollapsed = !hasSearch && collapsedSubgroups.has(subgroupId);
+  const hasOrderClass = subOrderQty > 0 ? 'has-subgroup-order' : '';
+  const orderBadgeHtml = subOrderQty > 0
+    ? `<span class="subgroup-order-badge">В заказе: ${formatQty(subOrderQty, subUnit)}</span>`
+    : '';
+
+  return `
+    <div class="subgroup-accordion ${isCollapsed ? 'is-collapsed' : ''} ${hasOrderClass}" data-subgroup-id="${escapeHtml(subgroupId)}">
+      <button type="button" class="subgroup-toggle" onclick="toggleSubgroup('${escapeHtml(subgroupId)}', event)">
+        <div class="subgroup-title-wrap">
+          <span class="subgroup-chevron">▾</span>
+          <span class="subgroup-name">${escapeHtml(title)}</span>
+          <span class="subgroup-count">${list.length} поз.</span>
+        </div>
+        ${orderBadgeHtml}
+      </button>
+      <div class="subgroup-content product-cards-list">
+        ${list.map(renderCardFn).join('')}
+      </div>
+    </div>
+  `;
 }
 
 // Unified Alphabetical Sorting Key for All Catalog Positions Across All Sheets (Option 1)
@@ -6157,19 +6281,6 @@ function renderCatalog() {
     return;
   }
 
-  // Group by Category
-  const groups = {};
-  filtered.forEach(it => {
-    const cat = it.category || 'Прочее';
-    if (!groups[cat]) groups[cat] = [];
-    groups[cat].push(it);
-  });
-
-  // Two-level alphabetical sorting (Option 3: Family/Series -> Flavors within)
-  for (const cat of Object.keys(groups)) {
-    groups[cat].sort(compareCatalogItems);
-  }
-
   let html = '';
   if (favFilterMode === 'private') {
     html += `
@@ -6181,121 +6292,236 @@ function renderCatalog() {
       </div>
     `;
   }
+
   const hasSearch = searchQuery.trim().length > 0;
+  const showCatBadge = activeCategory === 'all';
 
-  for (const [catName, items] of Object.entries(groups)) {
-    const meta = CATEGORY_META[catName] || { label: catName, icon: '🏷️' };
-
-    // Group items inside category by series / brand
-    const subgroupsMap = new Map();
-    items.forEach(it => {
-      const parsed = parseOrderPosition(it.name, catName);
-      const grp = parsed.brand || '__standalone__';
-      if (!subgroupsMap.has(grp)) {
-        subgroupsMap.set(grp, []);
-      }
-      subgroupsMap.get(grp).push({
-        item: it,
-        parsed: parsed,
-        flavor: parsed.flavor || parsed.fullName || it.name
-      });
+  if (activeSortMode === 'alpha') {
+    const sorted = [...filtered].sort((a, b) => {
+      const nameA = cleanOrderPositionName(a.name, a.category);
+      const nameB = cleanOrderPositionName(b.name, b.category);
+      return CATALOG_COLLATOR.compare(nameA, nameB);
     });
-
-    // Sort items inside each subgroup alphabetically by flavor
-    for (const [, list] of subgroupsMap) {
-      list.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
-    }
-
-    // Separate named subgroups from standalone items
-    const namedSubgroups = [];
-    let standaloneItems = [];
-
-    for (const [brand, list] of subgroupsMap) {
-      // Treat as subgroup if >= 2 items OR if it is a recognized series (глазурь, ж/с, Лутовские etc.)
-      const isRecognizedSeries = brand === 'Арахис в глазури' || brand.startsWith('Арахис ж/с') || brand.includes('Лутовские') || brand.includes('Санккино') || brand.includes('Фермерский');
-      if (brand !== '__standalone__' && (list.length >= 2 || isRecognizedSeries)) {
-        namedSubgroups.push({ brand, list });
-      } else {
-        standaloneItems.push(...list);
-      }
-    }
-
-    // Sort named subgroups alphabetically by brand name
-    namedSubgroups.sort((a, b) => CATALOG_COLLATOR.compare(a.brand, b.brand));
-
-    // Sort standalone items alphabetically
-    standaloneItems.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
-
-    let catBodyHtml = '';
-
-    // If category has only standalone items and no named subgroups, render clean flat list
-    if (namedSubgroups.length === 0) {
-      catBodyHtml = `
-        <div class="product-cards-list">
-          ${standaloneItems.map(e => renderProductCard(e.item, null)).join('')}
-        </div>
-      `;
-    } else {
-      // Render each named subgroup as an Accordion
-      namedSubgroups.forEach(({ brand, list }) => {
-        const subgroupId = 'sub_' + catName.replace(/[^\w\u0400-\u04FF]/g, '_') + '_' + brand.replace(/[^\w\u0400-\u04FF]/g, '_');
-        
-        // Calculate total order in this subgroup
-        let subOrderQty = 0;
-        let subUnit = list[0]?.item?.unit || 'кг';
-        list.forEach(e => {
-          const q = order[e.item.id] || 0;
-          if (q > 0) {
-            subOrderQty = Math.round((subOrderQty + q) * 1000) / 1000;
-            subUnit = e.item.unit || subUnit;
-          }
-        });
-
-        const isCollapsed = !hasSearch && collapsedSubgroups.has(subgroupId);
-        const hasOrderClass = subOrderQty > 0 ? 'has-subgroup-order' : '';
-        const orderBadgeHtml = subOrderQty > 0
-          ? `<span class="subgroup-order-badge">В заказе: ${formatQty(subOrderQty, subUnit)}</span>`
-          : '';
-
-        catBodyHtml += `
-          <div class="subgroup-accordion ${isCollapsed ? 'is-collapsed' : ''} ${hasOrderClass}" data-subgroup-id="${escapeHtml(subgroupId)}">
-            <button type="button" class="subgroup-toggle" onclick="toggleSubgroup('${escapeHtml(subgroupId)}', event)">
-              <div class="subgroup-title-wrap">
-                <span class="subgroup-chevron">▾</span>
-                <span class="subgroup-name">${escapeHtml(brand)}</span>
-                <span class="subgroup-count">${list.length} поз.</span>
-              </div>
-              ${orderBadgeHtml}
-            </button>
-            <div class="subgroup-content product-cards-list">
-              ${list.map(e => renderProductCard(e.item, brand)).join('')}
-            </div>
-          </div>
-        `;
-      });
-
-      // Render standalone items directly in product-cards-list (if any)
-      if (standaloneItems.length > 0) {
-        catBodyHtml += `
-          <div class="product-cards-list standalone-list">
-            ${standaloneItems.map(e => renderProductCard(e.item, null)).join('')}
-          </div>
-        `;
-      }
-    }
-
+    const scopeLabel = activeCategory === 'all'
+      ? 'Все товары (А → Я)'
+      : ((CATEGORY_META[activeCategory]?.label || activeCategory) + ' (А → Я)');
     html += `
       <div class="section-group">
         <div class="section-header">
           <div class="section-title">
-            <span>${meta.icon}</span>
-            <span>${escapeHtml(meta.label || catName)}</span>
+            <span>🔤</span>
+            <span>${escapeHtml(scopeLabel)}</span>
           </div>
-          <span class="section-count">${items.length} поз.</span>
+          <span class="section-count">${sorted.length} поз.</span>
         </div>
-        ${catBodyHtml}
+        <div class="product-cards-list">
+          ${sorted.map(it => renderProductCard(it, null, showCatBadge)).join('')}
+        </div>
       </div>
     `;
+  } else if (activeSortMode === 'fav_order') {
+    const inOrder = [];
+    const inFav = [];
+    const rest = [];
+    filtered.forEach(it => {
+      if ((order[it.id] || 0) > 0) inOrder.push(it);
+      else if (isItemStoreFav(it.id) || isItemPrivateFav(it.id)) inFav.push(it);
+      else rest.push(it);
+    });
+    const sortAlpha = (a, b) => CATALOG_COLLATOR.compare(
+      cleanOrderPositionName(a.name, a.category),
+      cleanOrderPositionName(b.name, b.category)
+    );
+    inOrder.sort((a, b) => {
+      const aFav = (isItemStoreFav(a.id) || isItemPrivateFav(a.id)) ? 0 : 1;
+      const bFav = (isItemStoreFav(b.id) || isItemPrivateFav(b.id)) ? 0 : 1;
+      return aFav !== bFav ? aFav - bFav : sortAlpha(a, b);
+    });
+    inFav.sort(sortAlpha);
+    rest.sort(sortAlpha);
+
+    const sections = [
+      { icon: '🛒', title: 'В заказе', items: inOrder },
+      { icon: '⭐', title: `Избранное (${activeStore})`, items: inFav },
+      { icon: '📦', title: 'Остальные товары', items: rest }
+    ];
+    sections.forEach(sec => {
+      if (sec.items.length === 0) return;
+      html += `
+        <div class="section-group">
+          <div class="section-header">
+            <div class="section-title">
+              <span>${sec.icon}</span>
+              <span>${escapeHtml(sec.title)}</span>
+            </div>
+            <span class="section-count">${sec.items.length} поз.</span>
+          </div>
+          <div class="product-cards-list">
+            ${sec.items.map(it => renderProductCard(it, null, showCatBadge)).join('')}
+          </div>
+        </div>
+      `;
+    });
+  } else if (activeSortMode === 'pack') {
+    const packMap = new Map();
+    filtered.forEach(it => {
+      const bucket = getPackBucket(it);
+      if (!packMap.has(bucket.key)) {
+        packMap.set(bucket.key, { ...bucket, items: [] });
+      }
+      packMap.get(bucket.key).items.push(it);
+    });
+    const buckets = Array.from(packMap.values()).sort((a, b) => a.order - b.order);
+    buckets.forEach(bucket => {
+      bucket.items.sort(compareCatalogItems);
+      const subgroupId = 'pack_' + bucket.key;
+      html += buildSubgroupAccordionHtml(
+        subgroupId,
+        bucket.label,
+        bucket.items,
+        hasSearch,
+        it => renderProductCard(it, null, showCatBadge)
+      );
+    });
+  } else {
+    // Group by Category (for 'series' and 'type' modes)
+    const groups = {};
+    filtered.forEach(it => {
+      const cat = it.category || 'Прочее';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(it);
+    });
+
+    for (const cat of Object.keys(groups)) {
+      groups[cat].sort(compareCatalogItems);
+    }
+
+    for (const [catName, items] of Object.entries(groups)) {
+      const meta = CATEGORY_META[catName] || { label: catName, icon: '🏷️' };
+      let catBodyHtml = '';
+
+      if (activeSortMode === 'type') {
+        const typeMap = new Map();
+        items.forEach(it => {
+          const typeLabel = getProductGroupType(it);
+          if (!typeMap.has(typeLabel)) typeMap.set(typeLabel, []);
+          typeMap.get(typeLabel).push(it);
+        });
+
+        const typeGroups = [];
+        const soloTypes = [];
+        for (const [typeLabel, list] of typeMap) {
+          list.sort(compareCatalogItems);
+          if (list.length >= 2) {
+            typeGroups.push({ typeLabel, list });
+          } else {
+            soloTypes.push(...list);
+          }
+        }
+        typeGroups.sort((a, b) => CATALOG_COLLATOR.compare(a.typeLabel, b.typeLabel));
+        soloTypes.sort(compareCatalogItems);
+
+        if (typeGroups.length === 0) {
+          catBodyHtml = `
+            <div class="product-cards-list">
+              ${soloTypes.map(it => renderProductCard(it, null)).join('')}
+            </div>
+          `;
+        } else {
+          typeGroups.forEach(({ typeLabel, list }) => {
+            const subgroupId = 'type_' + catName.replace(/[^\w\u0400-\u04FF]/g, '_') + '_' + typeLabel.replace(/[^\w\u0400-\u04FF]/g, '_');
+            catBodyHtml += buildSubgroupAccordionHtml(
+              subgroupId,
+              typeLabel,
+              list,
+              hasSearch,
+              it => renderProductCard(it, null)
+            );
+          });
+          if (soloTypes.length > 0) {
+            catBodyHtml += `
+              <div class="product-cards-list standalone-list">
+                ${soloTypes.map(it => renderProductCard(it, null)).join('')}
+              </div>
+            `;
+          }
+        }
+      } else {
+        // Default: 'series' — Group items inside category by series / brand
+        const subgroupsMap = new Map();
+        items.forEach(it => {
+          const parsed = parseOrderPosition(it.name, catName);
+          const grp = parsed.brand || '__standalone__';
+          if (!subgroupsMap.has(grp)) {
+            subgroupsMap.set(grp, []);
+          }
+          subgroupsMap.get(grp).push({
+            item: it,
+            parsed: parsed,
+            flavor: parsed.flavor || parsed.fullName || it.name
+          });
+        });
+
+        for (const [, list] of subgroupsMap) {
+          list.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
+        }
+
+        const namedSubgroups = [];
+        const standaloneItems = [];
+
+        for (const [brand, list] of subgroupsMap) {
+          const isRecognizedSeries = brand === 'Арахис в глазури' || brand.startsWith('Арахис ж/с') || brand.includes('Лутовские') || brand.includes('Санккино') || brand.includes('Фермерский');
+          if (brand !== '__standalone__' && (list.length >= 2 || isRecognizedSeries)) {
+            namedSubgroups.push({ brand, list });
+          } else {
+            standaloneItems.push(...list);
+          }
+        }
+
+        namedSubgroups.sort((a, b) => CATALOG_COLLATOR.compare(a.brand, b.brand));
+        standaloneItems.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
+
+        if (namedSubgroups.length === 0) {
+          catBodyHtml = `
+            <div class="product-cards-list">
+              ${standaloneItems.map(e => renderProductCard(e.item, null)).join('')}
+            </div>
+          `;
+        } else {
+          namedSubgroups.forEach(({ brand, list }) => {
+            const subgroupId = 'sub_' + catName.replace(/[^\w\u0400-\u04FF]/g, '_') + '_' + brand.replace(/[^\w\u0400-\u04FF]/g, '_');
+            catBodyHtml += buildSubgroupAccordionHtml(
+              subgroupId,
+              brand,
+              list.map(e => e.item),
+              hasSearch,
+              it => renderProductCard(it, brand)
+            );
+          });
+
+          if (standaloneItems.length > 0) {
+            catBodyHtml += `
+              <div class="product-cards-list standalone-list">
+                ${standaloneItems.map(e => renderProductCard(e.item, null)).join('')}
+              </div>
+            `;
+          }
+        }
+      }
+
+      html += `
+        <div class="section-group">
+          <div class="section-header">
+            <div class="section-title">
+              <span>${meta.icon}</span>
+              <span>${escapeHtml(meta.label || catName)}</span>
+            </div>
+            <span class="section-count">${items.length} поз.</span>
+          </div>
+          ${catBodyHtml}
+        </div>
+      `;
+    }
   }
   container.innerHTML = html;
   attachStepperEvents(container);
@@ -6440,7 +6666,7 @@ function toggleThumbZoom(el, event) {
 }
 
 // Single Product Card HTML
-function renderProductCard(item, subgroupBrand = null) {
+function renderProductCard(item, subgroupBrand = null, showCategoryBadge = false) {
   const currentQty = order[item.id] || 0;
   const hasOrder = currentQty > 0 ? 'has-order' : '';
   const qtyFormatted = formatQty(currentQty, item.unit);
@@ -6454,6 +6680,8 @@ function renderProductCard(item, subgroupBrand = null) {
 
   const itemBrand = cleanBrandValue(item.brand) || detectBrandFromName(item.name);
   const brandBadgeHtml = (!subgroupBrand && itemBrand) ? `<span class="badge-brand">${escapeHtml(itemBrand)}</span>` : '';
+  const catMeta = showCategoryBadge ? (CATEGORY_META[item.category] || { label: item.category }) : null;
+  const catBadgeHtml = catMeta ? `<span class="badge-cat-mini">${escapeHtml(catMeta.label)}</span>` : '';
 
   const isStore = isItemStoreFav(item.id);
   const isPrivate = isItemPrivateFav(item.id);
@@ -6504,6 +6732,7 @@ function renderProductCard(item, subgroupBrand = null) {
           </button>
         </div>
         <div class="product-meta">
+          ${catBadgeHtml}
           ${brandBadgeHtml}
           <span class="badge-step">${escapeHtml(item.display_step || `кратность ${item.step} ${item.unit}`)}</span>
         </div>
