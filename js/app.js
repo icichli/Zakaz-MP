@@ -3663,13 +3663,12 @@ const DEFAULT_SUPPLIERS = [
     ]
   },
   {
-    id: 'consumables',
-    name: 'Расходники и тара',
-    shortName: 'Расходники',
-    icon: '🧻',
+    id: 'pivnye_zakuski',
+    name: 'Пивные закуски',
+    shortName: 'Пивные закуски',
+    icon: '🥔',
     categories: [
-      'Расходники',
-      'Контейнеры'
+      'Pringles'
     ]
   },
   {
@@ -3683,21 +3682,36 @@ const DEFAULT_SUPPLIERS = [
     ]
   },
   {
-    id: 'pivnye_zakuski',
-    name: 'Пивные закуски',
-    shortName: 'Пивные закуски',
-    icon: '🥔',
+    id: 'consumables',
+    name: 'Расходники и тара',
+    shortName: 'Расходники',
+    icon: '🧻',
     categories: [
-      'Pringles'
+      'Расходники',
+      'Контейнеры'
     ]
   }
 ];
 
+const SUPPLIER_DISPLAY_ORDER = ['snacks', 'pivnye_zakuski', 'yarmarka', 'consumables'];
+
+function sortSuppliersList(list) {
+  if (!Array.isArray(list)) return list;
+  return [...list].sort((a, b) => {
+    const idxA = SUPPLIER_DISPLAY_ORDER.indexOf(a.id);
+    const idxB = SUPPLIER_DISPLAY_ORDER.indexOf(b.id);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return 0;
+  });
+}
+
 const KNOWN_SUPPLIER_META = {
   'snacks': { name: 'Снеки и закуски', shortName: 'Снеки', icon: '🍺' },
-  'consumables': { name: 'Расходники и тара', shortName: 'Расходники', icon: '🧻' },
+  'pivnye_zakuski': { name: 'Пивные закуски', shortName: 'Пивные закуски', icon: '🥔' },
   'yarmarka': { name: 'Ярмарка', shortName: 'Ярмарка', icon: '🎪' },
-  'pivnye_zakuski': { name: 'Пивные закуски', shortName: 'Пивные закуски', icon: '🥔' }
+  'consumables': { name: 'Расходники и тара', shortName: 'Расходники', icon: '🧻' }
 };
 
 // Category metadata: labels and icons
@@ -5189,7 +5203,7 @@ async function loadCatalog() {
       if (Array.isArray(parsed) && parsed.length >= 350 && parsed[0].supplier !== undefined) {
         catalog = parsed;
         if (cachedSuppliers) {
-          suppliers = JSON.parse(cachedSuppliers);
+          suppliers = sortSuppliersList(JSON.parse(cachedSuppliers));
         }
         validCache = true;
       }
@@ -5275,9 +5289,7 @@ function detectProductType(name, category = '') {
     if (n.includes('камбал')) return 'Камбала';
     if (n.includes('кревет')) return 'Креветка';
     if (n.includes('краб')) return 'Краб';
-    if (n.includes('треск') && n.includes('минта')) return 'Треска/Минтай';
-    if (n.includes('минта') || n.includes('лизун')) return 'Минтай';
-    if (n.includes('треск')) return 'Треска/Минтай';
+    if (n.includes('минта') || n.includes('лизун') || n.includes('треск')) return 'Минтай';
     if (n.includes('тунец') || n.includes('тунца')) return 'Тунец';
     if (n.includes('полосатик')) return 'Полосатик';
     if (n.includes('анчоус')) return 'Анчоус';
@@ -5308,7 +5320,7 @@ function normalizeCatalogItem(it) {
   if (String(it.category || '').toLowerCase() === 'рыбные') {
     if (lowerClean.includes('мясо краба') || lowerClean.includes('вкусовые пяточки') || lowerClean.includes('пяточки кальмара')) {
       productType = 'Кальмар';
-    } else if (lowerClean.includes('лизун') && !lowerClean.includes('треск')) {
+    } else if (!/^икра\s+/i.test(lowerClean) && (lowerClean.includes('лизун') || lowerClean.includes('минта') || lowerClean.includes('треск'))) {
       productType = 'Минтай';
     }
   }
@@ -5933,6 +5945,8 @@ function parseGoogleSheetWorkbook(wb) {
     });
   });
 
+  const orderedDynamicSuppliers = sortSuppliersList(dynamicSuppliers);
+
   // Discovered favorites sheet if present in Google Sheet
   const favSheetName = wb.SheetNames.find(s => {
     const lower = String(s).toLowerCase().trim();
@@ -6040,7 +6054,7 @@ function parseGoogleSheetWorkbook(wb) {
 
   return {
     items: mergedItems,
-    suppliers: dynamicSuppliers.length > 0 ? dynamicSuppliers : DEFAULT_SUPPLIERS
+    suppliers: orderedDynamicSuppliers.length > 0 ? orderedDynamicSuppliers : DEFAULT_SUPPLIERS
   };
 }
 
@@ -6293,11 +6307,17 @@ function getProductGroupType(item) {
   }
   if (cat === 'Сыры') {
     if (nameLower.includes('жарен')) return 'Сыр жареный';
-    if (nameLower.includes('спагетти')) return 'Сыр: Спагетти';
-    if (nameLower.includes('бочонок')) return 'Сыр: Бочонок';
-    if (nameLower.includes('балыков')) return 'Сыр: Балыковый';
-    if (nameLower.includes('коса')) return 'Сыр: Коса';
-    if (nameLower.includes('пряди') || nameLower.includes('охотнич')) return 'Сыр: Пряди';
+    if (nameLower.includes('дондуковск')) return 'Дондуковский';
+    const form = nameLower.includes('спагетти') ? 'Спагетти'
+      : nameLower.includes('бочонок') ? 'Бочонок'
+      : nameLower.includes('балыков') ? 'Балыковый'
+      : nameLower.includes('коса') ? 'Коса'
+      : '';
+    if (nameLower.includes('санккино')) return form ? `Санккино: ${form}` : 'Санккино';
+    if (nameLower.includes('фермерск')) return form ? `Фермерский: ${form}` : 'Фермерский';
+    const brand = cleanBrandValue(item.brand);
+    if (brand) return form ? `${brand}: ${form}` : brand;
+    return cleanOrderPositionName(item.name, cat) || 'Сыр';
   }
   if (cat === 'Орехи') {
     if (nameLower.includes('ореховая смесь')) return 'Ореховая смесь';
@@ -6316,8 +6336,8 @@ function getProductGroupType(item) {
       return 'Арахис: Жареный (мелкий)';
     }
   }
-  if (cat === 'Рыбные' && nameLower.includes('минта') && nameLower.includes('треск')) {
-    return 'Минтай / Треска';
+  if (cat === 'Рыбные' && !/^икра\s+/i.test(nameLower) && (nameLower.includes('минта') || nameLower.includes('треск') || nameLower.includes('лизун'))) {
+    return 'Минтай';
   }
   return item.productType || detectProductType(item.name, cat) || cat || 'Прочее';
 }
@@ -6400,6 +6420,10 @@ function getItemSortKey(item) {
   // 3. For any other positions: parse brand/series + flavor to keep families strictly adjacent
   const parsed = parseOrderPosition(rawName, cat);
   if (parsed.brand && parsed.flavor) {
+    if (parsed.brand === 'Гренки Снапсы') {
+      const grainOrder = /пшенич/i.test(parsed.flavor) ? '2' : '1';
+      return `${parsed.brand} ${grainOrder} ${parsed.flavor}`.trim();
+    }
     return `${parsed.brand} ${parsed.flavor}`.trim();
   }
 
@@ -6767,8 +6791,12 @@ function renderCatalog() {
           });
         });
 
-        for (const [, list] of subgroupsMap) {
-          list.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
+        for (const [grpBrand, list] of subgroupsMap) {
+          if (grpBrand === 'Гренки Снапсы') {
+            list.sort((a, b) => compareCatalogItems(a.item, b.item));
+          } else {
+            list.sort((a, b) => CATALOG_COLLATOR.compare(a.flavor, b.flavor));
+          }
         }
 
         const namedSubgroups = [];
@@ -7935,7 +7963,14 @@ function parseOrderPosition(rawName, category = '') {
         else if (cleanBase === 'Миндаль') finalFlavorRaw = 'Ж/с';
       }
       if (finalFlavorRaw) {
-        const flavor = cleanOrderFlavor(finalFlavorRaw, cleanBase);
+        let flavor = cleanOrderFlavor(finalFlavorRaw, cleanBase);
+        if (cleanBase === 'Гренки Снапсы') {
+          flavor = flavor.replace(/Маринов\.\s*огурцы/i, 'Маринов. огурцы');
+          if (!/\((?:пшенич|ржан)/i.test(flavor)) {
+            const isWheat = /пшенич/i.test(match[0]) || /пшенич/i.test(s);
+            flavor = `${flavor} (${isWheat ? 'пшеничные' : 'ржаные'})`;
+          }
+        }
         return { brand: cleanBase, flavor: flavor, fullName: `${cleanBase}: ${flavor}` };
       }
     }
