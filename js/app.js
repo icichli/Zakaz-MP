@@ -6421,7 +6421,7 @@ function getItemSortKey(item) {
   const parsed = parseOrderPosition(rawName, cat);
   if (parsed.brand && parsed.flavor) {
     if (parsed.brand === 'Гренки Снапсы') {
-      const grainOrder = /пшенич/i.test(parsed.flavor) ? '2' : '1';
+      const grainOrder = /пшенич/i.test(rawName) ? '2' : '1';
       return `${parsed.brand} ${grainOrder} ${parsed.flavor}`.trim();
     }
     return `${parsed.brand} ${parsed.flavor}`.trim();
@@ -7019,6 +7019,12 @@ function renderProductCard(item, subgroupBrand = null, showCategoryBadge = false
   const userSubcatBadgeHtml = (isUserAdded && item.productType && item.productType !== USER_ADDED_SHEET_NAME)
     ? `<span class="badge-cat-mini">${escapeHtml(item.productType)}</span>`
     : '';
+  const isSnapsy = /^Гренки\s+Снапсы/i.test(item.name || '');
+  const grainBadgeHtml = isSnapsy
+    ? (/пшенич/i.test(item.name)
+        ? '<span class="badge-grain wheat">пшеничные</span>'
+        : '<span class="badge-grain rye">ржаные</span>')
+    : '';
 
   const isStore = isItemStoreFav(item.id);
   const isPrivate = isItemPrivateFav(item.id);
@@ -7079,6 +7085,7 @@ function renderProductCard(item, subgroupBrand = null, showCategoryBadge = false
           ${catBadgeHtml}
           ${userSubcatBadgeHtml}
           ${brandBadgeHtml}
+          ${grainBadgeHtml}
           <span class="badge-step">${escapeHtml(item.display_step || `кратность ${item.step} ${item.unit}`)}</span>
         </div>
       </div>
@@ -7966,10 +7973,6 @@ function parseOrderPosition(rawName, category = '') {
         let flavor = cleanOrderFlavor(finalFlavorRaw, cleanBase);
         if (cleanBase === 'Гренки Снапсы') {
           flavor = flavor.replace(/Маринов\.\s*огурцы/i, 'Маринов. огурцы');
-          if (!/\((?:пшенич|ржан)/i.test(flavor)) {
-            const isWheat = /пшенич/i.test(match[0]) || /пшенич/i.test(s);
-            flavor = `${flavor} (${isWheat ? 'пшеничные' : 'ржаные'})`;
-          }
         }
         return { brand: cleanBase, flavor: flavor, fullName: `${cleanBase}: ${flavor}` };
       }

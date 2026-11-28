@@ -1211,6 +1211,28 @@ button,
   letter-spacing: 0.01em;
 }
 
+.badge-grain {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.badge-grain.wheat {
+  background: rgba(234, 179, 8, 0.14);
+  color: #fde047;
+  border: 1px solid rgba(234, 179, 8, 0.32);
+}
+
+.badge-grain.rye {
+  background: rgba(148, 163, 184, 0.14);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+}
+
 .badge-stock {
   display: inline-flex;
   align-items: center;
