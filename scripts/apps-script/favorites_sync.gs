@@ -20,6 +20,7 @@
  */
 
 const SHEET_NAME_FAVORITES = 'Избранное';
+const SHEET_NAME_CUSTOM_ITEMS = 'Добавлены пользователем';
 const ALLOWED_STORES = ['Битца', 'Битца2', 'БП', 'Олимп'];
 
 // 4-значные PIN-коды доступа к магазинам (задайте свои коды для торговых точек)
@@ -96,9 +97,67 @@ function getOrCreateFavoritesSheet() {
 }
 
 /**
+ * Получить или создать лист «Добавлены пользователем»
+ */
+function getOrCreateCustomItemsSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME_CUSTOM_ITEMS);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME_CUSTOM_ITEMS);
+    const headers = ['ID товара', 'Наименование', 'Раздел', 'Фасовка', 'Поставщик', 'Магазин', 'Дата добавления'];
+    sheet.appendRow(headers);
+
+    const headerRange = sheet.getRange(1, 1, 1, headers.length);
+    headerRange.setBackground('#0f172a');
+    headerRange.setFontColor('#f59e0b');
+    headerRange.setFontWeight('bold');
+    sheet.setFrozenRows(1);
+
+    sheet.setColumnWidth(1, 160); // ID товара
+    sheet.setColumnWidth(2, 320); // Наименование
+    sheet.setColumnWidth(3, 160); // Раздел
+    sheet.setColumnWidth(4, 110); // Фасовка
+    sheet.setColumnWidth(5, 160); // Поставщик
+    sheet.setColumnWidth(6, 110); // Магазин
+    sheet.setColumnWidth(7, 160); // Дата добавления
+  }
+  return sheet;
+}
+
+/**
+ * Прочитать все товары из листа «Добавлены пользователем»
+ */
+function readCustomItemsFromSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME_CUSTOM_ITEMS);
+  if (!sheet) return [];
+
+  const data = sheet.getDataRange().getValues();
+  const items = [];
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const id = String(row[0] || '').trim();
+    const name = String(row[1] || '').trim();
+    if (!name) continue;
+    items.push({
+      id: id,
+      name: name,
+      subcat: String(row[2] || '').trim(),
+      pack: String(row[3] || '').trim(),
+      supplier: String(row[4] || '').trim(),
+      store: String(row[5] || '').trim(),
+      createdAt: String(row[6] || '').trim()
+    });
+  }
+  return items;
+}
+
+/**
  * GET запрос:
  * 1. Проверка PIN-кода магазина: ?store=bitca&pin=1111 -> { "ok": true }
- * 2. Получение списка избранного: без параметров -> { status: "ok", stores: { ... } }
+ * 2. Получение списка добавленных пользователем товаров: ?action=getCustomItems
+ * 3. Получение избранного и добавленных товаров: без параметров -> { status: "ok", stores: { ... }, customItems: [ ... ] }
  */
 function doGet(e) {
   try {
@@ -109,7 +168,15 @@ function doGet(e) {
       return handlePinCheck(storeParam, pinParam);
     }
 
-    // Режим 2: Получение избранного
+    // Режим 2: Только пользовательские товары
+    if (e && e.parameter && e.parameter.action === 'getCustomItems') {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'ok',
+        customItems: readCustomItemsFromSheet()
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Режим 3: Получение избранного + пользовательских товаров
     const sheet = getOrCreateFavoritesSheet();
     const data = sheet.getDataRange().getValues();
     
@@ -120,7 +187,8 @@ function doGet(e) {
         'Битца2': [],
         'БП': [],
         'Олимп': []
-      }
+      },
+      customItems: readCustomItemsFromSheet()
     };
     
     if (data.length > 1) {
@@ -257,6 +325,73 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
+    // Режим 3: Добавление товара в общую базу «Добавлены пользователем»
+    if (action === 'addCustomItem') {
+      const cleanName = String(body.itemName || '').replace(/\s+/g, ' ').trim();
+      if (!cleanName) {
+        throw new Error('Не указано наименование товара');
+      }
+      const subcat = String(body.subcat || '').trim();
+      const pack = String(body.pack || '1').trim();
+      const supName = supplier || 'Снеки и закуски';
+
+      const customSheet = getOrCreateCustomItemsSheet();
+      const customData = customSheet.getDataRange().getValues();
+      const targetNorm = cleanName.toLowerCase();
+
+      for (let i = 1; i < customData.length; i++) {
+        const rowId = String(customData[i][0] || '').trim();
+        const rowName = String(customData[i][1] || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        const rowSup = String(customData[i][4] || '').trim();
+        if ((itemId && rowId === itemId) || (rowName === targetNorm && (!supName || !rowSup || rowSup.toLowerCase() === supName.toLowerCase()))) {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: 'duplicate',
+            action: action,
+            itemId: rowId || itemId,
+            message: 'Товар уже есть в базе'
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
+
+      const finalId = itemId || ('user_' + Date.now());
+      customSheet.appendRow([finalId, cleanName, subcat, pack, supName, store, nowStr]);
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'ok',
+        action: action,
+        itemId: finalId,
+        itemName: cleanName
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Режим 4: Удаление товара из листа «Добавлены пользователем»
+    if (action === 'deleteCustomItem') {
+      const customSheet = getOrCreateCustomItemsSheet();
+      const customData = customSheet.getDataRange().getValues();
+      const targetName = String(itemName || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      let deletedCount = 0;
+
+      for (let i = customData.length - 1; i >= 1; i--) {
+        const rowId = String(customData[i][0] || '').trim();
+        const rowName = String(customData[i][1] || '').replace(/\s+/g, ' ').trim().toLowerCase();
+        const rowSup = String(customData[i][4] || '').trim();
+
+        const idMatch = itemId && rowId && rowId === itemId;
+        const nameMatch = targetName && rowName === targetName && (!supplier || !rowSup || rowSup.toLowerCase() === supplier.toLowerCase());
+
+        if (idMatch || nameMatch) {
+          customSheet.deleteRow(i + 1);
+          deletedCount++;
+        }
+      }
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'ok',
+        action: action,
+        deleted: deletedCount
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({
       status: 'error',
       message: 'Неизвестное действие: ' + action

@@ -3718,6 +3718,7 @@ const CATEGORY_META = {
   'Заморозка': { label: 'Заморозка', icon: '❄️' },
   'Вкусняшки и прочее': { label: 'Вкусняшки', icon: '🍬' },
   'Pringles': { label: 'Pringles', icon: '🥔' },
+  'Добавлены пользователем': { label: 'Добавлены пользователем', icon: '🆕' },
   'manual': { label: 'Свободный ввод', icon: '✏️' }
 };
 
@@ -3790,6 +3791,11 @@ const PRIVATE_FAVORITES_KEY = 'snack_private_favorites_v2';
 const FAVORITES_STORAGE_KEY = 'snack_favorites_v1'; // legacy fallback
 const CUSTOM_SHEET_KEY = 'snack_custom_sheet_url';
 const APPS_SCRIPT_URL_KEY = 'snack_apps_script_url_v1';
+const USER_ADDED_SHEET_NAME = 'Добавлены пользователем';
+const USER_ADDED_CACHE_KEY = 'snack_user_added_cache_v1';
+const USER_DELETED_CACHE_KEY = 'snack_user_deleted_cache_v1';
+const PENDING_CUSTOM_TTL_MS = 10 * 60 * 1000;
+let liveCustomItemsCache = null;
 
 const DEFAULT_SHEET_XLSX_URL = 'https://docs.google.com/spreadsheets/d/1nqOd_F-H60hE8lwObZyBhLhAHFBidV0UKkqLVvl81Ro/export?format=xlsx';
 const DEFAULT_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyR0Mjnf8-VhnvEYCdc-i0sqjvxj8Kdw8Kxjc3BdrNvckL0baNvkt3cBtWvhAanC_s/exec';
@@ -4054,13 +4060,229 @@ async function syncFavoritesFromAppsScript(notify = false) {
       saveFavorites();
       renderStorePills();
       updateFavBadge();
+      if (Array.isArray(data.customItems)) {
+        reconcileLiveCustomItems(data.customItems);
+      }
       if (notify && imported > 0) {
         showToast(`⭐ Избранное синхронизировано (${imported} поз.)`);
       }
+    } else if (data && data.status === 'ok' && Array.isArray(data.customItems)) {
+      reconcileLiveCustomItems(data.customItems);
     }
   } catch (err) {
     console.warn('Apps Script GET sync notice:', err);
   }
+}
+
+// ==========================================
+// USER-ADDED ITEMS DATABASE SYNC HELPERS
+// ==========================================
+
+function loadPendingUserList(storageKey) {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    const now = Date.now();
+    const fresh = parsed.filter(entry => entry && (!entry.ts || (now - entry.ts) < PENDING_CUSTOM_TTL_MS));
+    if (fresh.length !== parsed.length) {
+      localStorage.setItem(storageKey, JSON.stringify(fresh));
+    }
+    return fresh;
+  } catch (e) {
+    return [];
+  }
+}
+
+function savePendingUserList(storageKey, list) {
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(list || []));
+  } catch (e) {
+    console.warn('Pending custom storage error:', e);
+  }
+}
+
+function isCustomItemMarkedDeleted(item, deletedList) {
+  if (!item || !Array.isArray(deletedList) || deletedList.length === 0) return false;
+  const itemId = String(item.id || '').trim().toLowerCase();
+  const itemName = String(item.name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  return deletedList.some(d => {
+    const dId = String(d.id || '').trim().toLowerCase();
+    const dName = String(d.name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    return (dId && itemId && dId === itemId) || (dName && itemName && dName === itemName);
+  });
+}
+
+function buildUserAddedCatalogItem({ id, name, subcat, pack, supplier, store }) {
+  const cleanName = String(name || '').replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+  const supplierId = slugify(supplier || 'snacks');
+  const packInfo = parsePackInfo(cleanName, pack || '1', USER_ADDED_SHEET_NAME);
+  const finalId = String(id || '').trim() || `user_${transliterate(cleanName + '_' + supplierId)}`;
+  return normalizeCatalogItem({
+    id: finalId,
+    name: cleanName,
+    brand: '',
+    productType: String(subcat || '').trim() || USER_ADDED_SHEET_NAME,
+    category: USER_ADDED_SHEET_NAME,
+    supplier: supplierId,
+    step: packInfo.step,
+    unit: packInfo.unit,
+    display_step: packInfo.display,
+    isUserAdded: true,
+    addedByStore: String(store || '').trim()
+  });
+}
+
+function mergePendingUserItemsIntoList(items) {
+  const pendingAdded = loadPendingUserList(USER_ADDED_CACHE_KEY);
+  const pendingDeleted = loadPendingUserList(USER_DELETED_CACHE_KEY);
+
+  const filtered = (Array.isArray(items) ? items : []).filter(it => {
+    const isUser = Boolean(it && (it.isUserAdded || it.category === USER_ADDED_SHEET_NAME));
+    if (isUser && isCustomItemMarkedDeleted(it, pendingDeleted)) {
+      return false;
+    }
+    return true;
+  });
+
+  for (const entry of pendingAdded) {
+    if (!entry || !entry.name) continue;
+    if (isCustomItemMarkedDeleted(entry, pendingDeleted)) continue;
+    const entryNameNorm = String(entry.name).replace(/\s+/g, ' ').trim().toLowerCase();
+    const entrySup = entry.supplier || 'snacks';
+    const exists = filtered.some(it =>
+      it &&
+      ((it.id && entry.id && it.id === entry.id) ||
+       (String(it.name || '').replace(/\s+/g, ' ').trim().toLowerCase() === entryNameNorm && it.supplier === entrySup))
+    );
+    if (!exists) {
+      filtered.push(buildUserAddedCatalogItem({
+        id: entry.id,
+        name: entry.name,
+        subcat: entry.subcat,
+        pack: entry.pack,
+        supplier: entry.supplier,
+        store: entry.store
+      }));
+    }
+  }
+  return filtered;
+}
+
+function ensureUserAddedCategoryOnSuppliers() {
+  if (!Array.isArray(suppliers)) return;
+  suppliers.forEach(sup => {
+    if (!Array.isArray(sup.categories)) sup.categories = [];
+    const hasItems = catalog.some(it => it.supplier === sup.id && it.category === USER_ADDED_SHEET_NAME);
+    if (hasItems && !sup.categories.includes(USER_ADDED_SHEET_NAME)) {
+      sup.categories.push(USER_ADDED_SHEET_NAME);
+    }
+  });
+}
+
+function reconcileLiveCustomItems(serverItems) {
+  if (!Array.isArray(serverItems)) return;
+  liveCustomItemsCache = serverItems;
+
+  let pendingAdded = loadPendingUserList(USER_ADDED_CACHE_KEY);
+  let pendingDeleted = loadPendingUserList(USER_DELETED_CACHE_KEY);
+
+  const serverConverted = serverItems
+    .filter(rawIt => rawIt && String(rawIt.name || '').trim())
+    .map(rawIt => buildUserAddedCatalogItem({
+      id: rawIt.id,
+      name: rawIt.name,
+      subcat: rawIt.subcat,
+      pack: rawIt.pack,
+      supplier: rawIt.supplier,
+      store: rawIt.store
+    }))
+    .filter(it => !isCustomItemMarkedDeleted(it, pendingDeleted));
+
+  // Clear pendingAdded items already confirmed on server
+  pendingAdded = pendingAdded.filter(p => {
+    const pName = String(p.name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const pSup = slugify(p.supplier || 'snacks');
+    return !serverConverted.some(s =>
+      (s.id && p.id && s.id === p.id) ||
+      (String(s.name || '').replace(/\s+/g, ' ').trim().toLowerCase() === pName && s.supplier === pSup)
+    );
+  });
+  savePendingUserList(USER_ADDED_CACHE_KEY, pendingAdded);
+
+  // Clear pendingDeleted items confirmed absent from server
+  pendingDeleted = pendingDeleted.filter(d => {
+    const dId = String(d.id || '').trim().toLowerCase();
+    const dName = String(d.name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    return serverItems.some(s => {
+      const sId = String(s.id || '').trim().toLowerCase();
+      const sName = String(s.name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      return (dId && sId === dId) || (dName && sName === dName);
+    });
+  });
+  savePendingUserList(USER_DELETED_CACHE_KEY, pendingDeleted);
+
+  // Replace user-added items in catalog with authoritative server list + remaining pendingAdded
+  const nonUserCatalog = catalog.filter(it => !(it && (it.isUserAdded || it.category === USER_ADDED_SHEET_NAME)));
+  const mergedUserItems = [...serverConverted];
+  for (const p of pendingAdded) {
+    mergedUserItems.push(buildUserAddedCatalogItem(p));
+  }
+
+  catalog = processCatalogWithPeanutOptimization([...nonUserCatalog, ...mergedUserItems]);
+  ensureUserAddedCategoryOnSuppliers();
+
+  try {
+    localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
+    localStorage.setItem(SUPPLIERS_CACHE_KEY, JSON.stringify(suppliers));
+  } catch (e) {
+    console.warn('Cache save notice:', e);
+  }
+
+  renderSupplierNav();
+  updateFavBadge();
+  renderCategoryTabs();
+  renderCatalog();
+  updateOrderBar();
+}
+
+async function syncCustomItemToAppsScript(action, payloadObj) {
+  const url = localStorage.getItem(APPS_SCRIPT_URL_KEY) || DEFAULT_APPS_SCRIPT_URL;
+  if (!url || !url.startsWith('http')) return false;
+
+  try {
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action,
+        ...payloadObj
+      })
+    });
+    return true;
+  } catch (err) {
+    console.warn('Apps Script custom item sync notice:', err);
+    return false;
+  }
+}
+
+function findCatalogDuplicate(name, targetSupplierId) {
+  const norm = String(name || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!norm) return null;
+
+  const matchesItem = (it) => {
+    if (!it || !it.name) return false;
+    const rawNorm = String(it.name).replace(/\s+/g, ' ').trim().toLowerCase();
+    if (rawNorm === norm) return true;
+    const cleanNorm = cleanOrderPositionName(it.name, it.category).replace(/\s+/g, ' ').trim().toLowerCase();
+    return cleanNorm === norm;
+  };
+
+  return catalog.find(it => it.supplier === targetSupplierId && matchesItem(it)) ||
+         catalog.find(it => matchesItem(it)) ||
+         null;
 }
 
 // Store Selection & Header Display
@@ -4977,9 +5199,9 @@ async function loadCatalog() {
   }
 
   if (validCache) {
-    catalog = processCatalogWithPeanutOptimization(catalog.map(normalizeCatalogItem));
+    catalog = processCatalogWithPeanutOptimization(mergePendingUserItemsIntoList(catalog).map(normalizeCatalogItem));
   } else {
-    catalog = processCatalogWithPeanutOptimization(DEFAULT_CATALOG.map(normalizeCatalogItem));
+    catalog = processCatalogWithPeanutOptimization(mergePendingUserItemsIntoList(DEFAULT_CATALOG).map(normalizeCatalogItem));
     suppliers = [...DEFAULT_SUPPLIERS];
   }
 
@@ -5096,6 +5318,8 @@ function normalizeCatalogItem(it) {
   let displayStep = it.display_step;
   const nameLower = cleanName.toLowerCase();
   if (
+    !it.isUserAdded &&
+    it.category !== USER_ADDED_SHEET_NAME &&
     it.supplier === 'snacks' &&
     unit === 'шт' &&
     (Number(step) === 1 || !step) &&
@@ -5128,7 +5352,7 @@ function parsePackInfo(name, packStr, cat) {
   const nameLower = name.toLowerCase();
 
   // 1. Bucket check: ведро Юбилейные -> 1 шт
-  if (nameLower.includes('ведро')) {
+  if (cat !== USER_ADDED_SHEET_NAME && nameLower.includes('ведро')) {
     return { step: 1.0, unit: 'шт', display: 'кратность 1 шт' };
   }
 
@@ -5158,6 +5382,9 @@ function parsePackInfo(name, packStr, cat) {
   }
   if (pLower.includes('рулон')) {
     return { step: 1.0, unit: 'рулон', display: 'кратность 1 рулон' };
+  }
+  if (pLower.includes('ведро')) {
+    return { step: 1.0, unit: 'ведро', display: 'кратность 1 ведро' };
   }
 
   // 5. Pure numbers (e.g. 3, 3.0, 4, 4.0, 1, 1.0)
@@ -5256,7 +5483,7 @@ async function syncFromGoogleSheets(notify = true) {
     const parsedData = parseGoogleSheetWorkbook(wb);
 
     if (parsedData && parsedData.items && parsedData.items.length > 0) {
-      catalog = processCatalogWithPeanutOptimization(parsedData.items);
+      catalog = processCatalogWithPeanutOptimization(mergePendingUserItemsIntoList(parsedData.items));
       if (parsedData.suppliers && parsedData.suppliers.length > 0) {
         suppliers = parsedData.suppliers;
       }
@@ -5273,7 +5500,10 @@ async function syncFromGoogleSheets(notify = true) {
       renderCategoryTabs();
       renderCatalog();
       updateOrderBar();
-      // Also sync live favorites from Apps Script Web App in parallel
+      if (Array.isArray(liveCustomItemsCache)) {
+        reconcileLiveCustomItems(liveCustomItemsCache);
+      }
+      // Also sync live favorites and user-added items from Apps Script Web App
       syncFavoritesFromAppsScript(false).catch(() => { });
       if (notify) showToast(`✅ Каталог обновлен: ${parsedData.items.length} позиций во всех вкладках!`);
     } else {
@@ -5454,6 +5684,7 @@ function parseGoogleSheetWorkbook(wb) {
     let photoCol = -1;
     let updatedCol = -1;
     let catCol = -1;
+    let storeCol = -1;
 
     header.forEach((col, idx) => {
       if (col === undefined || col === null) return;
@@ -5473,6 +5704,8 @@ function parseGoogleSheetWorkbook(wb) {
         supCol = idx;
       } else if (cLower.includes('категория') || cLower.includes('раздел')) {
         catCol = idx;
+      } else if (cLower.includes('магазин') || cLower === 'store' || cLower === 'точка') {
+        storeCol = idx;
       } else if (
         cLower === 'фото' ||
         cLower === 'photo' ||
@@ -5491,12 +5724,13 @@ function parseGoogleSheetWorkbook(wb) {
       }
     });
 
+    const isUserAddedSheet = sheetName.toLowerCase().trim() === USER_ADDED_SHEET_NAME.toLowerCase();
     const isPringlesSheet = sheetName.toLowerCase().includes('pringles');
     const hasPhotoOrUpdate = (photoCol !== -1 || updatedCol !== -1);
     const hasItemPrefix = idCol !== -1 && hasItemPrefixInRows(rows, idCol);
 
     // Auto-parsed sheets (Pringles or other auto-parsed chip tabs without item_XXX column)
-    const isAutoParsedSheet = isPringlesSheet || (hasPhotoOrUpdate && !hasItemPrefix);
+    const isAutoParsedSheet = !isUserAddedSheet && (isPringlesSheet || (hasPhotoOrUpdate && !hasItemPrefix));
 
     if (isAutoParsedSheet) {
       if (photoCol === -1) photoCol = 6; // Column G is index 6
@@ -5525,7 +5759,9 @@ function parseGoogleSheetWorkbook(wb) {
       if (cleanName.toLowerCase() === 'наименование' || cleanName.toLowerCase() === 'название') continue;
 
       const rawPack = packCol !== -1 ? row[packCol] : '';
-      const itemCat = (isAllAssortment && catCol !== -1 && row[catCol]) ? String(row[catCol]).trim() : sheetName;
+      const itemCat = isUserAddedSheet
+        ? USER_ADDED_SHEET_NAME
+        : ((isAllAssortment && catCol !== -1 && row[catCol]) ? String(row[catCol]).trim() : sheetName);
       const packInfo = parsePackInfo(cleanName, rawPack, itemCat);
 
       // Extract photo URL (handling column G, objects, hyperlinks, strings, and direct scan)
@@ -5562,10 +5798,10 @@ function parseGoogleSheetWorkbook(wb) {
         itemBrand = 'Pringles';
       }
 
-      // Extract product type ("Вид продукта") with automatic fallback
+      // Extract product type ("Вид продукта" / "Раздел" for user-added) with automatic fallback
       const rawProductType = (productTypeCol !== -1 && row[productTypeCol] !== undefined && row[productTypeCol] !== null)
         ? String(row[productTypeCol]).trim()
-        : '';
+        : (isUserAddedSheet && catCol !== -1 && row[catCol] !== undefined && row[catCol] !== null ? String(row[catCol]).trim() : '');
       const itemProductType = rawProductType || detectProductType(cleanName, itemCat);
 
       // Determine supplier
@@ -5611,6 +5847,13 @@ function parseGoogleSheetWorkbook(wb) {
         }
       }
 
+      if (isUserAddedSheet && !itemId) {
+        itemId = `user_${transliterate(cleanName + '_' + supplierId)}`;
+      }
+      const addedByStore = (isUserAddedSheet && storeCol !== -1 && row[storeCol] !== undefined && row[storeCol] !== null)
+        ? String(row[storeCol]).trim()
+        : '';
+
       items.push(normalizeCatalogItem({
         id: itemId, // empty string if cell was empty; will be assigned MAX + 1 in pass 2
         name: cleanName,
@@ -5625,6 +5868,8 @@ function parseGoogleSheetWorkbook(wb) {
         photo: cleanPhoto,
         imageUrl: cleanPhoto,
         'Фото': cleanPhoto,
+        isUserAdded: isUserAddedSheet,
+        addedByStore,
         _isAutoParsed: isAutoParsedSheet
       }));
     }
@@ -5662,20 +5907,22 @@ function parseGoogleSheetWorkbook(wb) {
   // Assign temporary local IDs (MAX + 1) for newly added rows with temporarily empty ID
   // (Preserves exact permanent IDs for all existing rows without shifts)
   for (const it of items) {
-    if (!it.id && !it._isAutoParsed) {
+    if (!it.id && !it._isAutoParsed && !it.isUserAdded) {
       maxItemNum++;
       it.id = `item_${String(maxItemNum).padStart(3, '0')}`;
     }
     delete it._isAutoParsed;
   }
 
+  const mergedItems = mergePendingUserItemsIntoList(items);
+
   // Build dynamic suppliers array from discovered items
-  const discoveredSupplierIds = [...new Set(items.map(i => i.supplier))];
+  const discoveredSupplierIds = [...new Set(mergedItems.map(i => i.supplier))];
   const dynamicSuppliers = [];
 
   discoveredSupplierIds.forEach(id => {
     const meta = dynamicSupplierLabels[id] || KNOWN_SUPPLIER_META[id] || { name: id, shortName: id, icon: '📦' };
-    const categoriesForSup = [...new Set(items.filter(i => i.supplier === id).map(i => i.category))];
+    const categoriesForSup = [...new Set(mergedItems.filter(i => i.supplier === id).map(i => i.category))];
 
     dynamicSuppliers.push({
       id,
@@ -5738,12 +5985,12 @@ function parseGoogleSheetWorkbook(wb) {
               // 1. Primary: search by permanent ID (item_XXX or pringles_...)
               let matchedItem = null;
               if (idVal) {
-                matchedItem = items.find(it => it.id && it.id.toLowerCase() === idVal.toLowerCase());
+                matchedItem = mergedItems.find(it => it.id && it.id.toLowerCase() === idVal.toLowerCase());
               }
               // 2. Fallback: search by exact product name
               if (!matchedItem && nameVal) {
                 const targetName = nameVal.toLowerCase();
-                matchedItem = items.find(it => it.name && it.name.trim().toLowerCase() === targetName);
+                matchedItem = mergedItems.find(it => it.name && it.name.trim().toLowerCase() === targetName);
               }
               if (matchedItem) {
                 parsedFavs[matchedStore].add(matchedItem.id);
@@ -5758,11 +6005,11 @@ function parseGoogleSheetWorkbook(wb) {
             if (!cellVal) continue;
 
             // 1. Primary match by ID
-            let matchedItem = items.find(it => it.id && it.id.toLowerCase() === cellVal.toLowerCase());
+            let matchedItem = mergedItems.find(it => it.id && it.id.toLowerCase() === cellVal.toLowerCase());
             // 2. Fallback match by exact Name
             if (!matchedItem) {
               const targetName = cellVal.toLowerCase();
-              matchedItem = items.find(it => it.name && it.name.trim().toLowerCase() === targetName);
+              matchedItem = mergedItems.find(it => it.name && it.name.trim().toLowerCase() === targetName);
             }
             if (!matchedItem) continue;
 
@@ -5792,7 +6039,7 @@ function parseGoogleSheetWorkbook(wb) {
   }
 
   return {
-    items,
+    items: mergedItems,
     suppliers: dynamicSuppliers.length > 0 ? dynamicSuppliers : DEFAULT_SUPPLIERS
   };
 }
@@ -5851,14 +6098,15 @@ function renderCategoryTabs() {
 
   if (currentSup && Array.isArray(currentSup.categories)) {
     currentSup.categories.forEach(cat => {
-      if (presentCategories.has(cat)) orderedCats.push(cat);
+      if (cat !== USER_ADDED_SHEET_NAME && presentCategories.has(cat)) orderedCats.push(cat);
     });
   }
 
   presentCategories.forEach(cat => {
-    if (!orderedCats.includes(cat)) orderedCats.push(cat);
+    if (cat !== USER_ADDED_SHEET_NAME && !orderedCats.includes(cat)) orderedCats.push(cat);
   });
 
+  orderedCats.push(USER_ADDED_SHEET_NAME);
   orderedCats.push('manual');
 
   container.innerHTML = orderedCats.map(cat => {
@@ -5889,16 +6137,20 @@ function renderCategoryTabs() {
 
   container.querySelectorAll('.cat-tab').forEach(btn => {
     btn.addEventListener('click', () => {
-      activeCategory = btn.getAttribute('data-cat');
-      activeBrandFilter = 'all';
-      renderCategoryTabs();
-      renderSortBar();
-      renderCatalog();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      switchCategory(btn.getAttribute('data-cat'));
     });
   });
 
   renderBrandChips();
+}
+
+function switchCategory(cat) {
+  activeCategory = cat || 'all';
+  activeBrandFilter = 'all';
+  renderCategoryTabs();
+  renderSortBar();
+  renderCatalog();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Render Brand Filter Chips (e.g. for Pringles / Chips: Pringles, Bulba, Mega Chips, Джаузи)
@@ -6241,6 +6493,22 @@ function renderCatalog() {
           </p>
           <button class="btn-action-secondary" style="margin: 0 auto; display: inline-flex;" onclick="toggleFavoritesFilter('none')">
             Показать весь ассортимент
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    if (activeCategory === USER_ADDED_SHEET_NAME && !searchQuery.trim()) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">🆕</div>
+          <p style="font-weight: 700; font-size: 1rem;">В разделе «Добавлены пользователем» пока пусто</p>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 6px auto 14px; max-width: 300px; line-height: 1.4;">
+            Добавьте позицию во вкладке <strong>«✏️ Свободный ввод»</strong> и отметьте галочку «Сохранить в базу для следующих заказов».
+          </p>
+          <button type="button" class="btn-action-primary" style="margin: 0 auto; display: inline-flex; font-size: 0.85rem; padding: 8px 16px;" onclick="switchCategory('manual')">
+            ✏️ Перейти в Свободный ввод
           </button>
         </div>
       `;
@@ -6678,10 +6946,14 @@ function renderProductCard(item, subgroupBrand = null, showCategoryBadge = false
 
   const thumbHtml = showThumb ? renderProductThumbnail(item) : '';
 
+  const isUserAdded = Boolean(item.isUserAdded || item.category === USER_ADDED_SHEET_NAME);
   const itemBrand = cleanBrandValue(item.brand) || detectBrandFromName(item.name);
   const brandBadgeHtml = (!subgroupBrand && itemBrand) ? `<span class="badge-brand">${escapeHtml(itemBrand)}</span>` : '';
   const catMeta = showCategoryBadge ? (CATEGORY_META[item.category] || { label: item.category }) : null;
   const catBadgeHtml = catMeta ? `<span class="badge-cat-mini">${escapeHtml(catMeta.label)}</span>` : '';
+  const userSubcatBadgeHtml = (isUserAdded && item.productType && item.productType !== USER_ADDED_SHEET_NAME)
+    ? `<span class="badge-cat-mini">${escapeHtml(item.productType)}</span>`
+    : '';
 
   const isStore = isItemStoreFav(item.id);
   const isPrivate = isItemPrivateFav(item.id);
@@ -6720,6 +6992,13 @@ function renderProductCard(item, subgroupBrand = null, showCategoryBadge = false
             }
             return `<div class="product-title">${highlightSearch(titleText, searchQuery)}</div>`;
           })()}
+          ${isUserAdded ? `
+            <button type="button" class="btn-delete-custom"
+              onclick="confirmDeleteCustomItem('${escapeHtml(item.id)}', event)"
+              title="Удалить товар из базы" aria-label="Удалить из базы">
+              ${ICONS.trash}
+            </button>
+          ` : ''}
           <button type="button" class="btn-fav ${favClass}"
             onclick="handleFavClick('${item.id}', event)"
             onpointerdown="handleFavPointerDown('${item.id}', event)"
@@ -6733,6 +7012,7 @@ function renderProductCard(item, subgroupBrand = null, showCategoryBadge = false
         </div>
         <div class="product-meta">
           ${catBadgeHtml}
+          ${userSubcatBadgeHtml}
           ${brandBadgeHtml}
           <span class="badge-step">${escapeHtml(item.display_step || `кратность ${item.step} ${item.unit}`)}</span>
         </div>
@@ -6897,6 +7177,13 @@ function renderManualSection(container) {
           <label>Раздел (необязательно)</label>
           <input type="text" id="manualCat" class="form-control" placeholder="Например: Свободный ввод" />
         </div>
+        <label class="manual-save-checkbox">
+          <input type="checkbox" id="manualSaveToBase" />
+          <span class="manual-save-checkbox-text">
+            <strong>Сохранить в базу для следующих заказов</strong>
+            <small>Появится во вкладке «Добавлены пользователем» и в Google Таблице для всех точек</small>
+          </span>
+        </label>
         <button type="submit" class="btn-add-manual">
           ${ICONS.plus} Добавить в заказ ${escapeHtml(currentSup.shortName)}
         </button>
@@ -6910,13 +7197,110 @@ function renderManualSection(container) {
 
 function handleManualSubmit(e) {
   e.preventDefault();
-  const name = document.getElementById('manualName').value.trim();
-  const qty = parseFloat(document.getElementById('manualQty').value) || 1;
-  const unit = document.getElementById('manualUnit').value;
-  const cat = document.getElementById('manualCat').value.trim() || 'Свободный ввод';
+  const nameEl = document.getElementById('manualName');
+  const qtyEl = document.getElementById('manualQty');
+  const unitEl = document.getElementById('manualUnit');
+  const catEl = document.getElementById('manualCat');
+  const saveCheckEl = document.getElementById('manualSaveToBase');
+
+  const rawName = nameEl ? nameEl.value : '';
+  const name = rawName.replace(/\s+/g, ' ').replace(/\s+,/g, ',').trim();
+  const qty = parseFloat(qtyEl ? qtyEl.value : '1') || 1;
+  const unit = unitEl ? unitEl.value : 'шт';
+  const rawCat = catEl ? catEl.value.trim() : '';
+  const saveToBase = Boolean(saveCheckEl && saveCheckEl.checked);
 
   if (!name) return;
 
+  if (saveToBase) {
+    const existing = findCatalogDuplicate(name, activeSupplier);
+    if (existing) {
+      const existingSup = getSupplierById(existing.supplier);
+      if (existing.supplier === activeSupplier) {
+        order[existing.id] = Math.round(((order[existing.id] || 0) + qty) * 1000) / 1000;
+        saveState();
+        if (nameEl) nameEl.value = '';
+        if (catEl) catEl.value = '';
+        if (qtyEl) qtyEl.value = '1';
+        if (saveCheckEl) saveCheckEl.checked = false;
+
+        const existingCatLabel = (CATEGORY_META[existing.category] && CATEGORY_META[existing.category].label) || existing.category;
+        showToast(`ℹ️ «${existing.name}» уже есть в базе (${existingCatLabel}) — добавлено в заказ (${qty} ${existing.unit})`);
+        renderSupplierNav();
+        renderCategoryTabs();
+        renderCatalog();
+        updateOrderBar();
+      } else {
+        showToast(`⚠️ «${existing.name}» уже есть в базе у поставщика «${existingSup.shortName}»!`, true);
+      }
+      return;
+    }
+
+    const currentSup = getSupplierById(activeSupplier);
+    const step = unit === 'кг' ? 0.5 : 1;
+    const packStr = unit === 'кг' ? '0.5 кг' : (unit === 'шт' ? '1' : `1 ${unit}`);
+    const newId = `user_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+
+    const newCatalogItem = buildUserAddedCatalogItem({
+      id: newId,
+      name,
+      subcat: rawCat,
+      pack: packStr,
+      supplier: activeSupplier,
+      store: activeStore
+    });
+    // Guarantee exact standard step/unit chosen by user
+    newCatalogItem.step = step;
+    newCatalogItem.unit = unit;
+    newCatalogItem.display_step = `кратность ${step} ${unit}`;
+
+    catalog.push(newCatalogItem);
+    ensureUserAddedCategoryOnSuppliers();
+
+    const pendingAdded = loadPendingUserList(USER_ADDED_CACHE_KEY);
+    pendingAdded.push({
+      id: newId,
+      name,
+      subcat: rawCat,
+      pack: packStr,
+      supplier: activeSupplier,
+      store: activeStore,
+      ts: Date.now()
+    });
+    savePendingUserList(USER_ADDED_CACHE_KEY, pendingAdded);
+
+    order[newId] = Math.round(((order[newId] || 0) + qty) * 1000) / 1000;
+    saveState();
+    try {
+      localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
+      localStorage.setItem(SUPPLIERS_CACHE_KEY, JSON.stringify(suppliers));
+    } catch (cacheErr) {
+      console.warn('Catalog cache save notice:', cacheErr);
+    }
+
+    syncCustomItemToAppsScript('addCustomItem', {
+      itemId: newId,
+      itemName: name,
+      subcat: rawCat,
+      pack: packStr,
+      supplier: currentSup.name || activeSupplier,
+      store: activeStore
+    });
+
+    if (nameEl) nameEl.value = '';
+    if (catEl) catEl.value = '';
+    if (qtyEl) qtyEl.value = '1';
+    if (saveCheckEl) saveCheckEl.checked = false;
+
+    showToast(`✅ «${name}» сохранён в базу и добавлен в заказ (${qty} ${unit})`);
+    renderSupplierNav();
+    renderCategoryTabs();
+    renderCatalog();
+    updateOrderBar();
+    return;
+  }
+
+  const cat = rawCat || 'Свободный ввод';
   const newItem = {
     id: `manual_${Date.now()}`,
     name,
@@ -6934,6 +7318,73 @@ function handleManualSubmit(e) {
   renderCategoryTabs();
   renderCatalog();
   updateOrderBar();
+}
+
+function confirmDeleteCustomItem(itemId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const item = catalog.find(i => i.id === itemId);
+  if (!item) return;
+
+  openConfirmDialog(
+    'Удалить из базы?',
+    `Удалить товар «${item.name}» из вкладки «Добавлены пользователем» и Google Таблицы для всех магазинов?`,
+    () => deleteCustomItemFromBase(item.id),
+    'Удалить'
+  );
+}
+
+function deleteCustomItemFromBase(itemId) {
+  const item = catalog.find(i => i.id === itemId);
+  if (!item) return;
+
+  const sup = getSupplierById(item.supplier);
+  catalog = catalog.filter(i => i.id !== itemId);
+
+  if (order[itemId]) {
+    delete order[itemId];
+  }
+
+  let favChanged = false;
+  STORES.forEach(s => {
+    if (storeFavorites[s] && storeFavorites[s].delete(itemId)) favChanged = true;
+  });
+  if (privateFavorites && privateFavorites.delete(itemId)) favChanged = true;
+  if (favChanged) saveFavorites();
+
+  const pendingAdded = loadPendingUserList(USER_ADDED_CACHE_KEY).filter(p => p.id !== itemId && String(p.name || '').trim().toLowerCase() !== item.name.trim().toLowerCase());
+  savePendingUserList(USER_ADDED_CACHE_KEY, pendingAdded);
+
+  const pendingDeleted = loadPendingUserList(USER_DELETED_CACHE_KEY);
+  pendingDeleted.push({ id: item.id, name: item.name, ts: Date.now() });
+  savePendingUserList(USER_DELETED_CACHE_KEY, pendingDeleted);
+
+  if (Array.isArray(liveCustomItemsCache)) {
+    liveCustomItemsCache = liveCustomItemsCache.filter(s => s && s.id !== item.id && String(s.name || '').trim().toLowerCase() !== item.name.trim().toLowerCase());
+  }
+
+  saveState();
+  try {
+    localStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify(catalog));
+  } catch (e) {
+    console.warn('Catalog cache save notice:', e);
+  }
+
+  syncCustomItemToAppsScript('deleteCustomItem', {
+    itemId: item.id,
+    itemName: item.name,
+    supplier: sup.name || item.supplier
+  });
+
+  renderStorePills();
+  updateFavBadge();
+  renderSupplierNav();
+  renderCategoryTabs();
+  renderCatalog();
+  updateOrderBar();
+  showToast(`🗑️ «${item.name}» удалён из базы`);
 }
 
 function attachManualEvents(container) {
@@ -7379,6 +7830,11 @@ function parseOrderPosition(rawName, category = '') {
     return { brand: null, flavor: '', fullName: '' };
   }
   let s = String(rawName).trim();
+
+  if (category === USER_ADDED_SHEET_NAME) {
+    const trimmed = s.replace(/\s+/g, ' ').trim();
+    return { brand: null, flavor: trimmed, fullName: trimmed };
+  }
 
   // 1. Preserve technical tare specs in Consumables & Containers (e.g. ИПР, 350гр, мокрые)
   if (category === 'Контейнеры' || category === 'Расходники') {
@@ -7987,7 +8443,7 @@ function openQuantityPrompt(title, currentVal, unit, callback) {
   setTimeout(() => dInput.focus(), 100);
 }
 
-function openConfirmDialog(title, desc, onConfirm) {
+function openConfirmDialog(title, desc, onConfirm, confirmLabel = 'Очистить') {
   promptCallback = onConfirm;
   const overlay = document.getElementById('dialogOverlay');
   const dTitle = document.getElementById('dialogTitle');
@@ -7999,7 +8455,7 @@ function openConfirmDialog(title, desc, onConfirm) {
   dDesc.textContent = desc;
   dInput.style.display = 'none';
   dConfirm.className = 'btn-dialog confirm-danger';
-  dConfirm.textContent = 'Очистить';
+  dConfirm.textContent = confirmLabel || 'Очистить';
 
   overlay.classList.add('active');
 }
