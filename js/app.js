@@ -5247,12 +5247,12 @@ function detectProductType(name, category = '') {
     return 'Сыр';
   }
   if (c === 'орехи') {
+    if (n.includes('ореховая смесь')) return 'Ореховая смесь';
     if (n.includes('арахис')) return 'Арахис';
     if (n.includes('фисташ')) return 'Фисташки';
     if (n.includes('кешью')) return 'Кешью';
     if (n.includes('миндал')) return 'Миндаль';
     if (n.includes('кукуруз')) return 'Кукуруза жареная';
-    if (n.includes('ореховая смесь')) return 'Ореховая смесь';
   }
   if (c === 'начос и лавашики') {
     if (n.includes('лаваш')) return 'Чипсы из лаваша';
@@ -5291,9 +5291,9 @@ function detectProductType(name, category = '') {
     return n.includes('кукуруз') ? 'Сухари кукурузные' : 'Сухари';
   }
   if (n.includes('гренки') || n.includes('ведро юбилейные')) return 'Гренки';
-  if (n.includes('морская капуста')) return 'Морская капуста';
   if (n.includes('семечки')) return 'Семечки';
   if (n.includes('чипсы') || n.includes('картошка') || n.includes('pringles') || n.includes('принглс')) return 'Чипсы';
+  if (n.includes('морская капуста')) return 'Морская капуста';
   return category || '';
 }
 
@@ -6268,11 +6268,29 @@ function setSortMode(modeId) {
   renderCatalog();
 }
 
-// Group label for "По виду продукта" mode (refines cheese forms and fish types)
+// Group label for "По виду продукта" mode (refines bread snacks, cheeses, and fish)
 function getProductGroupType(item) {
   if (!item) return 'Прочее';
   const cat = item.category || '';
   const nameLower = String(item.name || '').toLowerCase();
+  if (cat === 'Гренки Весовые') {
+    if (nameLower.includes('ведро') || nameLower.includes('юбилейн')) return 'Гренки: Ведро Юбилейные';
+    if (nameLower.includes('лутовск')) {
+      return nameLower.includes('ржан') ? 'Гренки: Лутовские ржаные' : 'Гренки: Лутовские пшеничные';
+    }
+    if (nameLower.includes('бро')) return 'Гренки: Бро';
+    if (nameLower.includes('снапс')) return 'Гренки: Снапсы';
+    if (nameLower.includes('житницк')) return 'Сухари: Багет Житницкие';
+    if (nameLower.includes('демидовск')) return 'Сухари: Демидовские';
+    if (nameLower.startsWith('сухар')) return 'Сухари: Весовые';
+    const brand = cleanBrandValue(item.brand);
+    if (nameLower.includes('гренк')) return brand ? `Гренки: ${brand}` : 'Гренки: Прочие';
+    if (nameLower.includes('сухар')) return brand ? `Сухари: ${brand}` : 'Сухари: Прочие';
+  }
+  if (cat === 'Гренки Чипсы и снеки ЗАВОДСКИЕ') {
+    if (nameLower.includes('сурск')) return 'Гренки (Сурские)';
+    if (nameLower.includes('корнелли')) return 'Сухари кукурузные (Корнелли)';
+  }
   if (cat === 'Сыры') {
     if (nameLower.includes('жарен')) return 'Сыр жареный';
     if (nameLower.includes('спагетти')) return 'Сыр: Спагетти';
@@ -6280,6 +6298,23 @@ function getProductGroupType(item) {
     if (nameLower.includes('балыков')) return 'Сыр: Балыковый';
     if (nameLower.includes('коса')) return 'Сыр: Коса';
     if (nameLower.includes('пряди') || nameLower.includes('охотнич')) return 'Сыр: Пряди';
+  }
+  if (cat === 'Орехи') {
+    if (nameLower.includes('ореховая смесь')) return 'Ореховая смесь';
+    if (nameLower.includes('арахис')) {
+      if (item.isPeanutGlazed || nameLower.includes('глазур') || nameLower.includes('корочк')) {
+        return 'Арахис: В глазури / корочке';
+      }
+      if (
+        nameLower.includes('хруст') ||
+        nameLower.includes('премиум') ||
+        nameLower.includes('запеч') ||
+        nameLower.includes('в соусе')
+      ) {
+        return 'Арахис: Хрустящий (Премиум)';
+      }
+      return 'Арахис: Жареный (мелкий)';
+    }
   }
   if (cat === 'Рыбные' && nameLower.includes('минта') && nameLower.includes('треск')) {
     return 'Минтай / Треска';
@@ -6698,12 +6733,14 @@ function renderCatalog() {
         } else {
           typeGroups.forEach(({ typeLabel, list }) => {
             const subgroupId = 'type_' + catName.replace(/[^\w\u0400-\u04FF]/g, '_') + '_' + typeLabel.replace(/[^\w\u0400-\u04FF]/g, '_');
+            const seriesSet = new Set(list.map(it => parseOrderPosition(it.name, catName).brand || ''));
+            const singleSeries = seriesSet.size === 1 && !seriesSet.has('') ? Array.from(seriesSet)[0] : null;
             catBodyHtml += buildSubgroupAccordionHtml(
               subgroupId,
               typeLabel,
               list,
               hasSearch,
-              it => renderProductCard(it, null)
+              it => renderProductCard(it, singleSeries)
             );
           });
           if (soloTypes.length > 0) {
@@ -6738,7 +6775,7 @@ function renderCatalog() {
         const standaloneItems = [];
 
         for (const [brand, list] of subgroupsMap) {
-          const isRecognizedSeries = brand === 'Арахис в глазури' || brand.startsWith('Арахис ж/с') || brand.includes('Лутовские') || brand.includes('Санккино') || brand.includes('Фермерский');
+          const isRecognizedSeries = brand === 'Арахис в глазури' || brand.startsWith('Арахис ж/с') || brand.startsWith('Арахис Хрустящий') || brand.includes('Лутовские') || brand.includes('Санккино') || brand.includes('Фермерский');
           if (brand !== '__standalone__' && (list.length >= 2 || isRecognizedSeries)) {
             namedSubgroups.push({ brand, list });
           } else {
@@ -7558,7 +7595,7 @@ const KNOWN_ORDER_SERIES_PREFIXES = [
   [/^Семечки\s+от\s*["«]?МАРТИНА["»]?(?:\s*\d+\s*г(?:р)?\*\d+(?:\s*шт\.?)?)?(?:\s+|$)/i, 'Семечки От Мартина'],
   // Орехи, Начос, Соусы
   [/^Арахис в хруст\.корочке ФомаЛукич(?:\s+|$)/i, 'Арахис ФомаЛукич'],
-  [/^Арахис ж\/?с\s+ХРУСТЯЩИЙ(?:\s+|$)/i, 'Арахис ж/с Хрустящий'],
+  [/^Арахис ж\/?с\s+ХРУСТЯЩИЙ(?:\s+|$)/i, 'Арахис Хрустящий (Премиум)'],
   [/^Арахис\s+ж\/?с(?:\s+|$)/i, 'Арахис ж/с'],
   [/^КУКУРУЗА\s+жареная(?:\s+со\s+вкусом)?(?:\s+|$)/i, 'Кукуруза жареная'],
   [/^Фисташк[аи](?:\s+со\s+вкусом)?(?:\s+|$)/i, 'Фисташки'],
@@ -7811,6 +7848,21 @@ function parseSimilarProductGroup(s, category = '') {
     const flavor = cleanOrderFlavor(s, 'Полосатик');
     if (flavor) {
       return { brand: 'Полосатик', flavor: flavor, fullName: `Полосатик: ${flavor}` };
+    }
+  }
+
+  // 3b. Baked-in-sauce / Premium peanuts in Орехи -> "Арахис Хрустящий (Премиум)"
+  if (
+    (category === 'Орехи' || !category) &&
+    lower.includes('арахис') &&
+    !lower.includes('глазур') &&
+    !lower.includes('корочк') &&
+    (lower.includes('запеч') || lower.includes('в соусе') || (lower.includes('премиум') && !lower.includes('хруст')))
+  ) {
+    let rest = stripTrailingPackUnits(s, false).replace(/^Арахис(?:\s+ж\/?с)?\s+/i, '').trim();
+    const flavor = cleanOrderFlavor(rest || s, 'Арахис Хрустящий (Премиум)');
+    if (flavor) {
+      return { brand: 'Арахис Хрустящий (Премиум)', flavor: flavor, fullName: `Арахис Хрустящий (Премиум): ${flavor}` };
     }
   }
 
